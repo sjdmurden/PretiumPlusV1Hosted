@@ -1,0 +1,153 @@
+html {
+  font-size: 14px;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+#websiteBody {
+    /*    background: #003f4b;
+*/
+    background: #263238;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+#dataTable {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#ultimateCostsTableWithAdjustments {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#ultimateCostsTable {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+
+.tabs-container {
+    display: flex;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 8px;
+    border-bottom: 2px solid #e0e0e0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.tabs-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+.tabs-container button:hover, .tabs-container button.active {
+    background-color: #0056b3;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/*.tab-btn {
+    @apply px-4 py-2 text-sm font-medium text-gray-600 bg-white rounded-lg shadow-sm transition-all duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 active:scale-95;
+}
+
+.tab-btn.active {
+    @apply bg-blue-500 text-white shadow-md hover:bg-blue-600;
+}*/
+
+
+.highlight {
+    background: #ffcccc !important; /* Light red background */
+    background-color: #ffcccc;
+    color: #900; /* Dark red text */
+    transition: background-color 0.3s ease-in-out;
+    border-bottom: 2px solid red;
+}
+
+.indexExcelSearchBox {
+    background: #334155;
+    box-shadow: 0px -10px 50px 10px rgb(23,37,84);
+}
+
+.indexExcelUploadBox {
+    background: #334155;
+    box-shadow: 0px 10px 50px 10px rgb(5,46,22);
+}
+
+
+.claims-list-hidden {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transform: translateY(-10px); /* slight donwward movement once loaded in */
+}
+
+.claims-list-transition {
+    transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.claims-list-visible {
+    opacity: 1;
+    height: auto;
+    transform: translateY(0);
+}
+
+/*.logoBox {
+    background: white;
+    width: 10rem;
+    overflow: visible;
+}*/
+
+.logo {
+    width: 7rem;
+    
+}
+
+.header {
+    background: radial-gradient(circle, rgba(38, 118, 150, 1) 0%, rgba(70, 145, 126, 1) 15%, rgba(51, 65, 85, 1) 30%);
+}

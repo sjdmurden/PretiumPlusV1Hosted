@@ -1,0 +1,37 @@
+{
+  "Rabbits Vehicle Hire": {
+    "Address": "Wolsey Road, Caversham, Reading, Berkshire, RG4 8BY",
+    "RegistrationNum": "2403691",
+    "VATNum": "GB641894318"
+  },
+  "U-Drive Limited": {
+    "Address": "48-56 Old Wareham Road, Poole, Dorset BH12 4QR",
+    "RegistrationNum": "03183986",
+    "VATNum": "222458284"
+  },
+  "Seymours Vehicle Rental": {
+    "Address": "Unit 3b, Old Mill Lane, Aylesford, Kent, ME20 7DT",
+    "RegistrationNum": "02048172",
+    "VATNum": "445890616"
+  },
+  "Badshot Lea and Roman Self Drive": {
+    "Address": "2 Farnham Trading Estate, Farnham, Surrey, GU9 9NN",
+    "RegistrationNum": "4883188",
+    "VATNum": "413751667"
+  },
+  "Rentruck": {
+    "Address": "Keverick House, Blueberry Business Park, Wallhead Road, Rochdale, OL16 5DB",
+    "RegistrationNum": "00740150",
+    "VATNum": "GB765346017"
+  },
+  "Weflex": {
+    "Address": "Unit 6, Westpoint, Trading Estate Rd, Alliance Rd, London W3 0RA",
+    "RegistrationNum": "09704423",
+    "VATNum": "GB230947510"
+  },
+  "Lincs Van Hire Ltd.": {
+    "Address": "Wrightsway, Lincoln, LN2 4JY",
+    "RegistrationNum": "06334578",
+    "VATNum": "GB897807257"
+  }
+}

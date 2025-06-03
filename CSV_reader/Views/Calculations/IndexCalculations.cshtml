@@ -1,0 +1,867 @@
+﻿@model CSV_reader.ViewModels.ClaimsViewModel;
+@{
+    ViewData["Title"] = "IndexCalculations";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Rating Guide</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <script src="~/js/quoteSearch.js" ></script>
+    <script src="~/js/downloadPDF.js"></script>
+</head>
+<body id="websiteBody">
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+        <div class="flex flex-col items-center space-y-4">
+            <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-lg font-medium text-gray-700 animate-pulse">Loading...</p>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 p-10">
+            <!-- Client info -->
+            <div class=" shadow-md rounded-lg p-6 w-full max-w-md hover:shadow-lg transition" style="background: #bae6fd;">
+                <h3 class="text-teal-600 text-xl font-bold mb-4">Client Details</h3>
+                <p class="text-gray-700 text-sm font-semibold">
+                    <span class="block mb-2">Client Name:</span>
+                    <span class="text-gray-900">@Model.CalculationsModel.ClientName</span>
+                </p>
+                <p class="text-gray-700 text-sm font-semibold mt-4">
+                    <span class="block mb-2">Quote Number:</span>
+                    <span class="text-gray-900">@Model.CalculationsModel.QuoteNumber</span>
+                </p>
+            </div>
+
+            <!-- Form Section -->
+            <form id="quoteSearchForm" class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+                <div class="flex flex-col space-y-4">
+                    <label for="quoteId" class="text-2xl font-bold text-gray-700">Search Quotes</label>
+                    <label for="quoteSearch" class="text-sm font-semibold text-gray-600">Enter Quote Number</label>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-700 font-semibold bg-gray-200 py-2 px-3 rounded-md">PAQ</span>
+                        <input type="text"
+                               name="quoteSearch"
+                               id="quoteIdToSearch"
+                               required
+                               class="rounded-md bg-gray-100 border border-gray-300 p-3 text-gray-800 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300"
+                               placeholder="eg. 1234" />
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+
+
+        
+
+
+        <!------------- form to adjust quote params ---------------->
+
+        <form id="combinedForm" class="bg-light p-4 rounded-lg shadow-md mb-7">
+            <div class="form-group flex flex-wrap gap-4" style="margin: 1rem 0 1rem 0;">
+
+                <div class="flex-1 min-w-[200px]">
+                    <label for="selectedNumOfMonthsDropdown" class="block text-gray-700 font-medium mb-2">
+                        Select Months:
+                    </label>
+                    @Html.DropDownListFor(
+                             m => m.CalculationsModel.SelectedNumOfMonths,
+                             Model.CalculationsModel.InflationMonths,
+                             new { @class = "form-select bg-gray-200 text-gray-700 border-none rounded-md focus:ring-2 focus:ring-gray-400", @id = "selectedNumOfMonthsDropdown" }
+                             )
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label for="projYearsDropdown" class="block text-gray-700 font-medium mb-2">
+                        Projected Years:
+                    </label>
+                    @Html.DropDownListFor(
+                             m => m.CalculationsModel.SelectedProjYears,
+                             Model.CalculationsModel.ProjectedYears,
+                             new { @class = "form-select bg-gray-200 text-gray-700 border-none rounded-md focus:ring-2 focus:ring-gray-400", @id = "projYearsDropdown" }
+                             )
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label for="COIFeeDropdown" class="block text-gray-700 font-medium mb-2">
+                        Charge COI Fee:
+                    </label>
+                    @Html.DropDownListFor(
+                             m => m.CalculationsModel.SelectedCOIFee,
+                             Model.CalculationsModel.ChargeCOIFee,
+                             new { @class = "form-select bg-gray-200 text-gray-700 border-none rounded-md focus:ring-2 focus:ring-gray-400", @id = "COIFeeDropdown" }
+                             )
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label for="pricingMetricDropdown" class="block text-gray-700 font-medium mb-2">
+                        Pricing Metric:
+                    </label>
+                    @Html.DropDownListFor(
+                             m => m.CalculationsModel.SelectedPricingMetric,
+                             Model.CalculationsModel.PricingMetrics,
+                             new { @class = "form-select bg-gray-200 text-gray-700 border-none rounded-md focus:ring-2 focus:ring-gray-400", @id = "pricingMetricDropdown" }
+                             )
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label for="priceByDropdown" class="block text-gray-700 font-medium mb-2">
+                        Price by:
+                    </label>
+                    @Html.DropDownListFor(
+                             m => m.CalculationsModel.SelectedPriceBy,
+                             Model.CalculationsModel.PriceByFilters,
+                             new { @class = "form-select bg-gray-200 text-gray-700 border-none rounded-md focus:ring-2 focus:ring-gray-400", @id = "priceByDropdown" }
+                             )
+                </div>
+
+            </div>
+
+            <div class="mt-4 text-center">
+                <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300" id="goButton">Go</button>
+            </div>
+        </form>
+
+
+
+        <!---------------------------- Historic data table ---------------->
+
+        <div class="w-75" style="margin: 2rem 0 2rem 0;">
+            <div class="display-6 mb-8 text-white">Historic Data</div>
+            <div class="shadow-lg">
+            <table id="dataTable" class="relative overflow-x-auto rounded-lg w-full bg-white">
+                <thead class="text-xs text-gray-700 uppercase bg-blue-100 ">
+                    <tr>
+                        <th scope="col" class="px-6 py-3"></th>
+                        <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year1Name</th>
+                        <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year2Name</th>
+                        <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year3Name</th>
+                        <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year4Name</th>
+                        <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year5Name</th>
+                        <th scope="col" class="px-6 py-3 text-right">3 Year</th>
+                        <th scope="col" class="px-6 py-3 text-right">5 Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var dataCellClass = "px-6 py-3 text-right";
+                    }
+                    <tr>
+                        <td class="px-6 py-3">Rental Days COI</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y1RentalDaysCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y2RentalDaysCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y3RentalDaysCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y4RentalDaysCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y5RentalDaysCOI)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("{0:N0}", Model.CalculationsModel.ThreeY_RDaysCOI)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("{0:N0}", Model.CalculationsModel.FiveY_RDaysCOI)</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3">Rental Days Non COI</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y1RentalDaysNonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y2RentalDaysNonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y3RentalDaysNonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y4RentalDaysNonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y5RentalDaysNonCOI)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("{0:N0}", Model.CalculationsModel.ThreeY_RDaysNonCOI)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("{0:N0}", Model.CalculationsModel.FiveY_RDaysNonCOI)</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3">Turnover COI</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TO_COI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TO_COI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TO_COI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TO_COI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TO_COI)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TO_COI)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TO_COI)</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3">Turnover Non COI</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TO_NonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TO_NonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TO_NonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TO_NonCOI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TO_NonCOI)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TO_NonCOI)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TO_NonCOI)</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3">Vehicle Years</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y1VYrs)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y2VYrs)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y3VYrs)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y4VYrs)</td>
+                        <td class="@dataCellClass">@string.Format("{0:N0}", Model.CalculationsModel.Y5VYrs)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("{0:N0}", Model.CalculationsModel.ThreeY_VYrs)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("{0:N0}", Model.CalculationsModel.FiveY_VYrs)</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3">Claims Open</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y1ClaimsOpen</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y2ClaimsOpen</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y3ClaimsOpen</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y4ClaimsOpen</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y5ClaimsOpen</td>
+                        <td class="@dataCellClass bg-blue-200">@Model.CalculationsModel.ThreeY_ClaimsOpen</td>
+                        <td class="@dataCellClass bg-blue-300">@Model.CalculationsModel.FiveY_ClaimsOpen</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3">Claims Closed</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y1ClaimsClosed</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y2ClaimsClosed</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y3ClaimsClosed</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y4ClaimsClosed</td>
+                        <td class="@dataCellClass">@Model.CalculationsModel.Y5ClaimsClosed</td>
+                        <td class="@dataCellClass bg-blue-200">@Model.CalculationsModel.ThreeY_ClaimsClo</td>
+                        <td class="@dataCellClass bg-blue-300">@Model.CalculationsModel.FiveY_ClaimsClo</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">AD Paid</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1ADPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2ADPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3ADPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4ADPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5ADPaid)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_AD)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_AD)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">F&T Paid</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1FTPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2FTPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3FTPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4FTPaid)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5FTPaid)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_FT)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_FT)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">TPPD Paid</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TPPD)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TPPD)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TPPD)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TPPD)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TPPD)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TPPD)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TPPD)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">TPCH Paid</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TPCH)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TPCH)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TPCH)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TPCH)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TPCH)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TPCH)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TPCH)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">TPPI Paid</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TPPI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TPPI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TPPI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TPPI)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TPPI)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TPPI)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TPPI)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">AD OS</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1ADOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2ADOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3ADOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4ADOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5ADOS)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_ADOS)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_ADOS)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">F&T OS</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1FTOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2FTOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3FTOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4FTOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5FTOS)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_FTOS)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_FTOS)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">TP PD OS</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TPPDOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TPPDOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TPPDOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TPPDOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TPPDOS)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TPPDOS)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TPPDOS)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">TP CH OS</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TPCHOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TPCHOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TPCHOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TPCHOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TPCHOS)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TPCHOS)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TPCHOS)</td>
+                    </tr>
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-3">TP PI OS</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y1TPPIOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y2TPPIOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y3TPPIOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y4TPPIOS)</td>
+                        <td class="@dataCellClass">@string.Format("£{0:N2}", Model.CalculationsModel.Y5TPPIOS)</td>
+                        <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_TPPIOS)</td>
+                        <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_TPPIOS)</td>
+                    </tr>
+                    <tr class="bg-gray-200">
+                        <td class="px-6 py-3 bg-purple-200">Total Claims Costs</td>
+                        <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.Y1Total)</td>
+                        <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.Y2Total)</td>
+                        <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.Y3Total)</td>
+                        <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.Y4Total)</td>
+                        <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.Y5Total)</td>
+                        <td class="px-6 py-3 bg-purple-300 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.ThreeY_Total)</td>
+                        <td class="px-6 py-3 bg-purple-400 text-right text-bold">@string.Format("£{0:N2}", Model.CalculationsModel.FiveY_Total)</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    
+        
+
+        <!----------Data Table --------------------------->
+        <div class="flex flex-row justify-between gap-8">
+
+            <div class="w-3/4">
+                <h1 class="display-6 text-white">Data</h1>
+                <div class="relative overflow-x-auto shadow-lg rounded-lg w-full max-w-5xl bg-white" style="margin-top: 1rem;">
+                    <table id="dataTable" class="w-full text-sm text-gray-500 bg-white border-separate border-spacing-0">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300"></th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">Year 1</th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">Year 2</th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">Year 3</th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">Year 4</th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">Year 5</th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">3 Year Avg</th>
+                                <th scope="col" class="px-6 py-3 border-b border-gray-300">5 Year Avg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.CalculationsModel.CalculationsYears.Count; i++)
+                            {
+                                if (i == 0)
+                                {
+                                    <tr class="bg-gray-100">
+                                        <td class="px-4 py-3">@Model.CalculationsModel.CalculationsYears[i].Label</td>
+                                        <td class="px-4 py-3">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year1)%</td>
+                                        <td class="px-4 py-3">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year2)%</td>
+                                        <td class="px-4 py-3">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year3)%</td>
+                                        <td class="px-4 py-3">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year4)%</td>
+                                        <td class="px-4 py-3">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year5)%</td>
+                                        <td class="px-4 py-3 bg-blue-100 text-blue-700">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].ThreeYearTotal)%</td>
+                                        <td class="px-4 py-3 bg-blue-200 text-blue-800">@string.Format("{0:0.00}", Model.CalculationsModel.CalculationsYears[i].FiveYearTotal)%</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr class="bg-white border-b hover:bg-gray-100">
+                                        <td class="px-4 py-3">@Model.CalculationsModel.CalculationsYears[i].Label</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year1)</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year2)</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year3)</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year4)</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].Year5)</td>
+                                        <td class="px-4 py-3 bg-blue-100 text-blue-700">
+                                            @string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].ThreeYearTotal)
+                                        </td>
+                                        <td class="px-4 py-3 bg-blue-200 text-blue-800">
+                                            @string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYears[i].FiveYearTotal)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+
+                
+                
+                <!-- --------------- INFLATION TABLE -------------------->
+
+                <h1 class="display-6 text-white">Inflated Data</h1>
+
+
+                <div class="relative overflow-x-auto shadow-lg rounded-lg w-full max-w-5xl bg-white" style="margin-top: 1rem;">
+                    <table id="dataTable" class="w-full text-sm text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 border-b"></th>
+                                <th scope="col" class="px-6 py-3 border-b">Year 1</th>
+                                <th scope="col" class="px-6 py-3 border-b">Year 2</th>
+                                <th scope="col" class="px-6 py-3 border-b">Year 3</th>
+                                <th scope="col" class="px-6 py-3 border-b">Year 4</th>
+                                <th scope="col" class="px-6 py-3 border-b">Year 5</th>
+                                <th scope="col" class="px-6 py-3 border-b">3 Year Avg</th>
+                                <th scope="col" class="px-6 py-3 border-b">5 Year Avg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.CalculationsModel.CalculationsYearsInflated.Count; i++)
+                            {
+                                <tr class="bg-white border-b hover:bg-gray-100">
+                                    <td class="px-4 py-3">@Model.CalculationsModel.CalculationsYearsInflated[i].Label</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].Year1)</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].Year2)</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].Year3)</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].Year4)</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].Year5)</td>
+                                    <td class="px-4 py-3 bg-blue-100 text-blue-700">
+                                        @string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].ThreeYearAverage)
+                                    </td>
+                                    <td class="px-4 py-3 bg-blue-200 text-blue-800">
+                                        @string.Format("£{0:0.00}", Model.CalculationsModel.CalculationsYearsInflated[i].FiveYearAverage)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="w-1/2">
+       
+                <h1 class="display-6 text-white">Additional Stats</h1>
+                <div class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white mt-6" style="margin-top: 1rem;">
+                    <table id="dataTable2" class="min-w-full divide-y divide-gray-200 text-sm text-left text-gray-500">
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-green-100">Total Exposure</th>
+                                <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.TotalExposure)</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-green-100">Total Non COI Exposure</th>
+                                <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.TotalNonCOIExposure)</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-green-100">CC 1000 Days (Book)</th>
+                                <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.CC1000DaysBook)</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-green-100">CC 1000 Days (Client)</th>
+                                <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.CC1000DaysClient)</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-green-100">Variance (+/-)</th>
+                                <td class="px-6 py-4 text-right text-gray-900">@string.Format("{0:N2}", Model.CalculationsModel.Variance)%</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-green-100">New Exposure</th>
+                                <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.NewExposure)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+             </div>
+        
+        </div>
+
+        <!-- ---------- TECHNICAL PRICE POINTS -------------------------->
+            
+        <div class="w-1/4">
+            <h1 class="display-6 text-white">Technical Price Points</h1>
+            <div class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white mt-6">
+                <table id="dataTable" class="min-w-full divide-y divide-gray-200 text-sm text-left text-gray-500">
+                    <tbody class="divide-y divide-gray-200">
+                        <tr>
+                            <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-purple-100">Projected Claims</th>
+                            <td class="px-6 py-4 text-right text-gray-900">@string.Format("{0:N2}", Model.CalculationsModel.ProjectedClaimsTech)</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-purple-100">Projected CCPVY</th>
+                            <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.ProjectedCCPVYTech)</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-purple-100">Projected CPIRD</th>
+                            <td class="px-6 py-4 text-right text-gray-900">@string.Format("£{0:N2}", Model.CalculationsModel.ProjectedCPIRDTech)</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-purple-100">Projected IBNR</th>
+                            <td class="px-6 py-4 text-right text-gray-900">@string.Format("{0:N2}", Model.CalculationsModel.ProjectedIBNRTech)</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-purple-100">Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900">@string.Format("{0:N2}", Model.CalculationsModel.ProjectedExposureTech)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="flex flex-row justify-between gap-8 items-end">
+
+            <div class="w-1/2" style="margin-top: 3rem;">
+                    <h1 class="display-6 text-white">Ultimate Costs</h1>
+                <div class="flex flex-row justify-between gap-8" style="margin-top: 1rem;">
+                    <!-------------- ULTIMATE COSTS --------------------->
+                    <div class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white mt-6">
+                        <table id="ultimateCostsTable" class="min-w-full divide-y divide-gray-200 text-sm text-left text-gray-500">
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Claims Amount</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="ProjClaimsAmount">@string.Format("£{0:N2}", Model.CalculationsModel.ProjClaimsAmount)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Large Loss Fund</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="ProjLLFund">@string.Format("£{0:N2}", Model.CalculationsModel.ProjLLFund)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">COI Contingent (1%)</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="COI_Contingent">@string.Format("£{0:N2}", Model.CalculationsModel.COI_Contingent)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">IBNR</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="ProjIBNR">@string.Format("£{0:N2}", Model.CalculationsModel.ProjIBNR)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Exposure</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="ProjExposure">@string.Format("£{0:N2}", Model.CalculationsModel.ProjExposure)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Claims Handling Fee</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="ProjClaimsHandlingFee">@string.Format("£{0:N2}", Model.CalculationsModel.ProjClaimsHandlingFee)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Levies</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="Levies">@string.Format("£{0:N2}", Model.CalculationsModel.Levies)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Expenses</th>  <!-- was Pretium Expenses-->
+                                    <td class="px-6 py-4 text-right text-gray-900" id="PretiumExpenses">@string.Format("£{0:N2}", Model.CalculationsModel.PretiumExpenses)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Profit</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="Profit">@string.Format("£{0:N2}", Model.CalculationsModel.Profit)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-100">Reinsurance Costs</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" id="ReinsuranceCosts">@string.Format("£{0:N2}", Model.CalculationsModel.ReinsuranceCosts)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-semibold bg-red-200">Commissions</th> <!-- was URG-->
+                                <td class="px-6 py-4 text-right text-gray-900 font-medium bg-gray-100" id="Commission">@string.Format("£{0:N2}", Model.CalculationsModel.Commission)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-medium bg-red-200">Net Premium</th>
+                                    <td class="px-6 py-4 text-right text-gray-900 font-medium bg-gray-100" id="NetPremium">@string.Format("£{0:N2}", Model.CalculationsModel.NetPremium)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-medium bg-red-200">Gross Premium</th>
+                                    <td class="px-6 py-4 text-right text-gray-900 font-medium bg-gray-100" id="GrossPremium">@string.Format("£{0:N2}", Model.CalculationsModel.GrossPremium)</td>                                    
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="px-6 py-4 text-gray-900 font-medium bg-red-200">Gross Premium + IPT</th>
+                                    <td class="px-6 py-4 text-right text-gray-900 font-medium bg-gray-100" id="GrossPremiumPlusIPT">@string.Format("£{0:N2}", Model.CalculationsModel.GrossPremiumPlusIPT)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="w-1/2">
+                <h2 class="text-2xl font-bold mb-4 text-white">Adjust Premium</h2>
+                <!-- Percentage Input and Adjust Button -->
+                <div class="flex items-center space-x-4 mt-4">
+                    <label for="adjustmentPercentage" class="text-white font-medium">Adjustment Percentage:</label>
+                    <input type="number" id="adjustmentPercentage" class="border border-gray-300 rounded px-4 py-2 w-20" placeholder="%" />
+                </div>
+                <div class="flex items-center space-x-4 mt-4">
+                    <label for="adjustmentAmount" class="text-white font-medium">Adjustment Amount:</label>
+                    <input type="number" id="adjustmentAmount" class="border border-gray-300 rounded px-4 py-2 w-32" placeholder="£" />
+                </div>
+                <div class="text-gray-100 mt-2">
+                    You can adjust the Net Premium using either a percentage or a fixed amount. </br>
+                    This also adjusts the Gross Premium values. </br>
+                    Adjusting by a fixed amount will override the percentage adjustment. </br>
+                </div>
+                <div class="flex items-center space-x-4 mt-4">
+                    <button id="adjustValuesButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Adjust
+                    </button>
+                    <button id="resetValuesButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Reset
+                    </button>
+                    <div id="resultAdjustment" class="text-gray-100 italic font-medium"></div>
+                </div>
+                
+                <div class="flex flex-col space-y-2">
+                    <label for="adjustmentsNotes" class="text-white font-semibold">
+                        Notes:
+                    </label>
+                    <input type="text"
+                           id="adjustmentNotes"
+                           class="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition duration-200"
+                           placeholder="Reasons for adjustments..." />
+                </div>
+
+                <div class="container mx-auto mt-6">
+                    <h2 class="text-2xl font-bold mb-4 text-white">Generate Fleet Insurance Quote</h2>
+
+                    <button id="generatePdfButton" class="btn btn-primary">Get Quote</button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!----------------------------------- Partial View for PDF page --------------------------------------->
+        @* <div id="PreviewPDFContainer" >
+            @await Html.PartialAsync("PreviewPDF")
+        </div> *@
+
+    </div>
+
+
+    <script>
+
+        // ------------------ LOADING INDICATOR ---------------------------------
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadingDiv = document.getElementById("loadingIndicator");
+            const mainContent = document.getElementById("mainContent");
+
+            // Show the loading indicator
+            loadingDiv.style.display = "flex";
+
+            setTimeout(() => {
+                // after 3 seconds, hide the loading indicator and show main content
+                loadingDiv.style.display = "none";
+                mainContent.style.display = "block";
+            }, 3000);
+        });
+
+
+        // ------------------- ADJUST ULTIMATE COSTS ----------------------------
+        const adjustValuesButton = document.getElementById("adjustValuesButton");
+        const resetAdjustmentButton = document.getElementById("resetValuesButton");
+
+        const netPremium = document.getElementById("NetPremium");
+        const grossPremium = document.getElementById("GrossPremium");
+        const grossPremiumPlusIPT = document.getElementById("GrossPremiumPlusIPT");
+        const commissions = document.getElementById("Commission");
+
+        const initialNetVal = netPremium.textContent;
+        const initialGrossVal = grossPremium.textContent;
+        const initialGrossPlusIPT = grossPremiumPlusIPT.textContent;
+
+        console.log("commissions: ", commissions.textContent);
+        console.log("initial net value: ", netPremium.textContent);
+        console.log("initial gross prem: ", grossPremium.textContent);
+       
+        adjustValuesButton.addEventListener("click", function () {
+            const adjustmentPercentage = parseFloat(document.getElementById("adjustmentPercentage").value);
+            const adjustmentAmount = parseFloat(document.getElementById("adjustmentAmount").value);
+
+            // Validation
+            if (isNaN(adjustmentPercentage) && isNaN(adjustmentAmount)) {
+                alert("Please enter a valid percentage or amount.");
+                return;
+            }
+
+            let adjustmentMessage = "";
+
+            if (!isNaN(adjustmentAmount)) {
+                // Adjust using fixed amount
+                const currentNetPrem = parseFloat(netPremium.textContent.replace(/[£,]/g, ""));
+                const newNetPrem = currentNetPrem + adjustmentAmount;
+                netPremium.textContent = `£${newNetPrem.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                netPremium.style = "color: blue;";
+
+                // Adjust gross premium
+                const commissionsValue = parseFloat(commissions.textContent.replace(/[£,]/g, ""));
+                const newGrossPrem = newNetPrem + commissionsValue;
+                grossPremium.textContent = `£${newGrossPrem.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                grossPremium.style = "color: blue;";
+
+                // Adjust gross premium plus IPT
+                const newGrossPremPlusIPT = newGrossPrem + newGrossPrem * (12 / 100);
+                grossPremiumPlusIPT.textContent = `£${newGrossPremPlusIPT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                grossPremiumPlusIPT.style = "color: blue;";
+
+                adjustmentMessage = `Net Premium adjusted by £${adjustmentAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+            } else if (!isNaN(adjustmentPercentage)) {
+                // Adjust using percentage
+                const multiplier = 1 + adjustmentPercentage / 100;
+
+                const currentNetPrem = parseFloat(netPremium.textContent.replace(/[£,]/g, ""));
+                const newNetPrem = currentNetPrem * multiplier;
+                netPremium.textContent = `£${newNetPrem.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                netPremium.style = "color: blue;";
+
+                const commissionsValue = parseFloat(commissions.textContent.replace(/[£,]/g, ""));
+                const newGrossPrem = newNetPrem + commissionsValue;
+                grossPremium.textContent = `£${newGrossPrem.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                grossPremium.style = "color: blue;";
+
+                const newGrossPremPlusIPT = newGrossPrem + newGrossPrem * (12 / 100);
+                grossPremiumPlusIPT.textContent = `£${newGrossPremPlusIPT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                grossPremiumPlusIPT.style = "color: blue;";
+
+                adjustmentMessage = `${adjustmentPercentage}% Adjustment for Net Premium`;
+            }
+                       
+
+            // Update adjustment message
+            const adjustmentDiv = document.getElementById("resultAdjustment");
+            adjustmentDiv.textContent = adjustmentMessage;
+
+            // Disable the Adjust button
+            adjustValuesButton.disabled = true;
+            adjustValuesButton.style = "background: lightblue;";
+            
+        });
+
+
+        // --------------- RESET ADJUSTMENT ---------------------
+
+        resetAdjustmentButton.addEventListener("click", function () {
+            // Reset values
+            netPremium.textContent = initialNetVal;
+            grossPremium.textContent = initialGrossVal;
+            grossPremiumPlusIPT.textContent = initialGrossPlusIPT;
+
+            // Reset styles
+            const valuesArray = [netPremium, grossPremium, grossPremiumPlusIPT];
+            for (var x of valuesArray) {
+                x.style.color = "";
+            }
+
+            // Re-enable the Adjust Values button
+            adjustValuesButton.disabled = false;
+            adjustValuesButton.style.background = "";
+
+            // Reset input fields
+            document.getElementById("adjustmentPercentage").value = "";
+            document.getElementById("adjustmentAmount").value = "";
+
+            // Clear adjustment message
+            const adjustmentDiv = document.getElementById("resultAdjustment");
+            adjustmentDiv.textContent = "";
+        });
+
+
+        // ------------------- Generate pdf button ----------------------
+
+        document.getElementById("generatePdfButton").addEventListener("click", function () {
+            let params = new URLSearchParams(document.location.search)
+            let quoteId = params.get("quoteId")
+
+            let updatedGrossPremiumString = document.getElementById("GrossPremium").textContent
+            let formattedGrossPremium = parseFloat(updatedGrossPremiumString.replace(/[£,]/g, ''))
+
+            let adjustmentNotes = document.getElementById("adjustmentNotes").value
+            console.log(`adjustmentNotes: ${adjustmentNotes}`)
+
+            console.log(`quoteId: ${quoteId}`)
+            console.log(`updatedGrossPremium: ${formattedGrossPremium}`)
+
+            fetch('/PDF/GeneratePDF', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    quoteId: parseInt(quoteId), 
+                    updatedGrossPremium: formattedGrossPremium,
+                    adjustmentNotes: adjustmentNotes,
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to generate PDF');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const pdfBase64 = data.pdfBase64; // Extract the Base64 string from the response
+                downloadPDF(pdfBase64); // Call existing download function
+            })
+            .catch(error => {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate PDF. Please try again.');
+            });
+        });
+     
+
+
+
+
+        // ------------------------- FORM PARAMETERS ----------------------------
+
+        const combinedForm = document.getElementById("combinedForm");
+        const goButton = document.getElementById("goButton");
+        const selectedNumOfMonthsDropdown = document.getElementById("selectedNumOfMonthsDropdown");
+        const projYearsDropdown = document.getElementById("projYearsDropdown");
+        const COIFeeDropdown = document.getElementById("COIFeeDropdown");
+        const pricingMetricDropdown = document.getElementById("pricingMetricDropdown");
+        const priceByDropdown = document.getElementById("priceByDropdown");
+
+        combinedForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent form from submitting normally
+
+            const selectedNumOfMonths = selectedNumOfMonthsDropdown.value;
+            const selectedProjYears = projYearsDropdown.value;
+            const selectedCOIFee = COIFeeDropdown.value;
+            const selectedPricingMetric = pricingMetricDropdown.value;
+            const selectedPriceBy = priceByDropdown.value;
+
+            // Update the URL parameters without reloading the page
+            const url = new URL(window.location);
+            url.searchParams.set('selectedNumOfMonths', selectedNumOfMonths);
+            url.searchParams.set('projYears', selectedProjYears);
+            url.searchParams.set('chargeCOIFee', selectedCOIFee);
+            url.searchParams.set('pricingMetric', selectedPricingMetric);
+            url.searchParams.set('priceBy', selectedPriceBy);
+            window.history.pushState({}, '', url);
+
+            // Disable the Go button to prevent multiple submissions
+            goButton.disabled = true;
+
+            // Reload the page to apply the new parameters
+            window.location.reload();
+        });
+
+
+        
+
+
+    </script>
+
+</body>
+</html>
+
+

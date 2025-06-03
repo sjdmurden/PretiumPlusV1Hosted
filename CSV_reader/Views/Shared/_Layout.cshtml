@@ -1,0 +1,88 @@
+﻿
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CSV_reader</title>
+    <link href="~/css/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CSV_reader.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" />
+</head>
+<body>
+    @* <header>
+       
+        <nav class="flex items-center justify-between px-6 py-4  border-b-2 border-gray-300 shadow-lg" style="background: #caf0f8;">
+            <div class="flex items-center">
+                <a href="/Excel/IndexExcel">
+                    <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="w-20 max-w-xs">
+                </a>
+            </div>
+
+            <!-- Other navigation links can go here -->
+            @if (User.Identity.IsAuthenticated)
+            {
+                <!-- only load the quote search js if the user is logged in -->
+                <script src="~/js/quoteSearch.js"></script>
+                
+
+                <div class="flex items-center space-x-4">
+
+                    <!--  this gets the current action. If the action is IndexExcel, then the nav bar quote search form won't load hence loading the big quote search form in the middle of the page instead -->
+                    @if (ViewContext.RouteData.Values["Action"]?.ToString() != "IndexExcel")
+                    {
+                        
+                        <form id="quoteSearchForm" class="bg-white p-2 rounded-lg shadow-md border border-gray-200">
+                            <span class="font-bold mb-2">Search Quotes</span>
+                            <div class="flex items-center">
+                                <span class="text-gray-700 font-semibold bg-gray-200 py-1 px-2 rounded-md">PAQ</span>
+                                <input type="text"
+                                       name="quoteSearch"
+                                       id="quoteIdToSearch"
+                                       required
+                                       class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                                       placeholder="Enter Quote #" />
+                                <button type="submit"
+                                        class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                                    Search
+                                </button>
+                            </div>
+                        </form>
+                    }
+
+                    <div class="d-flex align-items-center p-3">
+                        <div class="me-3">
+                            <small class="text-muted">Logged in as:</small><br />
+                            <span class="fw-semibold text-dark">@User.Identity.Name</span>
+                        </div>
+                        <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
+                            <button type="submit" class="btn btn-primary fw-semibold px-4 py-2">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            }
+        </nav>
+
+    </header> *@
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

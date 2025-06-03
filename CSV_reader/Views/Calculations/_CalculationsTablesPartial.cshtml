@@ -1,0 +1,688 @@
+﻿@model CSV_reader.ViewModels.ClaimsPlusCalcsViewModel;
+
+@{
+    ViewData["Title"] = "IndexCalculationsPlusClaims";
+    string tailwindLink = "https://cdn.jsdelivr.net/npm/tailwindcss@3.0.0/dist/tailwind.min.css";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Rating Guide</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="@tailwindLink" rel="stylesheet">
+    <script src="~/js/quoteSearch.js"></script>
+    <script src="~/js/downloadPDF.js"></script>
+    <link rel="stylesheet" href="~/css/output.css" />
+    <link href="~/css/site.css" />
+</head>
+<body id="websiteBody" class="bg-grey-700">
+
+  
+
+    <input type="hidden" id="batchIdHidden" value="@ViewBag.BatchId" />
+
+    <div class="container" id="mainContent">
+       
+        
+        <!---------------------------- Historic data table ---------------->        
+        
+        <div id="historicDataTableSection" class="w-100 tab-content active">
+            <div class="display-6 text-white">Historic Data</div>
+            <div class="relative flex flex-col w-full h-full shadow-md rounded-lg bg-clip-border mt-3" style="background: #1e293b; color: #cbd5e1;">
+                <table class="w-full text-left table-auto min-w-max">
+                    <thead>
+                        <tr class="border-b border-gray-700" style="background: #334155; color: #cbd5e1;">
+                            <th scope="col" class="p-4"></th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year1Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year2Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year3Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year4Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year5Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal" style="color: #7dd3fc">3 Year Aggr.</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal" style="color: #7dd3fc">5 Year Aggr.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700" >
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Rental Days COI</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y1RentalDaysCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y2RentalDaysCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y3RentalDaysCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y4RentalDaysCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y5RentalDaysCOI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.ThreeY_RDaysCOI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.FiveY_RDaysCOI)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Rental Days Non COI
+                            </td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y5RentalDaysNonCOI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.ThreeY_RDaysNonCOI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.FiveY_RDaysNonCOI)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Turnover COI
+                            </td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TO_COI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TO_COI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TO_COI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TO_COI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TO_COI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TO_COI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TO_COI)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Turnover Non COI
+                            </td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TO_NonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TO_NonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TO_NonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TO_NonCOI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TO_NonCOI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TO_NonCOI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TO_NonCOI)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Vehicle Years
+                            </td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y1VYrs)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y2VYrs)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y3VYrs)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y4VYrs)</td>
+                            <td class="p-4 text-sm">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.Y5VYrs)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.ThreeY_VYrs)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.FiveY_VYrs)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Claims Open
+                            </td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y1ClaimsOpen</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y2ClaimsOpen</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y3ClaimsOpen</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y4ClaimsOpen</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y5ClaimsOpen</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@Model.ClaimsCalculationsModel.ThreeY_ClaimsOpen</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@Model.ClaimsCalculationsModel.FiveY_ClaimsOpen</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b-4 border-gray-500">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">
+                                Claims Closed
+                            </td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y1ClaimsClosed</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y2ClaimsClosed</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y3ClaimsClosed</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y4ClaimsClosed</td>
+                            <td class="p-4 text-sm">@Model.ClaimsCalculationsModel.Y5ClaimsClosed</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@Model.ClaimsCalculationsModel.ThreeY_ClaimsClo</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@Model.ClaimsCalculationsModel.FiveY_ClaimsClo</td>
+                        </tr>
+
+
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Accidental Damage - Paid">AD Paid</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1ADPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2ADPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3ADPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4ADPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5ADPaid)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_ADPaid)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_ADPaid)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Fire and Theft - Paid">F&T Paid</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1FTPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2FTPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3FTPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4FTPaid)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5FTPaid)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_FTPaid)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_FTPaid)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Third Party Personal Damage - Paid">TPPD Paid</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TPPD)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TPPD)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TPPD)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TPPD)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TPPD)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TPPD)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TPPD)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Third Party Cash Handled - Paid">TPCH Paid</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TPCH)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TPCH)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TPCH)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TPCH)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TPCH)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TPCH)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc" >@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TPCH)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Third Party Personal Injury - Paid">TPPI Paid</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TPPI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TPPI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TPPI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TPPI)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TPPI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TPPI)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc" >@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TPPI)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Accidental Damage Other Structures">AD OS</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1ADOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2ADOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3ADOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4ADOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5ADOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_ADOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc" >@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_ADOS)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Fire and Theft Other Structures">F&T OS</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1FTOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2FTOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3FTOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4FTOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5FTOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_FTOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc" >@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_FTOS)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Third Party Property Damage">TP PD OS</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TPPDOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TPPDOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TPPDOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TPPDOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TPPDOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TPPDOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TPPDOS)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Third Party Cash Handled Other Structures">TP CH OS</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TPCHOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TPCHOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TPCHOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TPCHOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TPCHOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TPCHOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc" >@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TPCHOS)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;" title="Third Party Personal Injury Other Structures">TP PI OS</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1TPPIOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2TPPIOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3TPPIOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4TPPIOS)</td>
+                            <td class="p-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5TPPIOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_TPPIOS)</td>
+                            <td class="p-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_TPPIOS)</td>
+                        </tr>
+                        <tr class="p-4 text-sm border-b border-gray-700" style="background: #334155; color: #f1f5f9;">
+                            <td class="p-4 text-sm font-bold">Total Claims Costs</td>
+                            <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1Total)</td>
+                            <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2Total)</td>
+                            <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3Total)</td>
+                            <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4Total)</td>
+                            <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5Total)</td>
+                            <td class="px-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ThreeY_Total)</td>
+                            <td class="px-4 text-sm" style="color: #7dd3fc">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FiveY_Total)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!------------ BUSINESS FORECAST -------------->
+
+        <div id="businessFCSection" class=" tab-content">
+            <h1 class="display-6 text-white">Business Forecast</h1>
+            <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-3xl mt-3" style="background: #1e293b; color: #cbd5e1;">
+                <table class="w-full text-left table-auto min-w-max">
+                    <thead>
+                        <tr class="border-b border-gray-700" style="background: #334155; color: #cbd5e1;">
+                            <th scope="col" class="p-4 text-sm leading-none font-normal"></th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">COI</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">Non COI</th>                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">Days</td>
+                            <td class="px-4 text-sm" id="FCDaysCOI">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.FCDaysCOI)</td>
+                            <td class="px-4 text-sm" id="FCDaysNonCOI">@string.Format("{0:N0}", Model.ClaimsCalculationsModel.FCDaysNonCOI)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm">
+                            <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">Turnover</td>
+                            <td class="px-4 text-sm" id="FCTurnoverCOI">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FCTurnoverCOI)</td>
+                            <td class="px-4 text-sm" id="FCTurnoverNonCOI">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.FCTurnoverNonCOI)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+        <!----------Data Table --------------------------->
+
+        <div id="dataInfSection" class=" tab-content">
+            <h1 class="display-6 text-white">Data</h1>
+            <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3" style="background: #1e293b; color: #cbd5e1;">
+                <table class="w-full text-left table-auto min-w-max">
+                    <thead>
+                        <tr class="border-b border-gray-700" style="background: #334155; color: #cbd5e1;">
+                            <th scope="col" class="p-4 text-sm leading-none font-normal"></th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year1Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year2Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year3Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year4Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year5Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal" style="color: #7dd3fc">3 Year Avg</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal" style="color: #7dd3fc">5 Year Avg</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.ClaimsCalculationsModel.CalculationsYears.Count; i++)
+                        {
+                            if (i == 0)
+                            {
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                    <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">@Model.ClaimsCalculationsModel.CalculationsYears[i].Label</td>
+                                    <td class="px-4 text-sm">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year1)%</td>
+                                    <td class="px-4 text-sm">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year2)%</td>
+                                    <td class="px-4 text-sm">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year3)%</td>
+                                    <td class="px-4 text-sm">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year4)%</td>
+                                    <td class="px-4 text-sm">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year5)%</td>
+                                    <td class="px-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].ThreeYearTotal)%</td>
+                                    <td class="px-4 text-sm" style="color: #7dd3fc">@string.Format("{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].FiveYearTotal)%</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                    <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">@Model.ClaimsCalculationsModel.CalculationsYears[i].Label</td>
+                                    <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year1)</td>
+                                    <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year2)</td>
+                                    <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year3)</td>
+                                    <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year4)</td>
+                                    <td class="px-4 text-sm">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].Year5)</td>
+                                    <td class="px-4 text-sm" style="color: #7dd3fc">
+                                        @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].ThreeYearTotal)
+                                    </td>
+                                    <td class="px-4 text-sm" style="color: #7dd3fc">
+                                        @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CalculationsYears[i].FiveYearTotal)
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+            <!-- --------------- INFLATION TABLE -------------------->
+            <h1 class="display-6 text-white mt-6">Inflated Data</h1>
+
+
+            <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3" style="background: #1e293b; color: #cbd5e1;">
+                <table class="w-full text-left table-auto min-w-max">
+                    <thead>
+                        <tr class="border-b border-gray-700" style="background: #334155; color: #cbd5e1;">
+                            <th scope="col" class="p-4 text-sm leading-none font-normal"></th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year1Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year2Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year3Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year4Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal">@Model.ClaimsCalculationsModel.Year5Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal" style="color: #7dd3fc">3 Year Avg</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-normal" style="color: #7dd3fc">5 Year Avg</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.ClaimsCalculationsModel.CalculationsYearsInflated.Count; i++)
+                        {
+                            <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                <td class="p-4 text-sm font-bold" style="color: #f1f5f9;">@Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].Label</td>
+                                <td class="px-4 text-sm">@string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].Year1)</td>
+                                <td class="px-4 text-sm">@string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].Year2)</td>
+                                <td class="px-4 text-sm">@string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].Year3)</td>
+                                <td class="px-4 text-sm">@string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].Year4)</td>
+                                <td class="px-4 text-sm">@string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].Year5)</td>
+                                <td class="px-4 text-sm" style="color: #7dd3fc">
+                                    @string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].ThreeYearAverage)
+                                </td>
+                                <td class="px-4 text-sm" style="color: #7dd3fc">
+                                    @string.Format("£{0:0.00}", Model.ClaimsCalculationsModel.CalculationsYearsInflated[i].FiveYearAverage)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+        <!-------------- ADDITIONAL STATS ---------------------------->
+
+        <div id="additionalStatsSection" class="w-1/2 tab-content">
+
+            <h1 class="display-6 text-white">Additional Stats</h1>
+            <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3" style="background: #1e293b; color: #cbd5e1;">
+                <table class="w-full text-left table-auto min-w-max ">
+                    <tbody>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Total Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.TotalExposure)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class=" px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Total Non COI Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.TotalNonCOIExposure)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">CC 1000 Days (Book)</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CC1000DaysBook)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">                            
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">CC 1000 Days (Client)</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CC1000DaysClient)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Variance (+/-)</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("{0:N2}", Model.ClaimsCalculationsModel.Variance)%</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">New Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.NewExposure)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!------------- TECHNICAL PRICE POINTS -------------------------->
+
+        <div id="technicalPriceSection" class="w-1/2 tab-content">
+            <h1 class="display-6 text-white">Technical Price Points</h1>
+            <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3" style="background: #1e293b; color: #cbd5e1;">
+                <table class="w-full text-left table-auto min-w-max ">
+                    <tbody>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Projected Claims</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("{0:N2}", Model.ClaimsCalculationsModel.ProjectedClaimsTech)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Projected CCPVY</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjectedCCPVYTech)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Projected CPIRD</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjectedCPIRDTech)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Projected IBNR</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("{0:N2}", Model.ClaimsCalculationsModel.ProjectedIBNRTech)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-700 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                @string.Format("{0:N2}", Model.ClaimsCalculationsModel.ProjectedExposureTech)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-------------------------------- ULTIMATE COSTS ----------------------------------------->
+
+        <div id="ultimateCostsSection" class="tab-content">
+            <div class="flex flex-row justify-between gap-8 items-end">
+
+                <div class="w-1/2">
+                    <h1 class="display-6 text-white">Ultimate Costs</h1>
+                    <div class="flex flex-row justify-between w-full">
+
+                        <!-------------- ULTIMATE COSTS TABLE --------------------->
+                        <div class="relative overflow-x-auto shadow-lg rounded-lg mt-3 w-full" style="background: #1e293b; color: #cbd5e1;">
+                            <table class="w-full text-left table-auto ">
+                                <tbody>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Claims Amount</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="ProjClaimsAmount">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjClaimsAmount)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Large Loss Fund</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="ProjLLFund">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjLLFund)</td>
+                                    </tr>
+                                    @* <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">COI Contingent (1%)</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="COI_Contingent">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.COI_Contingent)</td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">COI Contingent Per Day</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="COI_ContingentPerDay">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.COI_ContingentPerDay)
+                                        </td>
+                                    </tr> *@
+
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">IBNR</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="ProjIBNR">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjIBNR)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Exposure</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="ProjExposure">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjExposure)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Claims Handling Fee</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="ProjClaimsHandlingFee">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ProjClaimsHandlingFee)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Levies</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="Levies">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Levies)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Expenses</th>  <!-- was Pretium Expenses-->
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="PretiumExpenses">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.PretiumExpenses)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Profit</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="Profit">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Profit)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">Reinsurance Costs</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="ReinsuranceCosts">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.ReinsuranceCosts)</td>
+                                    </tr>
+
+
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #545f6e; color: #f1f5f9;">Net Premium</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #7dd3fc;" id="NetPremium">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.NetPremium)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #545f6e; color: #f1f5f9;">Commission</th> <!-- was URG-->
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #7dd3fc;" id="Commission">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Commission)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #545f6e; color: #f1f5f9;">Gross Premium</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #7dd3fc;" id="GrossPremium">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.GrossPremium)</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm">
+                                        <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #545f6e; color: #f1f5f9;">Gross Premium + IPT</th>
+                                        <td class="px-6 py-4 text-right text-gray-900" style="color: #7dd3fc;" id="GrossPremiumPlusIPT">
+                                            @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.GrossPremiumPlusIPT)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!----------- ADJUSTING NET PREMIUM ---------------->
+                <div class="w-1/2">
+
+                    <!------COI contingent adjustment section ---------->
+
+                    <div class="relative overflow-x-auto shadow-lg rounded-lg mb-3 w-full" style="background: #1e293b; color: #cbd5e1;">
+                        <table class="w-full text-left table-auto ">
+                            <tbody>
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                    <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">COI Contingent (1%)</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="COI_Contingent">
+                                        @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.COI_Contingent)
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm">
+                                    <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">COI Contingent Per Forecast COI Day</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;" id="COI_ContingentPerDay">
+                                        @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.COI_ContingentPerDay)
+                                    </td>
+                                </tr>
+                                
+
+                            </tbody>
+                        </table>
+                        <div>
+                            Or select your own daily fee:
+                        </div>
+                        <table class="w-full text-left table-auto">
+                            <tbody>                                
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-600">
+                                    <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">COI Contingent Fixed Figure Per Day</th>
+                                    <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                        £
+                                        <input type="number" id="COI_ContingentFixedFigureInput"
+                                               class="w-24 text-right px-2 py-1 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+                                               value="@Model.ClaimsCalculationsModel.COI_ContingentFixedFigure"
+                                               step="0.01" min="0" />
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm">
+                                    <th scope="row" class="px-6 py-4 border-r border-gray-600" style="background: #334155; color: #f1f5f9;">
+                                        COI Contingent Based on Fixed Figure
+                                    </th>
+                                    <td class="px-6 py-4 text-right text-gray-900" style="color: #cbd5e1;">
+                                        <span id="contingentCalculation">
+                                            
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                    <h2 class="text-2xl font-bold mb-4 text-white">Adjust Premium</h2>
+                    <div class="text-gray-100 mt-2">
+                        You can adjust the Net Premium using either a percentage or a fixed amount. </br>
+                        This also adjusts the Gross Premium and Commission values. </br>
+                        Adjusting by a fixed amount will override the percentage adjustment. </br>
+                    </div>
+
+                    <!-- Percentage Input and Adjust Button -->
+                    <div class="flex items-center space-x-4 mt-4">
+                        <label for="adjustmentPercentage" class="text-white font-medium">Adjustment Percentage:</label>
+                        <input type="number" id="adjustmentPercentage" class="rounded px-4 py-2 w-20" style="background: #545f6e; color: #cbd5e1;" placeholder="%" />
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4">
+                        <label for="adjustmentAmount" class="text-white font-medium">Adjustment Amount:</label>
+                        <input type="number" id="adjustmentAmount" class="rounded px-4 py-2 w-32" style="background: #545f6e; color: #cbd5e1;" placeholder="£" />
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4">
+                        <button id="adjustValuesButton" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Adjust
+                        </button>
+                        <button id="resetValuesButton" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Reset
+                        </button>
+                        <div id="resultAdjustment" class="text-gray-100 italic font-medium"></div>
+                    </div>
+
+                    <div class="flex flex-col space-y-2 mt-4">
+                        <label for="adjustmentsNotes" class="text-white font-semibold">
+                            Notes:
+                        </label>
+                        <input type="text"
+                               id="adjustmentNotes"
+                               class="rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition duration-200" style="background: #545f6e;"
+                               placeholder="Reasons for adjustments..." />
+                    </div>
+
+                    <div class="flex flex-col items-start space-y-2 mt-4">
+                        <h2 class="text-2xl font-bold mb-4 text-white">Generate Fleet Insurance Quote</h2>
+
+                        <button id="generatePdfButton" class="w-auto font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Get Quote
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    <script>
+
+        
+
+
+       
+
+
+    </script>
+
+</body>
+</html>
+
+

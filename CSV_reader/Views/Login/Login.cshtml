@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+@model CSV_reader.ViewModels.LoginViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rating Guide</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/output.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<header class="fixed top-0 left-0 right-0">
+
+    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header" >
+        <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
+            <a>
+                <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
+            </a>
+        </div>
+    </nav>
+
+</header>
+
+<body class="bg-gray-100" id="websiteBody">
+
+    <div class="flex items-center justify-center h-screen mt-4">
+
+        <div class="shadow-md rounded-lg p-8 max-w-lg w-full" style="background: #334155;">
+
+            <img src="~/images/pretium+nobackground.png" alt="Pretium+ Logo" style="width: 80%;"/>
+
+            <h3 class="display-6 text-white">Welcome!</h3>
+            
+            <form asp-action="Login" method="post">
+                <div class="form-group">
+                    <label asp-for="UserEmail" class="text-white">Email</label>  <!-- asp-for binds a field to a property in the model -->
+                    <input asp-for="UserEmail" class="form-control border-none" required="required" />
+                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="UserPassword" class="text-white">Password</label>
+                    <input asp-for="UserPassword" type="password" class="form-control" required="required" />
+                    <span asp-validation-for="UserPassword" class="text-danger"></span>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        Invalid username or password.
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary">Login</button>
+
+                @* <a href="@Url.Action("Register", "Login")">Sign Up</a> <!-- link to the Register action method in Login controller --> *@
+
+            </form>
+
+             
+        </div>
+    </div>
+
+
+</body>
+
+
+</html>

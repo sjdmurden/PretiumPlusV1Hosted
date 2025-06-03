@@ -1,0 +1,298 @@
+﻿@model CSV_reader.ViewModels.ClaimsViewModel;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Reader</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<header class="position-absolute top-0 left-0 right-0">
+
+    <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24 header" @* style="background: #334155;" *@>
+        <div class="flex items-center">
+            <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
+        </div>
+        
+        <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
+            <a>
+                <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
+            </a>
+        </div>
+
+
+        <div class="flex items-center space-x-4">
+            <script src="~/js/quoteSearch.js"></script>
+
+
+
+
+            <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none" style="background: #1e293b;">
+                <span class="font-semibold mb-2 text-gray-100">Search Quotes</span>
+                <div class="flex items-center">
+                    <span class="text-gray-700 font-semibold bg-gray-200 py-1 px-2 rounded-md">PAQ</span>
+                    <input type="text"
+                           name="quoteSearch"
+                           id="quoteIdToSearch"
+                           required
+                           class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                           placeholder="Enter Quote #" />
+                    <button type="submit"
+                            class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+
+            <div class="d-flex align-items-center p-3">
+                <div class="me-3">
+                    <small style="color: #e0e0e0;">Logged in as:</small><br />
+                    <span class="fw-semibold" style="color: #fafafa;">@User.Identity.Name</span>
+                </div>
+                <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
+                    <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+    </nav>
+
+</header>
+
+    <body id="websiteBody">
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+            <div class="flex flex-col items-center space-y-4">
+                <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <p class="text-lg font-medium text-gray-700 animate-pulse">Reading file...</p>
+            </div>
+        </div>
+
+
+
+       <div class="container pt-24" id="mainContent" style="display: none;">
+
+           <div class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light text-center border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <h1 class="text-white text-4xl font-bold my-10">@Model.PolicyYearSummaries.FirstOrDefault().Value.ClientName</h1>
+                </div>
+           </div>
+
+
+       <form asp-controller="Home" asp-action="ImportClaims" method="post" onsubmit="return validateForm()" id="excelUploadForm">
+
+            <div class="shadow-md w-1/2 rounded-lg p-6 mx-auto my-3" style="background: #334155;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @* <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.QuoteNumber, "Quote Number:", new { @class = "font-semibold text-gray-700" })
+                        @Html.TextBoxFor(m => m.InputModel.QuoteNumber, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                    </div> *@
+
+                    @* <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.ClientName, "Select Client Name:", new { @class = "font-semibold text-gray-700" })
+                        @Html.DropDownListFor(m => m.InputModel.ClientName, Model.InputModel.ClientNames, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                    </div> *@
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.SelectedCoverType, "Select Cover:", new { @class = "font-semibold text-gray-200" })
+                        @Html.DropDownListFor(m => m.InputModel.SelectedCoverType, Model.InputModel.CoverTypes, new
+                            {
+                                @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2",
+                                @required = "required", style = "background: #e2e8f0"})
+                    </div>
+
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.Excess, "Excess (£):", new { @class = "font-semibold text-gray-200" })
+                        @Html.TextBoxFor(m => m.InputModel.Excess, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "number", min = "0", @required = "required", style = "background: #e2e8f0" })
+                    </div>
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.StartDate, "Start Date:", new { @class = "font-semibold text-gray-200" })
+                        @Html.TextBoxFor(m => m.InputModel.StartDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "date", @required = "required", style = "background: #e2e8f0" })
+                    </div>
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.EndDate, "End Date:", new { @class = "font-semibold text-gray-200" })
+                        @Html.TextBoxFor(m => m.InputModel.EndDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "date", @required = "required", style = "background: #e2e8f0" })
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="flex flex-row justify-between">
+                <div class="w-1/2 mx-auto">
+
+                    <div class="text-white display-6">Vehicle Details</div>
+
+                    <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-4" style="background: #1e293b; color: #cbd5e1;">
+
+                        <table class="relative overflow-x-auto rounded-lg w-full mx-auto">
+                            <thead class="text-xs uppercase">
+                                <tr style="background: #334155; color: #cbd5e1;">
+                                    <th class="px-6 py-3"></th>
+                                    <th class="px-6 py-3 text-left">Vehicle Numbers</th>
+                                    <th scope="col" class="px-6 py-3">Large Loss Loading (£)</th>
+                                    <th scope="col" class="px-6 py-3">Exposure Rating (£)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                    <td class="px-4 py-3 font-semibold">Car</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.CarNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.CarLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                    </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.CarExposure)</td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                    <td class="px-4 py-3 font-semibold">Van</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.VanNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.VanLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                    </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.VanExposure)</td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                    <td class="px-4 py-3 font-semibold">Minibus</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.MinibusLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                        </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusExposure)</td>
+                                </tr>
+
+                                <tr class="hover:bg-gray-700 p-4 text-sm">
+                                    <td class="px-4 py-3 font-semibold">HGV</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.HGVNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.HGVLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                        </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.HGVExposure)</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="w-1/3 mx-auto">
+
+                    <div class="display-6 text-white">Business Forecast</div>
+
+                    <div class="relative overflow-x-auto shadow-lg rounded-lg mt-4" style="background: #1e293b; color: #cbd5e1;">
+                        <table class="relative overflow-x-auto rounded-lg mx-auto w-full">
+                            <thead class="text-xs uppercase">
+                                <tr style="background: #334155; color: #cbd5e1;">
+                                    <th class="px-6 py-3"></th>
+                                    <th class="px-6 py-3 text-left">COI</th>
+                                    <th class="px-6 py-3 text-left">Non COI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                    <td class="px-4 py-3">Days</td>
+                                    <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysCOI)</td>
+                                    <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysNonCOI)</td>
+                                </tr>                    
+                                <tr class="hover:bg-gray-700 p-4 text-sm">
+                                    <td class="px-4 py-3">Turnover</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_COI)</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_NonCOI)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <h1 class="text-lg mt-4 text-white display-6">Apply % Exposure</h1>
+
+                    <div class="form-group mt-2" style="max-width: 90%">
+                        @Html.DropDownListFor(m => m.InputModel.SelectedPercentage, Model.InputModel.Percentages, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", style = "background: #e2e8f0;" })
+                    </div>
+                </div>
+            </div>           
+
+                <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+
+            </form>
+
+           
+       </div>
+            
+        
+        <script>
+
+            // ----------------- LOADING DIV ICON --------------------------
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadingDiv = document.getElementById("loadingIndicator");
+            const mainContent = document.getElementById("mainContent");
+
+            // Show the loading indicator
+            loadingDiv.style.display = "flex";
+
+            // Wait for 3 seconds
+            setTimeout(() => {
+                // Hide the loading indicator
+                loadingDiv.style.display = "none";
+
+                // Show the main content
+                mainContent.style.display = "block";
+            }, 500);
+        });
+
+        // --------------------- VALIDATE FORM INPUTS ---------------------
+        function validateForm() {
+            var LLLInputs = document.querySelectorAll(".LLLInput"); // Select all LLL input fields
+            var LLLErrors = document.querySelectorAll(".LLLError"); // Select all LLL error spans
+            var isValid = true;
+
+            // Reset error messages and highlight on all inputs
+            LLLErrors.forEach(function (error) {
+                error.classList.add("hidden");
+            });
+            LLLInputs.forEach(function (input) {
+                input.classList.remove("border-red-500");
+            });
+
+            // Check each LLL input field for value zero or empty
+            LLLInputs.forEach(function (input, index) {
+                if (input.value == 0 || input.value === "") {
+                    // Show the corresponding error message
+                    LLLErrors[index].classList.remove("hidden");
+
+                    // Scroll to the input field smoothly
+                    input.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                    // Highlight the field
+                    input.focus();
+                    input.classList.add("border-red-500");
+
+                    isValid = false; // Prevent form submission
+                }
+            });
+
+            return isValid; // If true, the form will submit
+        }
+
+        
+
+        </script>
+    </body>
+
+</html>

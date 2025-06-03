@@ -1,0 +1,705 @@
+﻿@model CSV_reader.ViewModels.ClaimsViewModel;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Reader</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+    <body id="websiteBody">
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+            <div class="flex flex-col items-center space-y-4">
+                <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <p class="text-lg font-medium text-gray-700 animate-pulse">Reading file...</p>
+            </div>
+        </div>
+
+        <div class="container" id="mainContent" style="display: none;">
+           <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light text-center border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <h1 class="text-white text-4xl font-bold my-10">@Model.PolicyYearSummaries.FirstOrDefault().Value.ClientName</h1>
+                </div>
+           </nav>
+        
+
+            <form asp-controller="Home" asp-action="SaveClientDetails" method="post" onsubmit="return validateForm()" id="excelUploadForm">
+            <div class="bg-gray-200 shadow-md w-1/2 rounded-lg p-6 mx-auto my-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @* <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.QuoteNumber, "Quote Number:", new { @class = "font-semibold text-gray-700" })
+                        @Html.TextBoxFor(m => m.InputModel.QuoteNumber, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                    </div> *@
+
+                    @* <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.ClientName, "Select Client Name:", new { @class = "font-semibold text-gray-700" })
+                        @Html.DropDownListFor(m => m.InputModel.ClientName, Model.InputModel.ClientNames, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                    </div> *@
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.SelectedCoverType, "Select Cover:", new { @class = "font-semibold text-gray-700" })
+                        @Html.DropDownListFor(m => m.InputModel.SelectedCoverType, Model.InputModel.CoverTypes, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                    </div>
+
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.Excess, "Excess (£):", new { @class = "font-semibold text-gray-700" })
+                        @Html.TextBoxFor(m => m.InputModel.Excess, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @type = "number", min = "0", @required = "required" })
+                    </div>
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.StartDate, "Start Date:", new { @class = "font-semibold text-gray-700" })
+                        @Html.TextBoxFor(m => m.InputModel.StartDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @type = "date", @required = "required" })
+                    </div>
+                    <div class="space-y-2">
+                        @Html.LabelFor(m => m.InputModel.EndDate, "End Date:", new { @class = "font-semibold text-gray-700" })
+                        @Html.TextBoxFor(m => m.InputModel.EndDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @type = "date", @required = "required" })
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="flex flex-row justify-between">
+                <div class="w-1/2 mx-auto">
+                    <div class="text-white display-6">Vehicle Details</div>
+                    <div class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white" style="margin-top: 2rem;">
+                        <table id="dataTable" class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3"></th>
+                                    <th class="px-6 py-3 text-left">Vehicle Numbers</th>
+                                    <th scope="col" class="px-6 py-3">Large Loss Loading (£)</th>
+                                    <th scope="col" class="px-6 py-3">Exposure Rating (£)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-3">Car Nums</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.CarNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.CarLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                    </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.CarExposure)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Vans Nums</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.VanNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.VanLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                    </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.VanExposure)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Minibus Nums</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.MinibusLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                        </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusExposure)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">HGV Nums</td>
+                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.HGVNums</td>
+                                    <td class="px-4 py-3">
+                                        @Html.TextBoxFor(m => m.InputModel.HGVLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput" })
+                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                        </td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.HGVExposure)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="w-1/3 mx-auto">
+
+                    <div class="display-6 text-white">Business Forecast</div>
+                    <div class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white" style="margin-top: 2rem;">
+                        <table id="dataTable" class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3"></th>
+                                    <th class="px-6 py-3 text-left">COI</th>
+                                    <th class="px-6 py-3 text-left">Non COI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="px-4 py-3">Days</td>
+                                    <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysCOI)</td>
+                                    <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysNonCOI)</td>
+                                </tr>                    
+                                <tr>
+                                    <td class="px-4 py-3">Turnover</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_COI)</td>
+                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_NonCOI)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h1 class="text-lg mt-4 text-white">Apply % Exposure</h1>
+
+                    <div class="form-group mt-2" style="max-width: 90%">
+                        @Html.DropDownListFor(m => m.InputModel.SelectedPercentage, Model.InputModel.Percentages, new { @class = "w-full border bg-white border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400" })                        
+                    </div>
+                </div>
+            </div>
+
+            <!--------------------------- HISTORIC DATA ------------------------------->
+
+            <div class="relative overflow-x-auto rounded-lg max-w-6xl mx-auto my-10" style="margin-top: 2rem;">
+            <div class="display-6 mb-8 text-white">Historic Data</div>
+                <table id="dataTable" class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white">
+                    <thead class="text-xs text-gray-700 uppercase bg-blue-100 ">
+                        <tr>
+                            <th scope="col" class="px-6 py-3"></th>
+                            <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year1Name</th>
+                            <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year2Name</th>
+                            <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year3Name</th>
+                            <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year4Name</th>
+                            <th scope="col" class="px-6 py-3 text-right">@Model.HistoricYearsData.Year5Name</th>
+                            <th scope="col" class="px-6 py-3 text-right">3 Year</th>
+                            <th scope="col" class="px-6 py-3 text-right">5 Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var dataCellClass = "px-6 py-3 text-right";
+                        }
+                        <tr>
+                            <td class="px-6 py-3">Rental Days COI</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y1RentalDaysCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y2RentalDaysCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y3RentalDaysCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y4RentalDaysCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y5RentalDaysCOI)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("{0:N0}", Model.HistoricYearsData.ThreeY_RDaysCOI)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("{0:N0}", Model.HistoricYearsData.FiveY_RDaysCOI)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3">Rental Days Non COI</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y1RentalDaysNonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y2RentalDaysNonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y3RentalDaysNonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y4RentalDaysNonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y5RentalDaysNonCOI)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("{0:N0}", Model.HistoricYearsData.ThreeY_RDaysNonCOI)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("{0:N0}", Model.HistoricYearsData.FiveY_RDaysNonCOI)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3">Turnover COI</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TO_COI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TO_COI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TO_COI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TO_COI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TO_COI)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TO_COI)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TO_COI)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3">Turnover Non COI</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TO_NonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TO_NonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TO_NonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TO_NonCOI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TO_NonCOI)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TO_NonCOI)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TO_NonCOI)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3">Vehicle Years</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y1VYrs)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y2VYrs)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y3VYrs)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y4VYrs)</td>
+                            <td class="@dataCellClass">@string.Format("{0:N0}", Model.HistoricYearsData.Y5VYrs)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("{0:N0}", Model.HistoricYearsData.ThreeY_VYrs)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("{0:N0}", Model.HistoricYearsData.FiveY_VYrs)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3">Claims Open</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y1ClaimsOpen</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y2ClaimsOpen</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y3ClaimsOpen</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y4ClaimsOpen</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y5ClaimsOpen</td>
+                            <td class="@dataCellClass bg-blue-200">@Model.HistoricYearsData.ThreeY_ClaimsOpen</td>
+                            <td class="@dataCellClass bg-blue-300">@Model.HistoricYearsData.FiveY_ClaimsOpen</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3">Claims Closed</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y1ClaimsClosed</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y2ClaimsClosed</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y3ClaimsClosed</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y4ClaimsClosed</td>
+                            <td class="@dataCellClass">@Model.HistoricYearsData.Y5ClaimsClosed</td>
+                            <td class="@dataCellClass bg-blue-200">@Model.HistoricYearsData.ThreeY_ClaimsClo</td>
+                            <td class="@dataCellClass bg-blue-300">@Model.HistoricYearsData.FiveY_ClaimsClo</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">AD Paid</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1ADPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2ADPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3ADPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4ADPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5ADPaid)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_AD)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_AD)</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">F&T Paid</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1FTPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2FTPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3FTPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4FTPaid)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5FTPaid)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_FT)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_FT)</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">TPPD Paid</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TPPD)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TPPD)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TPPD)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TPPD)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TPPD)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TPPD)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TPPD)</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">TPCH Paid</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TPCH)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TPCH)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TPCH)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TPCH)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TPCH)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TPCH)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TPCH)</td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">TPPI Paid</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TPPI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TPPI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TPPI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TPPI)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TPPI)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TPPI)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TPPI)</td>
+                        </tr>          
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">AD OS</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1ADOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2ADOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3ADOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4ADOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5ADOS)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_ADOS)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_ADOS)</td>
+                        </tr>          
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">F&T OS</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1FTOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2FTOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3FTOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4FTOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5FTOS)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_FTOS)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_FTOS)</td>
+                        </tr>          
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">TP PD OS</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TPPDOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TPPDOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TPPDOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TPPDOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TPPDOS)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TPPDOS)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TPPDOS)</td>
+                        </tr>          
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">TP CH OS</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TPCHOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TPCHOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TPCHOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TPCHOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TPCHOS)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TPCHOS)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TPCHOS)</td>
+                        </tr>          
+                        <tr class="bg-gray-100">
+                            <td class="px-6 py-3">TP PI OS</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1TPPIOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2TPPIOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3TPPIOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4TPPIOS)</td>
+                            <td class="@dataCellClass">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5TPPIOS)</td>
+                            <td class="@dataCellClass bg-blue-200">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_TPPIOS)</td>
+                            <td class="@dataCellClass bg-blue-300">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_TPPIOS)</td>
+                        </tr>
+                        <tr class="bg-gray-200">
+                            <td class="px-6 py-3 bg-purple-200">Total Claims Costs</td>
+                            <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.Y1Total)</td>
+                            <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.Y2Total)</td>
+                            <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.Y3Total)</td>
+                            <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.Y4Total)</td>
+                            <td class="px-6 py-3 bg-purple-200 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.Y5Total)</td>
+                            <td class="px-6 py-3 bg-purple-300 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.ThreeY_Total)</td>
+                            <td class="px-6 py-3 bg-purple-400 text-right text-bold">@string.Format("£{0:N2}", Model.HistoricYearsData.FiveY_Total)</td>
+                        </tr>
+                        <tr class="bg-transparent">
+                            <td class="px-6 py-3"></td>
+                            <td class="px-6 py-3">
+                                <button id="getYearData_@Model.HistoricYearsData.Year1Name" class="btn btn-light" type="button">Show Claims for @Model.HistoricYearsData.Year1Name</button>
+                            </td>
+                            <td class="px-6 py-3">
+                                <button id="getYearData_@Model.HistoricYearsData.Year2Name" class="btn btn-light" type="button">Show Claims for @Model.HistoricYearsData.Year2Name</button>
+                            </td>
+                            <td class="px-6 py-3">
+                                <button id="getYearData_@Model.HistoricYearsData.Year3Name" class="btn btn-light" type="button">Show Claims for @Model.HistoricYearsData.Year3Name</button>
+                            </td>
+                            <td class="px-6 py-3">
+                                <button id="getYearData_@Model.HistoricYearsData.Year4Name" class="btn btn-light" type="button">Show Claims for @Model.HistoricYearsData.Year4Name</button>
+                            </td>
+                            <td class="px-6 py-3">
+                                <button id="getYearData_@Model.HistoricYearsData.Year5Name" class="btn btn-light" type="button">Show Claims for @Model.HistoricYearsData.Year5Name</button>
+                            </td>
+                            <td class="px-6 py-3">
+                                <button id="hideClaimsTableButton" class="btn btn-light" type="button">Close Claims</button>
+                            </td>
+                            <td class="px-6 py-3"></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+
+            <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
+
+            </form>
+
+           
+
+            <!-- table of indiv year claims here-->
+
+        <table class="relative overflow-x-auto shadow-lg rounded-lg w-full bg-white" id="claimsTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th class="border border-gray-400 ">Policy Year</th>
+                    <th class="border border-gray-400 ">Claim Reference</th>
+                    <th class="border border-gray-400 ">Loss Date</th>
+                    <th class="border border-gray-400 ">Reported Date</th>
+                    <th class="border border-gray-400 ">Vehicle Type</th>
+                    <th class="border border-gray-400 ">Status</th>
+
+                    <th class="border border-gray-400 ">AD - Paid</th>
+                    <th class="border border-gray-400 ">F&T - Paid</th>
+                    <th class="border border-gray-400 ">TPPD - Paid</th>
+                    <th class="border border-gray-400 ">TPCH - Paid</th>
+                    <th class="border border-gray-400 ">TPPI - Paid</th>
+
+                    <th class="border border-gray-400 ">AD - OS</th>
+                    <th class="border border-gray-400 ">F&T - OS</th>
+                    <th class="border border-gray-400 ">TPPD - OS</th>
+                    <th class="border border-gray-400 ">TPCH - OS</th>
+                    <th class="border border-gray-400 ">TPPI - OS</th>
+
+                    <th class="border border-gray-400 ">Total Incurred</th>
+                    <th class="border border-gray-400">Include</th>
+                </tr>
+            </thead>
+            <tbody id="claimsTableBody">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+
+
+
+            <!-- Table of indiv claims -->
+        <p class="text-white">Total records: @Model.ClaimsRecords.Count</p>
+
+        <button id="getSelectedClaimsBtn" class="btn btn-primary">Get Selected Claims</button><br />
+
+        <label class="text-white" for="policyYearFilter">Filter by Policy Year:</label>
+        <select id="policyYearFilter" class="border border-gray-400 p-2">
+            <option value="">All</option>
+            @foreach (var year in Model.ClaimsRecords.Select(c => c.PolicyYearCol).Distinct())
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+
+        <form asp-controller="Home" asp-action="ImportClaims" method="post" id="saveClaimsForm">
+            <button id="saveClaimsChanges" class="btn btn-primary">Update</button>
+        </form>
+
+        <table class="table-auto border-collapse border border-gray-500 w-full">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-gray-400 ">Policy Year</th>
+                    <th class="border border-gray-400 ">Claim Reference</th>
+                    <th class="border border-gray-400 ">Loss Date</th>
+                    <th class="border border-gray-400 ">Reported Date</th>
+                    <th class="border border-gray-400 ">Vehicle Type</th>
+                    <th class="border border-gray-400 ">Status</th>
+
+                    <th class="border border-gray-400 ">AD - Paid</th>
+                    <th class="border border-gray-400 ">F&T - Paid</th>
+                    <th class="border border-gray-400 ">TPPD - Paid</th>
+                    <th class="border border-gray-400 ">TPCH - Paid</th>
+                    <th class="border border-gray-400 ">TPPI - Paid</th>
+
+                    <th class="border border-gray-400 ">AD - OS</th>
+                    <th class="border border-gray-400 ">F&T - OS</th>
+                    <th class="border border-gray-400 ">TPPD - OS</th>
+                    <th class="border border-gray-400 ">TPCH - OS</th>
+                    <th class="border border-gray-400 ">TPPI - OS</th>
+
+                    <th class="border border-gray-400 ">Total Incurred</th>
+                    <th class="border border-gray-400 ">Include</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in Model.ClaimsRecords)
+                {
+                    <tr class="border border-gray-400 bg-white" data-policy-year="@record.PolicyYearCol">
+                        <td class="border border-gray-400 ">@record.PolicyYearCol</td>
+                        <td class="border border-gray-400 ">@record.ClaimReferenceCol</td>
+                        <td class="border border-gray-400 ">@record.LossDateCol</td>
+                        <td class="border border-gray-400 ">@record.ReportedDateCol</td>
+                        <td class="border border-gray-400 ">@record.VehicleTypeCol</td>
+                        <td class="border border-gray-400 ">@record.StatusCol</td>
+
+                        <td class="border border-gray-400 ">@record.AD_PaidCol</td>
+                        <td class="border border-gray-400 ">@record.FT_PaidCol</td>
+                        <td class="border border-gray-400 ">@record.TPPD_PaidCol</td>
+                        <td class="border border-gray-400 ">@record.TPCH_PaidCol</td>
+                        <td class="border border-gray-400 ">@record.TPPI_PaidCol</td>
+
+                        <td class="border border-gray-400 ">@record.ADOSCol</td>
+                        <td class="border border-gray-400 ">@record.FTOSCol</td>
+                        <td class="border border-gray-400 ">@record.TPPD_OSCol</td>
+                        <td class="border border-gray-400 ">@record.TPCH_OSCol</td>
+                        <td class="border border-gray-400 ">@record.TPPI_OSCol</td>
+
+                        <td class="border border-gray-400 ">@record.TotalCol</td>
+                        <td>
+                            <select class="include-dropdown">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+
+
+       </div>
+
+            
+        
+       
+        
+        <script>
+
+            // ----------------- LOADING DIV ICON --------------------------
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadingDiv = document.getElementById("loadingIndicator");
+            const mainContent = document.getElementById("mainContent");
+
+            // Show the loading indicator
+            loadingDiv.style.display = "flex";
+
+            // Wait for 3 seconds
+            setTimeout(() => {
+                // Hide the loading indicator
+                loadingDiv.style.display = "none";
+
+                // Show the main content
+                mainContent.style.display = "block";
+            }, 3000);
+        });
+
+        // --------------------- VALIDATE FORM INPUTS ---------------------
+        function validateForm() {
+            var LLLInputs = document.querySelectorAll(".LLLInput"); // Select all LLL input fields
+            var LLLErrors = document.querySelectorAll(".LLLError"); // Select all LLL error spans
+            var isValid = true;
+
+            // Reset error messages and highlight on all inputs
+            LLLErrors.forEach(function (error) {
+                error.classList.add("hidden");
+            });
+            LLLInputs.forEach(function (input) {
+                input.classList.remove("border-red-500");
+            });
+
+            // Check each LLL input field for value zero or empty
+            LLLInputs.forEach(function (input, index) {
+                if (input.value == 0 || input.value === "") {
+                    // Show the corresponding error message
+                    LLLErrors[index].classList.remove("hidden");
+
+                    // Scroll to the input field smoothly
+                    input.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                    // Highlight the field
+                    input.focus();
+                    input.classList.add("border-red-500");
+
+                    isValid = false; // Prevent form submission
+                }
+            });
+
+            return isValid; // If true, the form will submit
+        }
+
+
+
+        document.getElementById("policyYearFilter").addEventListener("change", function () {
+            let selectedYear = this.value;
+            let rows = document.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                let rowYear = row.getAttribute("data-policy-year");
+
+                if (selectedYear === "" || rowYear === selectedYear) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+
+
+
+        // ---------------- HIDE INDIV YEARS CLAIMS TABLE ------------------
+        document.addEventListener("DOMContentLoaded", function () {
+
+            let hideClaimsTableButton = document.getElementById("hideClaimsTableButton");
+            let claimsTable = document.getElementById("claimsTable");
+
+            hideClaimsTableButton.addEventListener("click", function() {
+
+                claimsTable.style.display = "none";
+
+            })
+        })
+
+        // ------------------- SHOW INDIV YEAR CLAIMS TABLE ----------------------
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            let buttons = document.querySelectorAll("button[id^='getYearData_']");            
+
+            console.log("Found buttons:", buttons.length); 
+
+            let claimsTable = document.getElementById("claimsTable");
+
+            buttons.forEach(button => {
+                console.log("Adding event listener to:", button.id);
+
+                button.addEventListener("click", function () {
+
+                    claimsTable.style.display = "block";
+
+                    let yearString = this.id.replace("getYearData_", "");
+                    console.log(`Fetching data for year: ${yearString}`);
+
+                    fetch(`/Home/GetOneYearsClaimsController?year=${yearString}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log("Received data:", data); 
+                            updateTable(data);
+                        })
+                        .catch(error => {
+                            console.error("Fetch error:", error);
+                        });
+                });
+            });
+        });
+ 
+
+        function updateTable(claims) {
+            let tableBody = document.getElementById("claimsTableBody");
+            tableBody.innerHTML = ""; // Clear existing table rows
+
+            claims.forEach(claim => {
+                let row = 
+                    `<tr>
+                        <td>${claim.policyYearCol}</td>
+                        <td>${claim.claimReferenceCol}</td>
+                        <td>${claim.lossDateCol}</td>
+                        <td>${claim.reportedDateCol}</td>
+                        <td>${claim.vehicleTypeCol}</td>
+                        <td>${claim.statusCol}</td>
+
+                        <td>£${(+claim.aD_PaidCol).toFixed(2)}</td>
+                        <td>£${(+claim.fT_PaidCol).toFixed(2)}</td>
+                        <td>£${(+claim.tppD_PaidCol).toFixed(2)}</td>
+                        <td>£${(+claim.tpcH_PaidCol).toFixed(2)}</td>
+                        <td>£${(+claim.tppI_PaidCol).toFixed(2)}</td>
+
+                        <td>£${(+claim.adosCol).toFixed(2)}</td>
+                        <td>£${(+claim.ftosCol).toFixed(2)}</td>
+                        <td>£${(+claim.tppD_OSCol).toFixed(2)}</td>
+                        <td>£${(+claim.tpcH_OSCol).toFixed(2)}</td>
+                        <td>£${(+claim.tppI_OSCol).toFixed(2)}</td>
+
+                        <td>£${(+claim.totalCol).toFixed(2)}</td>
+                        <td>
+                            <select class="include-dropdown">
+                                <option value="Yes" >Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </td>
+
+                    </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function getSelectedClaims() {
+            let selectedClaims = [];
+            document.querySelectorAll("#claimsTableBody tr").forEach(row => {
+                let includeValue = row.querySelector(".include-dropdown").value;
+                let policyYear = row.cells[1].textContent;  // Adjust index if column order changes
+                let claimReference = row.cells[2].textContent;
+
+                selectedClaims.push({
+                    policyYear: policyYear,
+                    claimReference: claimReference,
+                    include: includeValue
+                });
+            });
+
+            console.log(selectedClaims); // You can send this data to the server if needed
+        }
+        document.getElementById("getSelectedClaimsBtn").addEventListener("click", function () {
+            getSelectedClaims();
+        });
+
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rating Guide</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/quoteSearch.js"></script>    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/output.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<header class="absolute top-0 left-0 right-0">
+
+    
+
+    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header" @* style="background: #334155;" *@>
+
+        <div class="flex items-center">
+            <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
+        </div>
+
+        <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
+            <a>
+                <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
+            </a>
+        </div>
+         
+            <script src="~/js/quoteSearch.js"></script>
+
+        <div class="flex items-center space-x-4">
+            <div class="d-flex align-items-center p-3">
+                <div class="me-3">
+                    <small style="color: #e0e0e0;">Logged in as:</small><br />
+                    <span class="fw-semibold" style="color: #fafafa;">@User.Identity.Name</span>
+                </div>
+                <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
+                    <button type="submit" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+            
+    </nav>
+
+</header>
+
+<body id="websiteBody">
+
+    <div class="flex flex-col items-center justify-center h-screen space-y-8 mt-5">
+
+        <!-- Quote Search Form -->
+        <form id="quoteSearchForm" class="indexExcelSearchBox p-6 rounded-lg max-w-md w-full border-none">
+            <div class="flex flex-col space-y-4">
+                <label for="quoteId" class="text-2xl font-bold text-gray-100">Search Quotes</label>
+                <label for="quoteSearch" class="text-sm font-semibold text-gray-200">Enter Quote Number</label>
+                <div class="flex items-center space-x-2">
+                    <span class="text-gray-700 font-semibold bg-gray-200 py-2 px-3 rounded-md">PAQ</span>
+                    <input type="text"
+                           name="quoteSearch"
+                           id="quoteIdToSearch"
+                           required
+                           class="rounded-md bg-gray-100 border border-gray-300 p-3 text-gray-800 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300"
+                           placeholder="Enter Quote #" />
+                </div>
+                <div class="flex justify-center">
+                    <button type="submit"
+                            class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Excel Upload Form -->
+        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" class="indexExcelUploadBox p-6 rounded-lg max-w-md w-full border-none">
+            <div class="flex flex-col space-y-6">
+                <h1 class="text-2xl font-bold text-gray-100">Create Quote</h1>
+                <div class="flex flex-col space-y-2">
+                    <label for="excelFile" class="text-sm font-semibold text-gray-200">Select Excel File</label>
+                    <input type="file" name="excelFile" id="excelFile" accept=".xlsx" class="bg-white border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                <div class="flex justify-center">
+                    <button id="uploadButton" type="submit"
+                            class="font-semibold bg-green-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-green-700 hover:shadow-lg transition duration-300" disabled>                       
+                        Upload
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.5/dist/xlsx.full.min.js"></script>  <!--  add SheetJS library -->
+
+    <script>
+        // JS for selecting an Excel file and verifies it
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const fileInput = document.getElementById('excelFile')
+            const uploadButton = document.getElementById('uploadButton')
+
+            const requiredSheets = ['ImportClaims', 'ImportDays', 'ImportTurnover', 'ImportVehicles', 'ImportForecast']
+
+            uploadButton.disabled = true;
+
+            fileInput.addEventListener('change', function () 
+            {
+                const file = fileInput.files[0]
+
+                if (file && file.name.endsWith('.xlsx')) 
+                {
+                    const reader = new FileReader()
+
+                    // parse it
+                    reader.onload = function (e) {
+                        const data = new Uint8Array(e.target.result)
+                        const workbook = XLSX.read(data, { type: 'array' })
+
+                        // Get the sheet names
+                        const sheetNames = workbook.SheetNames
+
+                        // Check if all required sheets exist in the uploaded file
+                        const hasAllRequiredSheets = requiredSheets.every(sheet => sheetNames.includes(sheet))
+
+                        if (hasAllRequiredSheets) 
+                        {
+                            uploadButton.disabled = false 
+                        } else 
+                        {
+                            uploadButton.disabled = true
+                            alert("The uploaded file must contain the following sheets: " + requiredSheets.join(", "))
+                        }
+                    };
+
+                    // need to read the file as an ArrayBuffer (binary format)
+                    reader.readAsArrayBuffer(file)
+                } 
+                else 
+                {
+                    uploadButton.disabled = true;
+                    alert("Please upload a valid .xlsx file.");
+                }
+            });
+        });        
+
+    </script>
+
+
+</body>
+</html>
+
+<!--             window.location.href = `/Calculations/IndexCalculations?${params.toString()}`;
+ -->

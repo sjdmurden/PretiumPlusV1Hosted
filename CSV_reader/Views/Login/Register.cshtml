@@ -1,0 +1,108 @@
+﻿@model CSV_reader.ViewModels.RegisterViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rating Guide</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/output.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<header class="fixed top-0 left-0 right-0">
+
+    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header">
+        <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
+            <a>
+                <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
+            </a>
+        </div>
+    </nav>
+
+</header>
+
+<body class="bg-gray-100" id="websiteBody">
+
+    <div class="flex items-center justify-center h-screen mt-4">
+
+        <div class="shadow-md rounded-lg p-8 max-w-lg w-full" style="background: #334155;">
+
+            <img src="~/images/pretium+nobackground.png" alt="Pretium+ Logo" style="width: 80%;" />
+
+            <h3 class="display-6 text-white">Register as a new user</h3>
+
+            <form asp-action="Register" method="post" onsubmit="return ">
+                <div class="form-group">
+                    <label asp-for="UserEmail" class="text-white">Email</label>
+                    <input asp-for="UserEmail" class="form-control border-none" required="required" />
+                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- password input -->
+                    <label class="text-white">Password</label><br />
+                    <input id="password" type="password" class="form-control border-none" oninput="checkPasswordMatchOnInput()" required="required" /><br />
+
+                    <!-- confirm password input -->
+                    <label asp-for="UserPassword">Confirm Password</label>
+                    <input asp-for="UserPassword" type="password" class="form-control text-white" id="confirmPassword" oninput="checkPasswordMatchOnInput()" />
+
+                    <!-- "REQUIRED" text-->
+                    <span asp-validation-for="UserPassword" class="text-danger"></span><br />
+
+                    <!-- passwords match/dont match text -->
+                    <span id="passwordError" class="text-danger" style="justify-content: right;"></span>
+                    <span id="passwordDoesMatch" class="text-success" style="justify-content: right;"></span>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        Registration failed. Please try again.
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary" id="registerButton" disabled>Register</button>
+                <a href="@Url.Action("Login", "Login")">Login</a> <!-- link to Login action in Login Controller -->
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function checkPasswordMatchOnInput() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            const errorElement = document.getElementById("passwordError")
+            const passwordDoesMatch = document.getElementById("passwordDoesMatch")
+
+            const registerButton = document.getElementById("registerButton")
+
+            if (confirmPassword !== password) {
+                errorElement.textContent = "Passwords do not match."; 
+                passwordDoesMatch.textContent = ""
+
+                registerButton.setAttribute("disabled", "disabled")
+            } else {
+                errorElement.textContent = ""
+                passwordDoesMatch.textContent = "Passwords match."
+
+                registerButton.removeAttribute("disabled");
+            }
+
+            
+        }
+
+
+    </script>
+
+</body>
+
+
+</html>
+
+
