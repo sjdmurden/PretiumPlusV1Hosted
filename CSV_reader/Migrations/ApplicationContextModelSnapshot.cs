@@ -720,6 +720,9 @@ namespace CSV_reader.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("FTOS")
                         .HasColumnType("float");
 
@@ -791,6 +794,10 @@ namespace CSV_reader.Migrations
                     b.Property<double>("TurnoverNonCOI")
                         .HasColumnType("float");
 
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("VehicleType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -838,12 +845,19 @@ namespace CSV_reader.Migrations
                     b.Property<double>("ClientMBusLLL")
                         .HasColumnType("float");
 
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ClientStartDate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("ClientVanLLL")
                         .HasColumnType("float");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("ExpoPercentage")
                         .HasColumnType("float");
@@ -871,6 +885,10 @@ namespace CSV_reader.Migrations
 
                     b.Property<int>("MinibusNums")
                         .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("VanExposure")
                         .HasColumnType("float");

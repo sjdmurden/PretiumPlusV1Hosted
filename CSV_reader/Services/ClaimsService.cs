@@ -306,14 +306,15 @@ namespace CSV_reader.Services
 
         // need a function to add each claim data to the database table as a row
 
-        public string SaveClaimsToDatabase(List<ClaimsModel> claimsData, InputModel inputModel)
+        public string SaveClaimsToDatabase(List<ClaimsModel> claimsData, InputModel inputModel, string userEmail)
         {
         
 
             // Creating a unique Batch ID using Client Name + Timestamp
             string clientName = claimsData.First().ClientNameCol.Replace(" ", "_");
             string quoteNumber = GenerateQuoteNumber(clientName);
-            string batchId = $"{quoteNumber}_{DateTime.UtcNow:yyyyMMddHHmm}";
+            DateTime createdDate = DateTime.Now;
+            string batchId = $"{quoteNumber}_{createdDate}";
 
             // This converts each ClaimsModel into an IndivClaimDB object
             var claimsToInsert = claimsData.Select(claim => new IndivClaimDB
@@ -380,6 +381,8 @@ namespace CSV_reader.Services
 
             var indivClaimDataToInsert = claimsData.Select(claim => new IndivClaimDataDB
             {
+                UserEmail = userEmail,
+                CreatedDate = createdDate,
                 BatchId = batchId,
 
                 ClientName = claim.ClientNameCol,
@@ -416,7 +419,10 @@ namespace CSV_reader.Services
 
             var staticDataToInsert = new StaticClientDataDB
             {
-                BatchId = batchId,                
+                UserEmail = userEmail,
+                CreatedDate = createdDate,
+                BatchId = batchId,
+                ClientName = firstClaim.ClientNameCol,
 
                 ForecastTO_COI = firstClaim.FCTO_COICol,
                 ForecastTO_NonCOI = firstClaim.FCTO_NonCOICol,

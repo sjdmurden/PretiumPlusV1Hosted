@@ -69,9 +69,9 @@ namespace CSV_reader.Controllers
         [HttpGet]
         public JsonResult CheckQuoteIdExists(string quoteId)
         {
-            var batchExists = _appContext.ClaimsTable.Any(x => x.BatchId.Contains(quoteId));  // using Any returns a true/false value and is faster than FirstOrDefault
+            var batchExists = _appContext.StaticClientDataDB.Any(x => x.BatchId.Contains(quoteId));  // using Any returns a true/false value and is faster than FirstOrDefault
 
-            var batchId = _appContext.ClaimsTable
+            var batchId = _appContext.StaticClientDataDB
                 .Where(x => x.BatchId.Contains(quoteId))
                 .Select(x => x.BatchId)
                 .FirstOrDefault();

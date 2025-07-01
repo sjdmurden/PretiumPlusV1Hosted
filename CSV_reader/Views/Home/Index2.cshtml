@@ -51,7 +51,12 @@
             <div class="d-flex align-items-center p-3">
                 <div class="me-3">
                     <small style="color: #e0e0e0;">Logged in as:</small><br />
-                    <span class="fw-semibold" style="color: #fafafa;">@User.Identity.Name</span>
+                    <a asp-controller="Profile"
+                       asp-action="ProfileIndex"
+                       asp-route-userEmail="@User.Identity.Name"
+                       style="color: #e0e0e0;">
+                        @User.Identity.Name
+                    </a>
                 </div>
                 <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
                     <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
@@ -90,148 +95,168 @@
            </div>
 
 
-       <form asp-controller="Home" asp-action="ImportClaims" method="post" onsubmit="return validateForm()" id="excelUploadForm">
+           <form asp-controller="Home" asp-action="ImportClaims" method="post" onsubmit="return validateForm()" id="excelUploadForm">
 
-            <div class="shadow-md w-1/2 rounded-lg p-6 mx-auto my-3" style="background: #334155;">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @* <div class="space-y-2">
-                        @Html.LabelFor(m => m.InputModel.QuoteNumber, "Quote Number:", new { @class = "font-semibold text-gray-700" })
-                        @Html.TextBoxFor(m => m.InputModel.QuoteNumber, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
-                    </div> *@
+                <div class="shadow-md w-1/2 rounded-lg p-6 mx-auto my-3" style="background: #334155;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @* <div class="space-y-2">
+                            @Html.LabelFor(m => m.InputModel.QuoteNumber, "Quote Number:", new { @class = "font-semibold text-gray-700" })
+                            @Html.TextBoxFor(m => m.InputModel.QuoteNumber, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                        </div> *@
 
-                    @* <div class="space-y-2">
-                        @Html.LabelFor(m => m.InputModel.ClientName, "Select Client Name:", new { @class = "font-semibold text-gray-700" })
-                        @Html.DropDownListFor(m => m.InputModel.ClientName, Model.InputModel.ClientNames, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
-                    </div> *@
-                    <div class="space-y-2">
-                        @Html.LabelFor(m => m.InputModel.SelectedCoverType, "Select Cover:", new { @class = "font-semibold text-gray-200" })
-                        @Html.DropDownListFor(m => m.InputModel.SelectedCoverType, Model.InputModel.CoverTypes, new
-                            {
-                                @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2",
-                                @required = "required", style = "background: #e2e8f0"})
-                    </div>
+                        @* <div class="space-y-2">
+                            @Html.LabelFor(m => m.InputModel.ClientName, "Select Client Name:", new { @class = "font-semibold text-gray-700" })
+                            @Html.DropDownListFor(m => m.InputModel.ClientName, Model.InputModel.ClientNames, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
+                        </div> *@
+                        <div class="space-y-2">
+                            @Html.LabelFor(m => m.InputModel.SelectedCoverType, "Select Cover:", new { @class = "font-semibold text-gray-200" })
+                            @Html.DropDownListFor(m => m.InputModel.SelectedCoverType, Model.InputModel.CoverTypes, new
+                                {
+                                    @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2",
+                                    @required = "required", style = "background: #e2e8f0"})
+                        </div>
 
-                    <div class="space-y-2">
-                        @Html.LabelFor(m => m.InputModel.Excess, "Excess (£):", new { @class = "font-semibold text-gray-200" })
-                        @Html.TextBoxFor(m => m.InputModel.Excess, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "number", min = "0", @required = "required", style = "background: #e2e8f0" })
-                    </div>
-                    <div class="space-y-2">
-                        @Html.LabelFor(m => m.InputModel.StartDate, "Start Date:", new { @class = "font-semibold text-gray-200" })
-                        @Html.TextBoxFor(m => m.InputModel.StartDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "date", @required = "required", style = "background: #e2e8f0" })
-                    </div>
-                    <div class="space-y-2">
-                        @Html.LabelFor(m => m.InputModel.EndDate, "End Date:", new { @class = "font-semibold text-gray-200" })
-                        @Html.TextBoxFor(m => m.InputModel.EndDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "date", @required = "required", style = "background: #e2e8f0" })
-                    </div>
+                        <div class="space-y-2">
+                            @Html.LabelFor(m => m.InputModel.Excess, "Excess (£):", new { @class = "font-semibold text-gray-200" })
+                            @Html.TextBoxFor(
+                                m => m.InputModel.Excess, 
+                                new { 
+                                    @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", 
+                                    @type = "number", 
+                                    min = "0", 
+                                    @required = "required", 
+                                    style = "background: #e2e8f0",
+                                    placeholder = "0"
+                                }
+                            )
+                        </div>
+                        <div class="space-y-2">
+                            @Html.LabelFor(m => m.InputModel.StartDate, "Start Date:", new { @class = "font-semibold text-gray-200" })
+                            @Html.TextBoxFor(m => m.InputModel.StartDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "date", @required = "required", style = "background: #e2e8f0" })
+                        </div>
+                        <div class="space-y-2">
+                            @Html.LabelFor(m => m.InputModel.EndDate, "End Date:", new { @class = "font-semibold text-gray-200" })
+                            @Html.TextBoxFor(m => m.InputModel.EndDate, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400 p-2", @type = "date", @required = "required", style = "background: #e2e8f0" })
+                        </div>
 
+                    </div>
                 </div>
-            </div>
 
 
-            <div class="flex flex-row justify-between">
-                <div class="w-1/2 mx-auto">
+                <div class="flex flex-row justify-between">
+                    <div class="w-1/2 mx-auto">
 
-                    <div class="text-white display-6">Vehicle Details</div>
+                        <div class="text-white display-6">Vehicle Details</div>
 
-                    <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-4" style="background: #1e293b; color: #cbd5e1;">
+                        <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-4" style="background: #1e293b; color: #cbd5e1;">
 
-                        <table class="relative overflow-x-auto rounded-lg w-full mx-auto">
-                            <thead class="text-xs uppercase">
-                                <tr style="background: #334155; color: #cbd5e1;">
-                                    <th class="px-6 py-3"></th>
-                                    <th class="px-6 py-3 text-left">Vehicle Numbers</th>
-                                    <th scope="col" class="px-6 py-3">Large Loss Loading (£)</th>
-                                    <th scope="col" class="px-6 py-3">Exposure Rating (£)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                            <table class="relative overflow-x-auto rounded-lg w-full mx-auto">
+                                <thead class="text-xs uppercase">
+                                    <tr style="background: #334155; color: #cbd5e1;">
+                                        <th class="px-6 py-3"></th>
+                                        <th class="px-6 py-3 text-left">Vehicle Numbers</th>
+                                        <th scope="col" class="px-6 py-3">Large Loss Loading (£)</th>
+                                        <th scope="col" class="px-6 py-3">Exposure Rating (£)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
-                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
-                                    <td class="px-4 py-3 font-semibold">Car</td>
-                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.CarNums</td>
-                                    <td class="px-4 py-3">
-                                        @Html.TextBoxFor(m => m.InputModel.CarLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
-                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
-                                    </td>
-                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.CarExposure)</td>
-                                </tr>
-
-                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
-                                    <td class="px-4 py-3 font-semibold">Van</td>
-                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.VanNums</td>
-                                    <td class="px-4 py-3">
-                                        @Html.TextBoxFor(m => m.InputModel.VanLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
-                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
-                                    </td>
-                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.VanExposure)</td>
-                                </tr>
-
-                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
-                                    <td class="px-4 py-3 font-semibold">Minibus</td>
-                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusNums</td>
-                                    <td class="px-4 py-3">
-                                        @Html.TextBoxFor(m => m.InputModel.MinibusLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
-                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                        <td class="px-4 py-3 font-semibold">Car</td>
+                                        <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.CarNums</td>
+                                        <td class="px-4 py-3">
+                                            @Html.TextBoxFor(m => m.InputModel.CarLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                            <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
                                         </td>
-                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusExposure)</td>
-                                </tr>
+                                        <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.CarExposure)</td>
+                                    </tr>
 
-                                <tr class="hover:bg-gray-700 p-4 text-sm">
-                                    <td class="px-4 py-3 font-semibold">HGV</td>
-                                    <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.HGVNums</td>
-                                    <td class="px-4 py-3">
-                                        @Html.TextBoxFor(m => m.InputModel.HGVLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
-                                        <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                        <td class="px-4 py-3 font-semibold">Van</td>
+                                        <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.VanNums</td>
+                                        <td class="px-4 py-3">
+                                            @Html.TextBoxFor(m => m.InputModel.VanLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                            <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
                                         </td>
-                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.HGVExposure)</td>
-                                </tr>
+                                        <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.VanExposure)</td>
+                                    </tr>
 
-                            </tbody>
-                        </table>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                        <td class="px-4 py-3 font-semibold">Minibus</td>
+                                        <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusNums</td>
+                                        <td class="px-4 py-3">
+                                            @Html.TextBoxFor(m => m.InputModel.MinibusLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                            <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                            </td>
+                                        <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.MinibusExposure)</td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-700 p-4 text-sm">
+                                        <td class="px-4 py-3 font-semibold">HGV</td>
+                                        <td class="px-4 py-3">@Model.PolicyYearSummaries.FirstOrDefault().Value.HGVNums</td>
+                                        <td class="px-4 py-3">
+                                            @Html.TextBoxFor(m => m.InputModel.HGVLLL, new { @class = "LLLInput form-control bg-gray-200 rounded-md ", @type = "number", @required = "required", @id = "LLLInput", style = "background: #e2e8f0" })
+                                            <span id="LLLError" class="LLLError text-red-500 hidden">LLL cannot be zero</span> <!-- Error message -->
+                                            </td>
+                                        <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.HGVExposure)</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="w-1/3 mx-auto">
+
+                        <div class="display-6 text-white">Business Forecast</div>
+
+                        <div class="relative overflow-x-auto shadow-lg rounded-lg mt-4" style="background: #1e293b; color: #cbd5e1;">
+                            <table class="relative overflow-x-auto rounded-lg mx-auto w-full">
+                                <thead class="text-xs uppercase">
+                                    <tr style="background: #334155; color: #cbd5e1;">
+                                        <th class="px-6 py-3"></th>
+                                        <th class="px-6 py-3 text-left">COI</th>
+                                        <th class="px-6 py-3 text-left">Non COI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
+                                        <td class="px-4 py-3">Days</td>
+                                        <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysCOI)</td>
+                                        <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysNonCOI)</td>
+                                    </tr>                    
+                                    <tr class="hover:bg-gray-700 p-4 text-sm">
+                                        <td class="px-4 py-3">Turnover</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_COI)</td>
+                                        <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_NonCOI)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <h1 class="mt-4 text-white">Apply % Exposure</h1>
+
+                        <div class="form-group mt-2" style="max-width: 90%">
+                            @Html.DropDownListFor(m => m.InputModel.SelectedPercentage, Model.InputModel.Percentages, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", style = "background: #e2e8f0;" })
+                        </div>
+                    </div>
+                </div>           
+
+                <div class="flex items-center justify-center mt-10">
+                    <div class="p-4 rounded-md shadow-md text-center" style="background: #334155;">
+                        <span class="text-white text-lg font-medium block mb-4">
+                            Save details and see quote:
+                        </span>
+                        <button type="submit"
+                                id="saveButton"
+                            class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Save
+                        </button>
                     </div>
                 </div>
 
-                <div class="w-1/3 mx-auto">
-
-                    <div class="display-6 text-white">Business Forecast</div>
-
-                    <div class="relative overflow-x-auto shadow-lg rounded-lg mt-4" style="background: #1e293b; color: #cbd5e1;">
-                        <table class="relative overflow-x-auto rounded-lg mx-auto w-full">
-                            <thead class="text-xs uppercase">
-                                <tr style="background: #334155; color: #cbd5e1;">
-                                    <th class="px-6 py-3"></th>
-                                    <th class="px-6 py-3 text-left">COI</th>
-                                    <th class="px-6 py-3 text-left">Non COI</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="hover:bg-gray-700 p-4 text-sm border-b border-gray-700">
-                                    <td class="px-4 py-3">Days</td>
-                                    <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysCOI)</td>
-                                    <td class="px-4 py-3">@string.Format("{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCDaysNonCOI)</td>
-                                </tr>                    
-                                <tr class="hover:bg-gray-700 p-4 text-sm">
-                                    <td class="px-4 py-3">Turnover</td>
-                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_COI)</td>
-                                    <td class="px-4 py-3">@string.Format("£{0:N0}", Model.PolicyYearSummaries.FirstOrDefault().Value.FCTO_NonCOI)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-
-                    <h1 class="text-lg mt-4 text-white display-6">Apply % Exposure</h1>
-
-                    <div class="form-group mt-2" style="max-width: 90%">
-                        @Html.DropDownListFor(m => m.InputModel.SelectedPercentage, Model.InputModel.Percentages, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", style = "background: #e2e8f0;" })
-                    </div>
-                </div>
-            </div>           
-
-                <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
-
-            </form>
-
+           </form>
            
        </div>
             

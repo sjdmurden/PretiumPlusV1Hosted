@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+
+
+@{
+    var userType = User.FindFirstValue("UserType");
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -33,7 +40,22 @@
             <div class="d-flex align-items-center p-3">
                 <div class="me-3">
                     <small style="color: #e0e0e0;">Logged in as:</small><br />
-                    <span class="fw-semibold" style="color: #fafafa;">@User.Identity.Name</span>
+                    @if (userType == "1")
+                    {
+                        <a asp-controller="Profile"
+                           asp-action="AdminProfileIndex"
+                           style="color: #e0e0e0;">
+                            @User.Identity.Name
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Profile"
+                           asp-action="ProfileIndex"
+                           style="color: #e0e0e0;">
+                            @User.Identity.Name
+                        </a>
+                    }
                 </div>
                 <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
                     <button type="submit" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">

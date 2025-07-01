@@ -73,11 +73,26 @@ namespace CSV_reader.Services
             /*Console.WriteLine("Policy Years: " + string.Join(", ", orderedPolicyYears));
             Console.WriteLine(orderedPolicyYears[0]);*/
 
-            var year1 = orderedPolicyYears[0];
+            /*var year1 = orderedPolicyYears[0];
             var year2 = orderedPolicyYears[1];
             var year3 = orderedPolicyYears[2];
             var year4 = orderedPolicyYears[3];
-            var year5 = orderedPolicyYears[4];
+            var year5 = orderedPolicyYears[4];*/
+
+            string year1 = null, year2 = null, year3 = null, year4 = null, year5 = null;
+
+            if (orderedPolicyYears.Count >= 3)
+            {
+                year1 = orderedPolicyYears[0];
+                year2 = orderedPolicyYears[1];
+                year3 = orderedPolicyYears[2];
+            }
+
+            if (orderedPolicyYears.Count == 5)
+            {
+                year4 = orderedPolicyYears[3];
+                year5 = orderedPolicyYears[4];
+            }
 
             var claimsCalculationsModel = new ClaimsCalculationsModel();
 
@@ -87,47 +102,86 @@ namespace CSV_reader.Services
             claimsCalculationsModel.Year4Name = year4;
             claimsCalculationsModel.Year5Name = year5;
 
+            // ------------------ HISTORIC YEARS DATA TABLE ---------------------
+            // NEW LOGIC FOR CLIENTS WITH ONLY 3 YEARS OF DATA ( 5 YEARS STILL WORKS )
 
-            // ----------------- HISTORIC YEARS DATA TABLE DATA -----------------------------
-
-            claimsCalculationsModel.Y1RentalDaysCOI = claimsByYear[year1].FirstOrDefault().RDaysCOI;
-            claimsCalculationsModel.Y2RentalDaysCOI = claimsByYear[year2].FirstOrDefault().RDaysCOI;
-            claimsCalculationsModel.Y3RentalDaysCOI = claimsByYear[year3].FirstOrDefault().RDaysCOI;
-            claimsCalculationsModel.Y4RentalDaysCOI = claimsByYear[year4].FirstOrDefault().RDaysCOI;
-            claimsCalculationsModel.Y5RentalDaysCOI = claimsByYear[year5].FirstOrDefault().RDaysCOI;
-
+            // rental days COI
+            claimsCalculationsModel.Y1RentalDaysCOI = claimsByYear[year1].FirstOrDefault()?.RDaysCOI ?? 0;
+            claimsCalculationsModel.Y2RentalDaysCOI = claimsByYear[year2].FirstOrDefault()?.RDaysCOI ?? 0;
+            claimsCalculationsModel.Y3RentalDaysCOI = claimsByYear[year3].FirstOrDefault()?.RDaysCOI ?? 0;
             claimsCalculationsModel.ThreeY_RDaysCOI = claimsCalculationsModel.Y1RentalDaysCOI + claimsCalculationsModel.Y2RentalDaysCOI + claimsCalculationsModel.Y3RentalDaysCOI;
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4RentalDaysCOI = claimsByYear[year4].FirstOrDefault()?.RDaysCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y4RentalDaysCOI = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5RentalDaysCOI = claimsByYear[year5].FirstOrDefault()?.RDaysCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y5RentalDaysCOI = 0; }
             claimsCalculationsModel.FiveY_RDaysCOI = claimsCalculationsModel.ThreeY_RDaysCOI + claimsCalculationsModel.Y4RentalDaysCOI + claimsCalculationsModel.Y5RentalDaysCOI;
 
-            claimsCalculationsModel.Y1RentalDaysNonCOI = claimsByYear[year1].FirstOrDefault().RDaysNonCOI;
-            claimsCalculationsModel.Y2RentalDaysNonCOI = claimsByYear[year2].FirstOrDefault().RDaysNonCOI;
-            claimsCalculationsModel.Y3RentalDaysNonCOI = claimsByYear[year3].FirstOrDefault().RDaysNonCOI;
-            claimsCalculationsModel.Y4RentalDaysNonCOI = claimsByYear[year4].FirstOrDefault().RDaysNonCOI;
-            claimsCalculationsModel.Y5RentalDaysNonCOI = claimsByYear[year5].FirstOrDefault().RDaysNonCOI;
-
+            // rental days non COI
+            claimsCalculationsModel.Y1RentalDaysNonCOI = claimsByYear[year1].FirstOrDefault()?.RDaysNonCOI ?? 0;
+            claimsCalculationsModel.Y2RentalDaysNonCOI = claimsByYear[year2].FirstOrDefault()?.RDaysNonCOI ?? 0;
+            claimsCalculationsModel.Y3RentalDaysNonCOI = claimsByYear[year3].FirstOrDefault()?.RDaysNonCOI ?? 0;
             claimsCalculationsModel.ThreeY_RDaysNonCOI = claimsCalculationsModel.Y1RentalDaysNonCOI + claimsCalculationsModel.Y2RentalDaysNonCOI + claimsCalculationsModel.Y3RentalDaysNonCOI;
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4RentalDaysNonCOI = claimsByYear[year4].FirstOrDefault()?.RDaysNonCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y4RentalDaysNonCOI = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5RentalDaysNonCOI = claimsByYear[year5].FirstOrDefault()?.RDaysNonCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y5RentalDaysNonCOI = 0; }
             claimsCalculationsModel.FiveY_RDaysNonCOI = claimsCalculationsModel.ThreeY_RDaysNonCOI + claimsCalculationsModel.Y4RentalDaysNonCOI + claimsCalculationsModel.Y5RentalDaysNonCOI;
 
-            claimsCalculationsModel.Y1TO_COI = claimsByYear[year1].FirstOrDefault().TurnoverCOI;
-            claimsCalculationsModel.Y2TO_COI = claimsByYear[year2].FirstOrDefault().TurnoverCOI;
-            claimsCalculationsModel.Y3TO_COI = claimsByYear[year3].FirstOrDefault().TurnoverCOI;
-            claimsCalculationsModel.Y4TO_COI = claimsByYear[year4].FirstOrDefault().TurnoverCOI;
-            claimsCalculationsModel.Y5TO_COI = claimsByYear[year5].FirstOrDefault().TurnoverCOI;
+            // turnover COI
+            claimsCalculationsModel.Y1TO_COI = claimsByYear[year1].FirstOrDefault()?.TurnoverCOI ?? 0;
+            claimsCalculationsModel.Y2TO_COI = claimsByYear[year2].FirstOrDefault()?.TurnoverCOI ?? 0;
+            claimsCalculationsModel.Y3TO_COI = claimsByYear[year3].FirstOrDefault()?.TurnoverCOI ?? 0;
 
             claimsCalculationsModel.ThreeY_TO_COI = claimsCalculationsModel.Y1TO_COI + claimsCalculationsModel.Y2TO_COI + claimsCalculationsModel.Y3TO_COI;
+
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4TO_COI = claimsByYear[year4].FirstOrDefault()?.TurnoverCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y4TO_COI = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5TO_COI = claimsByYear[year5].FirstOrDefault()?.TurnoverCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y5TO_COI = 0; }
+
             claimsCalculationsModel.FiveY_TO_COI = claimsCalculationsModel.ThreeY_TO_COI + claimsCalculationsModel.Y4TO_COI + claimsCalculationsModel.Y5TO_COI;
 
-            claimsCalculationsModel.Y1TO_NonCOI = claimsByYear[year1].FirstOrDefault().TurnoverNonCOI;
-            claimsCalculationsModel.Y2TO_NonCOI = claimsByYear[year2].FirstOrDefault().TurnoverNonCOI;
-            claimsCalculationsModel.Y3TO_NonCOI = claimsByYear[year3].FirstOrDefault().TurnoverNonCOI;
-            claimsCalculationsModel.Y4TO_NonCOI = claimsByYear[year4].FirstOrDefault().TurnoverNonCOI;
-            claimsCalculationsModel.Y5TO_NonCOI = claimsByYear[year5].FirstOrDefault().TurnoverNonCOI;
+            // turnover non COI
+            claimsCalculationsModel.Y1TO_NonCOI = claimsByYear[year1].FirstOrDefault()?.TurnoverNonCOI ?? 0;
+            claimsCalculationsModel.Y2TO_NonCOI = claimsByYear[year2].FirstOrDefault()?.TurnoverNonCOI ?? 0;
+            claimsCalculationsModel.Y3TO_NonCOI = claimsByYear[year3].FirstOrDefault()?.TurnoverNonCOI ?? 0;
 
             claimsCalculationsModel.ThreeY_TO_NonCOI = claimsCalculationsModel.Y1TO_NonCOI + claimsCalculationsModel.Y2TO_NonCOI + claimsCalculationsModel.Y3TO_NonCOI;
+
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4TO_NonCOI = claimsByYear[year4].FirstOrDefault()?.TurnoverNonCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y4TO_NonCOI = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5TO_NonCOI = claimsByYear[year5].FirstOrDefault()?.TurnoverNonCOI ?? 0;
+            }
+            else { claimsCalculationsModel.Y5TO_NonCOI = 0; }
+
             claimsCalculationsModel.FiveY_TO_NonCOI = claimsCalculationsModel.ThreeY_TO_NonCOI + claimsCalculationsModel.Y4TO_NonCOI + claimsCalculationsModel.Y5TO_NonCOI;
 
             // Utlisation rate is hardcoded in claimsCalculationsModel
 
+            // vehicle years
             claimsCalculationsModel.Y1VYrs = (double)claimsCalculationsModel.Y1RentalDaysNonCOI / 365;
             claimsCalculationsModel.Y2VYrs = (double)claimsCalculationsModel.Y2RentalDaysNonCOI / 365;
             claimsCalculationsModel.Y3VYrs = (double)claimsCalculationsModel.Y3RentalDaysNonCOI / 365;
@@ -137,133 +191,257 @@ namespace CSV_reader.Services
             claimsCalculationsModel.ThreeY_VYrs = claimsCalculationsModel.Y1VYrs + claimsCalculationsModel.Y2VYrs + claimsCalculationsModel.Y3VYrs;
             claimsCalculationsModel.FiveY_VYrs = claimsCalculationsModel.Y1VYrs + claimsCalculationsModel.Y2VYrs + claimsCalculationsModel.Y3VYrs + claimsCalculationsModel.Y4VYrs + claimsCalculationsModel.Y5VYrs;
 
+            // number of claims open
             claimsCalculationsModel.Y1ClaimsOpen = claimsByYear[year1]
                 .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
             claimsCalculationsModel.Y2ClaimsOpen = claimsByYear[year2]
                 .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
             claimsCalculationsModel.Y3ClaimsOpen = claimsByYear[year3]
                 .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
-            claimsCalculationsModel.Y4ClaimsOpen = claimsByYear[year4]
-                .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
-            claimsCalculationsModel.Y5ClaimsOpen = claimsByYear[year5]
-                .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
 
             claimsCalculationsModel.ThreeY_ClaimsOpen = claimsCalculationsModel.Y1ClaimsOpen + claimsCalculationsModel.Y2ClaimsOpen + claimsCalculationsModel.Y3ClaimsOpen;
+
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4ClaimsOpen = claimsByYear[year4]
+                .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+            } else { claimsCalculationsModel.Y4ClaimsOpen = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5ClaimsOpen = claimsByYear[year5]
+                .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+            } else { claimsCalculationsModel.Y5ClaimsOpen = 0; }
+
             claimsCalculationsModel.FiveY_ClaimsOpen = claimsCalculationsModel.ThreeY_ClaimsOpen + claimsCalculationsModel.Y4ClaimsOpen + claimsCalculationsModel.Y5ClaimsOpen;
 
+            // number of claims closed
             claimsCalculationsModel.Y1ClaimsClosed = claimsByYear[year1]
                 .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
             claimsCalculationsModel.Y2ClaimsClosed = claimsByYear[year2]
                 .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
             claimsCalculationsModel.Y3ClaimsClosed = claimsByYear[year3]
                 .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
-            claimsCalculationsModel.Y4ClaimsClosed = claimsByYear[year4]
-                .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
-            claimsCalculationsModel.Y5ClaimsClosed = claimsByYear[year5]
-                .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
 
             claimsCalculationsModel.ThreeY_ClaimsClo = claimsCalculationsModel.Y1ClaimsClosed + claimsCalculationsModel.Y2ClaimsClosed + claimsCalculationsModel.Y3ClaimsClosed;
+
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4ClaimsClosed = claimsByYear[year4]
+                .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+            }
+            else { claimsCalculationsModel.Y4ClaimsClosed = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5ClaimsClosed = claimsByYear[year5]
+                .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+            } else { claimsCalculationsModel.Y5ClaimsClosed = 0; }
+
             claimsCalculationsModel.FiveY_ClaimsClo = claimsCalculationsModel.ThreeY_ClaimsClo + claimsCalculationsModel.Y4ClaimsClosed + claimsCalculationsModel.Y5ClaimsClosed;
 
+            // AD paid
             claimsCalculationsModel.Y1ADPaid = claimsByYear[year1].Sum(claim => claim.AD_Paid);
             claimsCalculationsModel.Y2ADPaid = claimsByYear[year2].Sum(claim => claim.AD_Paid);
             claimsCalculationsModel.Y3ADPaid = claimsByYear[year3].Sum(claim => claim.AD_Paid);
-            claimsCalculationsModel.Y4ADPaid = claimsByYear[year4].Sum(claim => claim.AD_Paid);
-            claimsCalculationsModel.Y5ADPaid = claimsByYear[year5].Sum(claim => claim.AD_Paid);
 
             claimsCalculationsModel.ThreeY_ADPaid = claimsCalculationsModel.Y1ADPaid + claimsCalculationsModel.Y2ADPaid + claimsCalculationsModel.Y3ADPaid;
+
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4ADPaid = claimsByYear[year4].Sum(claim => claim.AD_Paid);
+            }
+            else { claimsCalculationsModel.Y4ADPaid = 0; }
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5ADPaid = claimsByYear[year5].Sum(claim => claim.AD_Paid);
+            }
+            else { claimsCalculationsModel.Y5ADPaid = 0; }
+
             claimsCalculationsModel.FiveY_ADPaid = claimsCalculationsModel.ThreeY_ADPaid + claimsCalculationsModel.Y4ADPaid + claimsCalculationsModel.Y5ADPaid;
 
+            // FT paid
             claimsCalculationsModel.Y1FTPaid = claimsByYear[year1].Sum(claim => claim.FT_Paid);
             claimsCalculationsModel.Y2FTPaid = claimsByYear[year2].Sum(claim => claim.FT_Paid);
             claimsCalculationsModel.Y3FTPaid = claimsByYear[year3].Sum(claim => claim.FT_Paid);
-            claimsCalculationsModel.Y4FTPaid = claimsByYear[year4].Sum(claim => claim.FT_Paid);
-            claimsCalculationsModel.Y5FTPaid = claimsByYear[year5].Sum(claim => claim.FT_Paid);
 
             claimsCalculationsModel.ThreeY_FTPaid = claimsCalculationsModel.Y1FTPaid + claimsCalculationsModel.Y2FTPaid + claimsCalculationsModel.Y3FTPaid;
+
+            if (year4 != null && claimsByYear.ContainsKey(year4))
+            {
+                claimsCalculationsModel.Y4FTPaid = claimsByYear[year4].Sum(claim => claim.FT_Paid);
+            }
+            else
+            {
+                claimsCalculationsModel.Y4FTPaid = 0;
+            }
+
+            if (year5 != null && claimsByYear.ContainsKey(year5))
+            {
+                claimsCalculationsModel.Y5FTPaid = claimsByYear[year5].Sum(claim => claim.FT_Paid);
+            }
+            else
+            {
+                claimsCalculationsModel.Y5FTPaid = 0;
+            }
+
             claimsCalculationsModel.FiveY_FTPaid = claimsCalculationsModel.ThreeY_FTPaid + claimsCalculationsModel.Y4FTPaid + claimsCalculationsModel.Y5FTPaid;
 
+            // TPPD Paid
             claimsCalculationsModel.Y1TPPD = claimsByYear[year1].Sum(claim => claim.TPPD_Paid);
             claimsCalculationsModel.Y2TPPD = claimsByYear[year2].Sum(claim => claim.TPPD_Paid);
             claimsCalculationsModel.Y3TPPD = claimsByYear[year3].Sum(claim => claim.TPPD_Paid);
-            claimsCalculationsModel.Y4TPPD = claimsByYear[year4].Sum(claim => claim.TPPD_Paid);
-            claimsCalculationsModel.Y5TPPD = claimsByYear[year5].Sum(claim => claim.TPPD_Paid);
 
             claimsCalculationsModel.ThreeY_TPPD = claimsCalculationsModel.Y1TPPD + claimsCalculationsModel.Y2TPPD + claimsCalculationsModel.Y3TPPD;
+
+            claimsCalculationsModel.Y4TPPD = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.TPPD_Paid)
+                : 0;
+
+            claimsCalculationsModel.Y5TPPD = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.TPPD_Paid)
+                : 0;
+
             claimsCalculationsModel.FiveY_TPPD = claimsCalculationsModel.ThreeY_TPPD + claimsCalculationsModel.Y4TPPD + claimsCalculationsModel.Y5TPPD;
 
+            // TPCH Paid
             claimsCalculationsModel.Y1TPCH = claimsByYear[year1].Sum(claim => claim.TPCH_Paid);
             claimsCalculationsModel.Y2TPCH = claimsByYear[year2].Sum(claim => claim.TPCH_Paid);
             claimsCalculationsModel.Y3TPCH = claimsByYear[year3].Sum(claim => claim.TPCH_Paid);
-            claimsCalculationsModel.Y4TPCH = claimsByYear[year4].Sum(claim => claim.TPCH_Paid);
-            claimsCalculationsModel.Y5TPCH = claimsByYear[year5].Sum(claim => claim.TPCH_Paid);
 
             claimsCalculationsModel.ThreeY_TPCH = claimsCalculationsModel.Y1TPCH + claimsCalculationsModel.Y2TPCH + claimsCalculationsModel.Y3TPCH;
+
+            claimsCalculationsModel.Y4TPCH = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.TPCH_Paid)
+                : 0;
+
+            claimsCalculationsModel.Y5TPCH = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.TPCH_Paid)
+                : 0;
+
             claimsCalculationsModel.FiveY_TPCH = claimsCalculationsModel.ThreeY_TPCH + claimsCalculationsModel.Y4TPCH + claimsCalculationsModel.Y5TPCH;
 
+            // TPPI Paid
             claimsCalculationsModel.Y1TPPI = claimsByYear[year1].Sum(claim => claim.TPPI_Paid);
             claimsCalculationsModel.Y2TPPI = claimsByYear[year2].Sum(claim => claim.TPPI_Paid);
             claimsCalculationsModel.Y3TPPI = claimsByYear[year3].Sum(claim => claim.TPPI_Paid);
-            claimsCalculationsModel.Y4TPPI = claimsByYear[year4].Sum(claim => claim.TPPI_Paid);
-            claimsCalculationsModel.Y5TPPI = claimsByYear[year5].Sum(claim => claim.TPPI_Paid);
 
             claimsCalculationsModel.ThreeY_TPPI = claimsCalculationsModel.Y1TPPI + claimsCalculationsModel.Y2TPPI + claimsCalculationsModel.Y3TPPI;
-            claimsCalculationsModel.FiveY_TPCH = claimsCalculationsModel.ThreeY_TPPI + claimsCalculationsModel.Y4TPPI + claimsCalculationsModel.Y5TPPI;
 
+            claimsCalculationsModel.Y4TPPI = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.TPPI_Paid)
+                : 0;
+
+            claimsCalculationsModel.Y5TPPI = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.TPPI_Paid)
+                : 0;
+
+            claimsCalculationsModel.FiveY_TPPI = claimsCalculationsModel.ThreeY_TPPI + claimsCalculationsModel.Y4TPPI + claimsCalculationsModel.Y5TPPI;
+
+            // ADOS
             claimsCalculationsModel.Y1ADOS = claimsByYear[year1].Sum(claim => claim.ADOS);
             claimsCalculationsModel.Y2ADOS = claimsByYear[year2].Sum(claim => claim.ADOS);
             claimsCalculationsModel.Y3ADOS = claimsByYear[year3].Sum(claim => claim.ADOS);
-            claimsCalculationsModel.Y4ADOS = claimsByYear[year4].Sum(claim => claim.ADOS);
-            claimsCalculationsModel.Y5ADOS = claimsByYear[year5].Sum(claim => claim.ADOS);
 
             claimsCalculationsModel.ThreeY_ADOS = claimsCalculationsModel.Y1ADOS + claimsCalculationsModel.Y2ADOS + claimsCalculationsModel.Y3ADOS;
+
+            claimsCalculationsModel.Y4ADOS = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.ADOS)
+                : 0;
+
+            claimsCalculationsModel.Y5ADOS = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.ADOS)
+                : 0;
+
             claimsCalculationsModel.FiveY_ADOS = claimsCalculationsModel.ThreeY_ADOS + claimsCalculationsModel.Y4ADOS + claimsCalculationsModel.Y5ADOS;
 
+            // FTOS
             claimsCalculationsModel.Y1FTOS = claimsByYear[year1].Sum(claim => claim.FTOS);
             claimsCalculationsModel.Y2FTOS = claimsByYear[year2].Sum(claim => claim.FTOS);
             claimsCalculationsModel.Y3FTOS = claimsByYear[year3].Sum(claim => claim.FTOS);
-            claimsCalculationsModel.Y4FTOS = claimsByYear[year4].Sum(claim => claim.FTOS);
-            claimsCalculationsModel.Y5FTOS = claimsByYear[year5].Sum(claim => claim.FTOS);
 
             claimsCalculationsModel.ThreeY_FTOS = claimsCalculationsModel.Y1FTOS + claimsCalculationsModel.Y2FTOS + claimsCalculationsModel.Y3FTOS;
+
+            claimsCalculationsModel.Y4FTOS = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.FTOS)
+                : 0;
+
+            claimsCalculationsModel.Y5FTOS = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.FTOS)
+                : 0;
+
             claimsCalculationsModel.FiveY_FTOS = claimsCalculationsModel.ThreeY_FTOS + claimsCalculationsModel.Y4FTOS + claimsCalculationsModel.Y5FTOS;
 
+            // TPPD_OS
             claimsCalculationsModel.Y1TPPDOS = claimsByYear[year1].Sum(claim => claim.TPPD_OS);
             claimsCalculationsModel.Y2TPPDOS = claimsByYear[year2].Sum(claim => claim.TPPD_OS);
             claimsCalculationsModel.Y3TPPDOS = claimsByYear[year3].Sum(claim => claim.TPPD_OS);
-            claimsCalculationsModel.Y4TPPDOS = claimsByYear[year4].Sum(claim => claim.TPPD_OS);
-            claimsCalculationsModel.Y5TPPDOS = claimsByYear[year5].Sum(claim => claim.TPPD_OS);
 
             claimsCalculationsModel.ThreeY_TPPDOS = claimsCalculationsModel.Y1TPPDOS + claimsCalculationsModel.Y2TPPDOS + claimsCalculationsModel.Y3TPPDOS;
+
+            claimsCalculationsModel.Y4TPPDOS = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.TPPD_OS)
+                : 0;
+
+            claimsCalculationsModel.Y5TPPDOS = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.TPPD_OS)
+                : 0;
+
             claimsCalculationsModel.FiveY_TPPDOS = claimsCalculationsModel.ThreeY_TPPDOS + claimsCalculationsModel.Y4TPPDOS + claimsCalculationsModel.Y5TPPDOS;
 
+            // TPCH_OS
             claimsCalculationsModel.Y1TPCHOS = claimsByYear[year1].Sum(claim => claim.TPCH_OS);
             claimsCalculationsModel.Y2TPCHOS = claimsByYear[year2].Sum(claim => claim.TPCH_OS);
             claimsCalculationsModel.Y3TPCHOS = claimsByYear[year3].Sum(claim => claim.TPCH_OS);
-            claimsCalculationsModel.Y4TPCHOS = claimsByYear[year4].Sum(claim => claim.TPCH_OS);
-            claimsCalculationsModel.Y5TPCHOS = claimsByYear[year5].Sum(claim => claim.TPCH_OS);
 
             claimsCalculationsModel.ThreeY_TPCHOS = claimsCalculationsModel.Y1TPCHOS + claimsCalculationsModel.Y2TPCHOS + claimsCalculationsModel.Y3TPCHOS;
+
+            claimsCalculationsModel.Y4TPCHOS = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(claim => claim.TPCH_OS)
+                : 0;
+
+            claimsCalculationsModel.Y5TPCHOS = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(claim => claim.TPCH_OS)
+                : 0;
+
             claimsCalculationsModel.FiveY_TPCHOS = claimsCalculationsModel.ThreeY_TPCHOS + claimsCalculationsModel.Y4TPCHOS + claimsCalculationsModel.Y5TPCHOS;
 
-            claimsCalculationsModel.Y1TPPIOS = claimsByYear[year1].Sum(claim => claim.TPPI_OS);
-            claimsCalculationsModel.Y2TPPIOS = claimsByYear[year2].Sum(claim => claim.TPPI_OS);
-            claimsCalculationsModel.Y3TPPIOS = claimsByYear[year3].Sum(claim => claim.TPPI_OS);
-            claimsCalculationsModel.Y4TPPIOS = claimsByYear[year4].Sum(claim => claim.TPPI_OS);
-            claimsCalculationsModel.Y5TPPIOS = claimsByYear[year5].Sum(claim => claim.TPPI_OS);
+            // TPPI_OS
+            claimsCalculationsModel.Y1TPPIOS = claimsByYear[year1].Sum(c => c.TPPI_OS);
+            claimsCalculationsModel.Y2TPPIOS = claimsByYear[year2].Sum(c => c.TPPI_OS);
+            claimsCalculationsModel.Y3TPPIOS = claimsByYear[year3].Sum(c => c.TPPI_OS);
 
             claimsCalculationsModel.ThreeY_TPPIOS = claimsCalculationsModel.Y1TPPIOS + claimsCalculationsModel.Y2TPPIOS + claimsCalculationsModel.Y3TPPIOS;
+
+            claimsCalculationsModel.Y4TPPIOS = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(c => c.TPPI_OS)
+                : 0;
+
+            claimsCalculationsModel.Y5TPPIOS = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(c => c.TPPI_OS)
+                : 0;
+
             claimsCalculationsModel.FiveY_TPPIOS = claimsCalculationsModel.ThreeY_TPPIOS + claimsCalculationsModel.Y4TPPIOS + claimsCalculationsModel.Y5TPPIOS;
 
-            claimsCalculationsModel.Y1Total = claimsByYear[year1].Sum(claim => claim.Total);
-            claimsCalculationsModel.Y2Total = claimsByYear[year2].Sum(claim => claim.Total);
-            claimsCalculationsModel.Y3Total = claimsByYear[year3].Sum(claim => claim.Total);
-            claimsCalculationsModel.Y4Total = claimsByYear[year4].Sum(claim => claim.Total);
-            claimsCalculationsModel.Y5Total = claimsByYear[year5].Sum(claim => claim.Total);
+            // Total
+            claimsCalculationsModel.Y1Total = claimsByYear[year1].Sum(c => c.Total);
+            claimsCalculationsModel.Y2Total = claimsByYear[year2].Sum(c => c.Total);
+            claimsCalculationsModel.Y3Total = claimsByYear[year3].Sum(c => c.Total);
 
             claimsCalculationsModel.ThreeY_Total = claimsCalculationsModel.Y1Total + claimsCalculationsModel.Y2Total + claimsCalculationsModel.Y3Total;
+
+            claimsCalculationsModel.Y4Total = (year4 != null && claimsByYear.ContainsKey(year4))
+                ? claimsByYear[year4].Sum(c => c.Total)
+                : 0;
+
+            claimsCalculationsModel.Y5Total = (year5 != null && claimsByYear.ContainsKey(year5))
+                ? claimsByYear[year5].Sum(c => c.Total)
+                : 0;
+
             claimsCalculationsModel.FiveY_Total = claimsCalculationsModel.ThreeY_Total + claimsCalculationsModel.Y4Total + claimsCalculationsModel.Y5Total;
 
+
+
+
+            
 
             // business forecast
 
@@ -1158,6 +1336,8 @@ namespace CSV_reader.Services
 
 
 
+            
+            
             return claimsCalculationsModel;
 
         }
@@ -1348,4 +1528,186 @@ namespace CSV_reader.Services
                 + (claimsCalculationsModel.GrossPremium / 100) * 12; // IPT is 12% of gross premium
 
             claimsCalculationsModel.Levies = claimsCalculationsModel.NetPremium * 0.047;
+*/
+
+
+
+
+// ----------------- HISTORIC YEARS DATA TABLE DATA -----------------------------
+
+/*claimsCalculationsModel.Y1RentalDaysCOI = claimsByYear[year1].FirstOrDefault().RDaysCOI;
+claimsCalculationsModel.Y2RentalDaysCOI = claimsByYear[year2].FirstOrDefault().RDaysCOI;
+claimsCalculationsModel.Y3RentalDaysCOI = claimsByYear[year3].FirstOrDefault().RDaysCOI;
+claimsCalculationsModel.Y4RentalDaysCOI = claimsByYear[year4].FirstOrDefault().RDaysCOI;
+claimsCalculationsModel.Y5RentalDaysCOI = claimsByYear[year5].FirstOrDefault().RDaysCOI;
+
+claimsCalculationsModel.ThreeY_RDaysCOI = claimsCalculationsModel.Y1RentalDaysCOI + claimsCalculationsModel.Y2RentalDaysCOI + claimsCalculationsModel.Y3RentalDaysCOI;
+claimsCalculationsModel.FiveY_RDaysCOI = claimsCalculationsModel.ThreeY_RDaysCOI + claimsCalculationsModel.Y4RentalDaysCOI + claimsCalculationsModel.Y5RentalDaysCOI;
+
+
+claimsCalculationsModel.Y1RentalDaysNonCOI = claimsByYear[year1].FirstOrDefault().RDaysNonCOI;
+claimsCalculationsModel.Y2RentalDaysNonCOI = claimsByYear[year2].FirstOrDefault().RDaysNonCOI;
+claimsCalculationsModel.Y3RentalDaysNonCOI = claimsByYear[year3].FirstOrDefault().RDaysNonCOI;
+claimsCalculationsModel.Y4RentalDaysNonCOI = claimsByYear[year4].FirstOrDefault().RDaysNonCOI;
+claimsCalculationsModel.Y5RentalDaysNonCOI = claimsByYear[year5].FirstOrDefault().RDaysNonCOI;
+
+claimsCalculationsModel.ThreeY_RDaysNonCOI = claimsCalculationsModel.Y1RentalDaysNonCOI + claimsCalculationsModel.Y2RentalDaysNonCOI + claimsCalculationsModel.Y3RentalDaysNonCOI;
+claimsCalculationsModel.FiveY_RDaysNonCOI = claimsCalculationsModel.ThreeY_RDaysNonCOI + claimsCalculationsModel.Y4RentalDaysNonCOI + claimsCalculationsModel.Y5RentalDaysNonCOI;
+
+claimsCalculationsModel.Y1TO_COI = claimsByYear[year1].FirstOrDefault().TurnoverCOI;
+claimsCalculationsModel.Y2TO_COI = claimsByYear[year2].FirstOrDefault().TurnoverCOI;
+claimsCalculationsModel.Y3TO_COI = claimsByYear[year3].FirstOrDefault().TurnoverCOI;
+claimsCalculationsModel.Y4TO_COI = claimsByYear[year4].FirstOrDefault().TurnoverCOI;
+claimsCalculationsModel.Y5TO_COI = claimsByYear[year5].FirstOrDefault().TurnoverCOI;
+
+claimsCalculationsModel.ThreeY_TO_COI = claimsCalculationsModel.Y1TO_COI + claimsCalculationsModel.Y2TO_COI + claimsCalculationsModel.Y3TO_COI;
+claimsCalculationsModel.FiveY_TO_COI = claimsCalculationsModel.ThreeY_TO_COI + claimsCalculationsModel.Y4TO_COI + claimsCalculationsModel.Y5TO_COI;
+
+claimsCalculationsModel.Y1TO_NonCOI = claimsByYear[year1].FirstOrDefault().TurnoverNonCOI;
+claimsCalculationsModel.Y2TO_NonCOI = claimsByYear[year2].FirstOrDefault().TurnoverNonCOI;
+claimsCalculationsModel.Y3TO_NonCOI = claimsByYear[year3].FirstOrDefault().TurnoverNonCOI;
+claimsCalculationsModel.Y4TO_NonCOI = claimsByYear[year4].FirstOrDefault().TurnoverNonCOI;
+claimsCalculationsModel.Y5TO_NonCOI = claimsByYear[year5].FirstOrDefault().TurnoverNonCOI;
+
+claimsCalculationsModel.ThreeY_TO_NonCOI = claimsCalculationsModel.Y1TO_NonCOI + claimsCalculationsModel.Y2TO_NonCOI + claimsCalculationsModel.Y3TO_NonCOI;
+claimsCalculationsModel.FiveY_TO_NonCOI = claimsCalculationsModel.ThreeY_TO_NonCOI + claimsCalculationsModel.Y4TO_NonCOI + claimsCalculationsModel.Y5TO_NonCOI;
+
+// Utlisation rate is hardcoded in claimsCalculationsModel
+
+claimsCalculationsModel.Y1VYrs = (double)claimsCalculationsModel.Y1RentalDaysNonCOI / 365;
+claimsCalculationsModel.Y2VYrs = (double)claimsCalculationsModel.Y2RentalDaysNonCOI / 365;
+claimsCalculationsModel.Y3VYrs = (double)claimsCalculationsModel.Y3RentalDaysNonCOI / 365;
+claimsCalculationsModel.Y4VYrs = (double)claimsCalculationsModel.Y4RentalDaysNonCOI / 365;
+claimsCalculationsModel.Y5VYrs = (double)claimsCalculationsModel.Y5RentalDaysNonCOI / 365;
+
+claimsCalculationsModel.ThreeY_VYrs = claimsCalculationsModel.Y1VYrs + claimsCalculationsModel.Y2VYrs + claimsCalculationsModel.Y3VYrs;
+claimsCalculationsModel.FiveY_VYrs = claimsCalculationsModel.Y1VYrs + claimsCalculationsModel.Y2VYrs + claimsCalculationsModel.Y3VYrs + claimsCalculationsModel.Y4VYrs + claimsCalculationsModel.Y5VYrs;
+
+claimsCalculationsModel.Y1ClaimsOpen = claimsByYear[year1]
+    .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+claimsCalculationsModel.Y2ClaimsOpen = claimsByYear[year2]
+    .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+claimsCalculationsModel.Y3ClaimsOpen = claimsByYear[year3]
+    .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+claimsCalculationsModel.Y4ClaimsOpen = claimsByYear[year4]
+    .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+claimsCalculationsModel.Y5ClaimsOpen = claimsByYear[year5]
+    .Count(claim => claim.Status == "O" || claim.Status == "Opened" || claim.Status == "Active" || claim.Status == "Reopened" || claim.Status == "ACTIVE");
+
+claimsCalculationsModel.ThreeY_ClaimsOpen = claimsCalculationsModel.Y1ClaimsOpen + claimsCalculationsModel.Y2ClaimsOpen + claimsCalculationsModel.Y3ClaimsOpen;
+claimsCalculationsModel.FiveY_ClaimsOpen = claimsCalculationsModel.ThreeY_ClaimsOpen + claimsCalculationsModel.Y4ClaimsOpen + claimsCalculationsModel.Y5ClaimsOpen;
+
+claimsCalculationsModel.Y1ClaimsClosed = claimsByYear[year1]
+    .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+claimsCalculationsModel.Y2ClaimsClosed = claimsByYear[year2]
+    .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+claimsCalculationsModel.Y3ClaimsClosed = claimsByYear[year3]
+    .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+claimsCalculationsModel.Y4ClaimsClosed = claimsByYear[year4]
+    .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+claimsCalculationsModel.Y5ClaimsClosed = claimsByYear[year5]
+    .Count(claim => claim.Status == "S" || claim.Status == "Settled" || claim.Status == "Closed" || claim.Status == "Information Only" || claim.Status == "SETTLED" || claim.Status == "CANCELLED");
+
+claimsCalculationsModel.ThreeY_ClaimsClo = claimsCalculationsModel.Y1ClaimsClosed + claimsCalculationsModel.Y2ClaimsClosed + claimsCalculationsModel.Y3ClaimsClosed;
+claimsCalculationsModel.FiveY_ClaimsClo = claimsCalculationsModel.ThreeY_ClaimsClo + claimsCalculationsModel.Y4ClaimsClosed + claimsCalculationsModel.Y5ClaimsClosed;
+
+claimsCalculationsModel.Y1ADPaid = claimsByYear[year1].Sum(claim => claim.AD_Paid);
+claimsCalculationsModel.Y2ADPaid = claimsByYear[year2].Sum(claim => claim.AD_Paid);
+claimsCalculationsModel.Y3ADPaid = claimsByYear[year3].Sum(claim => claim.AD_Paid);
+claimsCalculationsModel.Y4ADPaid = claimsByYear[year4].Sum(claim => claim.AD_Paid);
+claimsCalculationsModel.Y5ADPaid = claimsByYear[year5].Sum(claim => claim.AD_Paid);
+
+claimsCalculationsModel.ThreeY_ADPaid = claimsCalculationsModel.Y1ADPaid + claimsCalculationsModel.Y2ADPaid + claimsCalculationsModel.Y3ADPaid;
+claimsCalculationsModel.FiveY_ADPaid = claimsCalculationsModel.ThreeY_ADPaid + claimsCalculationsModel.Y4ADPaid + claimsCalculationsModel.Y5ADPaid;
+
+claimsCalculationsModel.Y1FTPaid = claimsByYear[year1].Sum(claim => claim.FT_Paid);
+claimsCalculationsModel.Y2FTPaid = claimsByYear[year2].Sum(claim => claim.FT_Paid);
+claimsCalculationsModel.Y3FTPaid = claimsByYear[year3].Sum(claim => claim.FT_Paid);
+claimsCalculationsModel.Y4FTPaid = claimsByYear[year4].Sum(claim => claim.FT_Paid);
+claimsCalculationsModel.Y5FTPaid = claimsByYear[year5].Sum(claim => claim.FT_Paid);
+
+claimsCalculationsModel.ThreeY_FTPaid = claimsCalculationsModel.Y1FTPaid + claimsCalculationsModel.Y2FTPaid + claimsCalculationsModel.Y3FTPaid;
+claimsCalculationsModel.FiveY_FTPaid = claimsCalculationsModel.ThreeY_FTPaid + claimsCalculationsModel.Y4FTPaid + claimsCalculationsModel.Y5FTPaid;
+
+claimsCalculationsModel.Y1TPPD = claimsByYear[year1].Sum(claim => claim.TPPD_Paid);
+claimsCalculationsModel.Y2TPPD = claimsByYear[year2].Sum(claim => claim.TPPD_Paid);
+claimsCalculationsModel.Y3TPPD = claimsByYear[year3].Sum(claim => claim.TPPD_Paid);
+claimsCalculationsModel.Y4TPPD = claimsByYear[year4].Sum(claim => claim.TPPD_Paid);
+claimsCalculationsModel.Y5TPPD = claimsByYear[year5].Sum(claim => claim.TPPD_Paid);
+
+claimsCalculationsModel.ThreeY_TPPD = claimsCalculationsModel.Y1TPPD + claimsCalculationsModel.Y2TPPD + claimsCalculationsModel.Y3TPPD;
+claimsCalculationsModel.FiveY_TPPD = claimsCalculationsModel.ThreeY_TPPD + claimsCalculationsModel.Y4TPPD + claimsCalculationsModel.Y5TPPD;
+
+claimsCalculationsModel.Y1TPCH = claimsByYear[year1].Sum(claim => claim.TPCH_Paid);
+claimsCalculationsModel.Y2TPCH = claimsByYear[year2].Sum(claim => claim.TPCH_Paid);
+claimsCalculationsModel.Y3TPCH = claimsByYear[year3].Sum(claim => claim.TPCH_Paid);
+claimsCalculationsModel.Y4TPCH = claimsByYear[year4].Sum(claim => claim.TPCH_Paid);
+claimsCalculationsModel.Y5TPCH = claimsByYear[year5].Sum(claim => claim.TPCH_Paid);
+
+claimsCalculationsModel.ThreeY_TPCH = claimsCalculationsModel.Y1TPCH + claimsCalculationsModel.Y2TPCH + claimsCalculationsModel.Y3TPCH;
+claimsCalculationsModel.FiveY_TPCH = claimsCalculationsModel.ThreeY_TPCH + claimsCalculationsModel.Y4TPCH + claimsCalculationsModel.Y5TPCH;
+
+claimsCalculationsModel.Y1TPPI = claimsByYear[year1].Sum(claim => claim.TPPI_Paid);
+claimsCalculationsModel.Y2TPPI = claimsByYear[year2].Sum(claim => claim.TPPI_Paid);
+claimsCalculationsModel.Y3TPPI = claimsByYear[year3].Sum(claim => claim.TPPI_Paid);
+claimsCalculationsModel.Y4TPPI = claimsByYear[year4].Sum(claim => claim.TPPI_Paid);
+claimsCalculationsModel.Y5TPPI = claimsByYear[year5].Sum(claim => claim.TPPI_Paid);
+
+claimsCalculationsModel.ThreeY_TPPI = claimsCalculationsModel.Y1TPPI + claimsCalculationsModel.Y2TPPI + claimsCalculationsModel.Y3TPPI;
+claimsCalculationsModel.FiveY_TPPI = claimsCalculationsModel.ThreeY_TPPI + claimsCalculationsModel.Y4TPPI + claimsCalculationsModel.Y5TPPI;
+
+claimsCalculationsModel.Y1ADOS = claimsByYear[year1].Sum(claim => claim.ADOS);
+claimsCalculationsModel.Y2ADOS = claimsByYear[year2].Sum(claim => claim.ADOS);
+claimsCalculationsModel.Y3ADOS = claimsByYear[year3].Sum(claim => claim.ADOS);
+claimsCalculationsModel.Y4ADOS = claimsByYear[year4].Sum(claim => claim.ADOS);
+claimsCalculationsModel.Y5ADOS = claimsByYear[year5].Sum(claim => claim.ADOS);
+
+claimsCalculationsModel.ThreeY_ADOS = claimsCalculationsModel.Y1ADOS + claimsCalculationsModel.Y2ADOS + claimsCalculationsModel.Y3ADOS;
+claimsCalculationsModel.FiveY_ADOS = claimsCalculationsModel.ThreeY_ADOS + claimsCalculationsModel.Y4ADOS + claimsCalculationsModel.Y5ADOS;
+
+claimsCalculationsModel.Y1FTOS = claimsByYear[year1].Sum(claim => claim.FTOS);
+claimsCalculationsModel.Y2FTOS = claimsByYear[year2].Sum(claim => claim.FTOS);
+claimsCalculationsModel.Y3FTOS = claimsByYear[year3].Sum(claim => claim.FTOS);
+claimsCalculationsModel.Y4FTOS = claimsByYear[year4].Sum(claim => claim.FTOS);
+claimsCalculationsModel.Y5FTOS = claimsByYear[year5].Sum(claim => claim.FTOS);
+
+claimsCalculationsModel.ThreeY_FTOS = claimsCalculationsModel.Y1FTOS + claimsCalculationsModel.Y2FTOS + claimsCalculationsModel.Y3FTOS;
+claimsCalculationsModel.FiveY_FTOS = claimsCalculationsModel.ThreeY_FTOS + claimsCalculationsModel.Y4FTOS + claimsCalculationsModel.Y5FTOS;
+
+claimsCalculationsModel.Y1TPPDOS = claimsByYear[year1].Sum(claim => claim.TPPD_OS);
+claimsCalculationsModel.Y2TPPDOS = claimsByYear[year2].Sum(claim => claim.TPPD_OS);
+claimsCalculationsModel.Y3TPPDOS = claimsByYear[year3].Sum(claim => claim.TPPD_OS);
+claimsCalculationsModel.Y4TPPDOS = claimsByYear[year4].Sum(claim => claim.TPPD_OS);
+claimsCalculationsModel.Y5TPPDOS = claimsByYear[year5].Sum(claim => claim.TPPD_OS);
+
+claimsCalculationsModel.ThreeY_TPPDOS = claimsCalculationsModel.Y1TPPDOS + claimsCalculationsModel.Y2TPPDOS + claimsCalculationsModel.Y3TPPDOS;
+claimsCalculationsModel.FiveY_TPPDOS = claimsCalculationsModel.ThreeY_TPPDOS + claimsCalculationsModel.Y4TPPDOS + claimsCalculationsModel.Y5TPPDOS;
+
+claimsCalculationsModel.Y1TPCHOS = claimsByYear[year1].Sum(claim => claim.TPCH_OS);
+claimsCalculationsModel.Y2TPCHOS = claimsByYear[year2].Sum(claim => claim.TPCH_OS);
+claimsCalculationsModel.Y3TPCHOS = claimsByYear[year3].Sum(claim => claim.TPCH_OS);
+claimsCalculationsModel.Y4TPCHOS = claimsByYear[year4].Sum(claim => claim.TPCH_OS);
+claimsCalculationsModel.Y5TPCHOS = claimsByYear[year5].Sum(claim => claim.TPCH_OS);
+
+claimsCalculationsModel.ThreeY_TPCHOS = claimsCalculationsModel.Y1TPCHOS + claimsCalculationsModel.Y2TPCHOS + claimsCalculationsModel.Y3TPCHOS;
+claimsCalculationsModel.FiveY_TPCHOS = claimsCalculationsModel.ThreeY_TPCHOS + claimsCalculationsModel.Y4TPCHOS + claimsCalculationsModel.Y5TPCHOS;
+
+claimsCalculationsModel.Y1TPPIOS = claimsByYear[year1].Sum(claim => claim.TPPI_OS);
+claimsCalculationsModel.Y2TPPIOS = claimsByYear[year2].Sum(claim => claim.TPPI_OS);
+claimsCalculationsModel.Y3TPPIOS = claimsByYear[year3].Sum(claim => claim.TPPI_OS);
+claimsCalculationsModel.Y4TPPIOS = claimsByYear[year4].Sum(claim => claim.TPPI_OS);
+claimsCalculationsModel.Y5TPPIOS = claimsByYear[year5].Sum(claim => claim.TPPI_OS);
+
+claimsCalculationsModel.ThreeY_TPPIOS = claimsCalculationsModel.Y1TPPIOS + claimsCalculationsModel.Y2TPPIOS + claimsCalculationsModel.Y3TPPIOS;
+claimsCalculationsModel.FiveY_TPPIOS = claimsCalculationsModel.ThreeY_TPPIOS + claimsCalculationsModel.Y4TPPIOS + claimsCalculationsModel.Y5TPPIOS;
+
+claimsCalculationsModel.Y1Total = claimsByYear[year1].Sum(claim => claim.Total);
+claimsCalculationsModel.Y2Total = claimsByYear[year2].Sum(claim => claim.Total);
+claimsCalculationsModel.Y3Total = claimsByYear[year3].Sum(claim => claim.Total);
+claimsCalculationsModel.Y4Total = claimsByYear[year4].Sum(claim => claim.Total);
+claimsCalculationsModel.Y5Total = claimsByYear[year5].Sum(claim => claim.Total);
+
+claimsCalculationsModel.ThreeY_Total = claimsCalculationsModel.Y1Total + claimsCalculationsModel.Y2Total + claimsCalculationsModel.Y3Total;
+claimsCalculationsModel.FiveY_Total = claimsCalculationsModel.ThreeY_Total + claimsCalculationsModel.Y4Total + claimsCalculationsModel.Y5Total;
+
 */

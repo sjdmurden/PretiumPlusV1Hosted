@@ -36,6 +36,8 @@ namespace CSV_reader.Controllers
             return View(new LoginViewModel());
         }
 
+        
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel viewModel)
         {
@@ -54,15 +56,14 @@ namespace CSV_reader.Controllers
             // Redirect based on user type for futrue
             // return user.UserType == 1 ? RedirectToAction("AdminDashboard") : RedirectToAction("UserDashboard");
 
-            // Create claims for the logged-in user
 
+
+            // Create claims for the logged-in user
             /*
             Claims – user login authentication
 
             A claim is a key - value pair that represents specific information about a user. In claims-based authentication, claims are used to store user-related information, like their email, role, or permissions. Unlike session variables, claims are part of the user’s identity and can be automatically verified with each request to validate and authorise the user’s access to certain parts of the application.
             */
-
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserEmail),

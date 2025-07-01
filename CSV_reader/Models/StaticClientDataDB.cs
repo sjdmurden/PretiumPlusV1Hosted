@@ -3,8 +3,10 @@
     public class StaticClientDataDB
     {
         public int Id { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string UserEmail { get; set; }
         public string BatchId { get; set; }
-
+        public string ClientName { get; set; }
         
         
 

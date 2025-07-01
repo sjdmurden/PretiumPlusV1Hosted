@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace CSV_reader.Migrations
 {
     /// <inheritdoc />
-    public partial class create_indivClaimDataDB_and_staticData_tables : Migration
+    public partial class create_indivClaim_and_static_tables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,6 +17,8 @@ namespace CSV_reader.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BatchId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PolicyYear = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -55,7 +58,10 @@ namespace CSV_reader.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BatchId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ForecastTO_COI = table.Column<double>(type: "float", nullable: false),
                     ForecastTO_NonCOI = table.Column<double>(type: "float", nullable: false),
                     ForecastDaysCOI = table.Column<int>(type: "int", nullable: false),

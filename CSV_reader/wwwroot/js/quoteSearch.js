@@ -34,7 +34,7 @@
                 console.log(`/Calculations/IndexCalculationsPlusClaims?${params.toString()}`);
 
 
-                // Redirect the user to the IndexCalculations action method
+                // Redirect the user to the IndexCalculationsPlusClaims2 action method
                 window.location.href = `/Calculations/IndexCalculationsPlusClaims2?${params.toString()}`;
             } else {
                

@@ -99,12 +99,16 @@ namespace CSV_reader.Controllers
         [HttpPost]
         public IActionResult ImportClaims(ClaimsViewModel viewModel)
         {
+
+            string userEmail = User.Identity!.Name!;
+
             string excelFilePath = _excelFileService.GetExcelFilePath();
 
             var claimsData = _claimsService.ReadClaimsExcel(excelFilePath);
-            string batchId = _claimsService.SaveClaimsToDatabase(claimsData, viewModel.InputModel);
+            string batchId = _claimsService.SaveClaimsToDatabase(claimsData, viewModel.InputModel, userEmail);
 
-
+            // just before loading the view, delete the file from the uploads folder
+            _excelFileService.DeleteFileByPath(excelFilePath);
 
             // Redirect page
             return RedirectToAction("IndexCalculationsPlusClaims2", "Calculations", new
@@ -113,9 +117,8 @@ namespace CSV_reader.Controllers
                 selectedNumOfMonths = "12",
                 projYears = "3",
                 chargeCOIFee = "Yes",
-                pricingMetric = "1",
+                pricingMetric = "CCPVY",
                 priceBy = "Experience",
-                isFiltered = "false",
             });
 
             
@@ -123,7 +126,7 @@ namespace CSV_reader.Controllers
 
 
 
-        [HttpPost]
+        /*[HttpPost]
         public IActionResult SaveClientDetails(ClaimsViewModel viewModel)
         {
             string excelFilePath = _excelFileService.GetExcelFilePath();
@@ -372,7 +375,7 @@ namespace CSV_reader.Controllers
                 .ErrorMessage ?? "An unknown validation error occured.";
 
             return View("Index", viewModel);
-        }
+        }*/
 
 
 

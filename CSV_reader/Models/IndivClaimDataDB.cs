@@ -3,6 +3,8 @@
     public class IndivClaimDataDB
     {
         public int Id { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string UserEmail { get; set; }
 
         // Unique identifier for each uploaded file - each batch of claims will have this Id
         public string BatchId { get; set; }
