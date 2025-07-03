@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string UserEmail { get; set; }
-        public string BatchId { get; set; }
-        public string ClientName { get; set; }
+        public string UserEmail { get; set; } = string.Empty;
+        public string BatchId { get; set; } = string.Empty;
+        public string ClientName { get; set; } = string.Empty;
         
         
 
@@ -20,10 +20,10 @@
         public int MinibusNums { get; set; }
         public int HGVNums { get; set; }
 
-        public string ClientCoverType { get; set; }
+        public string ClientCoverType { get; set; } = string.Empty;
         public double ClientExcess { get; set; }
-        public string ClientStartDate { get; set; }
-        public string ClientEndDate { get; set; }
+        public string ClientStartDate { get; set; } = string.Empty;
+        public string ClientEndDate { get; set; } = string.Empty;       
 
         public double ClientCarLLL { get; set; }
         public double ClientVanLLL { get; set; }

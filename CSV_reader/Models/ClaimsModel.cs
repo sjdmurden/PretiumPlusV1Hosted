@@ -5,21 +5,21 @@ namespace CSV_reader.Models
     public class ClaimsModel
     {
         //public string YearNameCol { get; set; }
-        public string ClientNameCol { get; set; }
-        public string PolicyYearCol { get; set; } //Column1
-        public string ClaimReferenceCol { get; set; }
-        public string LossDateCol { get; set; }
-        public string ReportedDateCol { get; set; }
-        public string RegCol { get; set; }
-        public string MakeCol { get; set; }
-        public string ModelCol { get; set; }
-        public string VehicleTypeCol { get; set; }
-        public string IncidentTypeCol { get; set; }
+        public string ClientNameCol { get; set; } = string.Empty;
+        public string PolicyYearCol { get; set; } = string.Empty; //Column1
+        public string ClaimReferenceCol { get; set; } = string.Empty;
+        public string LossDateCol { get; set; } = string.Empty;
+        public string ReportedDateCol { get; set; } = string.Empty;
+        public string RegCol { get; set; } = string.Empty;
+        public string MakeCol { get; set; } = string.Empty;
+        public string ModelCol { get; set; } = string.Empty;
+        public string VehicleTypeCol { get; set; } = string.Empty;
+        public string IncidentTypeCol { get; set; } = string.Empty;
         public int RentalDaysCOICol { get; set; }
         public int RentalDaysNonCOICol { get; set; }
         public double TurnoverCOICol { get; set; }
         public double TurnoverNonCOICol { get; set; }
-        public string StatusCol { get; set; } //Column11
+        public string StatusCol { get; set; } = string.Empty; //Column11
         public double AD_PaidCol { get; set; } //Column12
         public double FT_PaidCol { get; set; } //Column13
         public double TPPD_PaidCol { get; set; } //Column14
@@ -49,8 +49,8 @@ namespace CSV_reader.Models
     public class PolicyYearSummary
     {
         //public string YearName { get; set; }
-        public string PolicyYearName { get; set; }
-        public string ClientName { get; set; }
+        public string PolicyYearName { get; set; } = string.Empty;
+        public string ClientName { get; set; } = string.Empty;  
         public int RentalDaysCOI { get; set; }
         public int RentalDaysNonCOI { get; set; }
         public double TurnoverCOI { get; set; }

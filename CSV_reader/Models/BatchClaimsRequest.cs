@@ -2,12 +2,12 @@
 {
     public class BatchClaimsRequest
     {
-        public string BatchId { get; set; }
-        public string SelectedNumOfMonths { get; set; }
-        public string ProjYears { get; set; }
-        public string ChargeCOIFee { get; set; }
-        public string PricingMetric { get; set; }
-        public string PriceBy { get; set; }
-        public List<string> SelectedClaims { get; set; }
+        public string BatchId { get; set; } = string.Empty;
+        public string SelectedNumOfMonths { get; set; } = string.Empty;
+        public string ProjYears { get; set; } = string.Empty;
+        public string ChargeCOIFee { get; set; } = string.Empty;
+        public string PricingMetric { get; set; } = string.Empty;
+        public string PriceBy { get; set; } = string.Empty; 
+        public List<string> SelectedClaims { get; set; } = new List<string>();
     }
 }

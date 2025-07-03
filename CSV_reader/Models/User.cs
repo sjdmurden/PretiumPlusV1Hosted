@@ -8,7 +8,7 @@ namespace CSV_reader.Models
 
         [Required]
         [MaxLength(100)]
-        public string UserEmail { get; set; }  // unique login name
+        public string UserEmail { get; set; } = string.Empty;  // unique login name
 
         /*[Required]
         [MaxLength(100)]
@@ -16,7 +16,7 @@ namespace CSV_reader.Models
 
         [Required]
         [MaxLength(255)]
-        public string UserPassword { get; set; }
+        public string UserPassword { get; set; } = string.Empty;
         public int UserType { get; set; } // 1 = admin, 2 = user
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         /*public bool IsEmailVerified { get; set; }  // Track verification status

@@ -7,7 +7,7 @@ namespace CSV_reader.Models
     {
         //public string QuoteNumber { get; set; }
         [Required(ErrorMessage = "Client Name is required.")]
-        public string SelectedCoverType { get; set; }
+        public string SelectedCoverType { get; set; } = string.Empty;
         public List<SelectListItem> CoverTypes { get; set; } = new List<SelectListItem>();
         public double Excess { get; set; }
 
@@ -32,7 +32,7 @@ namespace CSV_reader.Models
         public double HGVExp { get; set; }*/
         //public double ExpPercentage { get; set; }
 
-        public string SelectedPercentage { get; set; }
+        public string SelectedPercentage { get; set; } = string.Empty;
 
         //public string ClientName { get; set; }
         //public List<SelectListItem> ClientNames { get; set; } = new List<SelectListItem>();

@@ -5,10 +5,10 @@
         // client details page
         public int Id { get; set; }
         //public string QuoteNumber { get; set; }
-        public string ClientName { get; set; }
-        public string CoverType { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
+        public string ClientName { get; set; } = string.Empty;
+        public string CoverType { get; set; } = string.Empty;
+        public string StartDate { get; set; } = string.Empty;
+        public string EndDate { get; set; } = string.Empty;
         public double Excess { get; set; }
         public int CarNums { get; set; } = 0;
         public int VanNums { get; set; } = 0;

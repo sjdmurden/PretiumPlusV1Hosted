@@ -367,26 +367,26 @@ namespace CSV_reader.Models
 
     public class CalculationsYearsData
     {
-        public string Label { get; set; } = "";
-        public string Year1 { get; set; }
-        public string Year2 { get; set; }
-        public string Year3 { get; set; }
-        public string Year4 { get; set; }
-        public string Year5 { get; set; }
-        public string ThreeYearTotal { get; set; }
-        public string FiveYearTotal { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public string Year1 { get; set; } = string.Empty;   
+        public string Year2 { get; set; } = string.Empty;
+        public string Year3 { get; set; } = string.Empty;
+        public string Year4 { get; set; } = string.Empty;
+        public string Year5 { get; set; } = string.Empty;
+        public string ThreeYearTotal { get; set; } = string.Empty;
+        public string FiveYearTotal { get; set; } = string.Empty;
     }
 
     public class CalculationsYearsDataInflated
     {
-        public string Label { get; set; } = "";
-        public string Year1 { get; set; }
-        public string Year2 { get; set; }
-        public string Year3 { get; set; }
-        public string Year4 { get; set; }
-        public string Year5 { get; set; }
-        public string ThreeYearAverage { get; set; }
-        public string FiveYearAverage { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public string Year1 { get; set; } = string.Empty;
+        public string Year2 { get; set; } = string.Empty;
+        public string Year3 { get; set; } = string.Empty;
+        public string Year4 { get; set; } = string.Empty;
+        public string Year5 { get; set; } = string.Empty;
+        public string ThreeYearAverage { get; set; } = string.Empty;
+        public string FiveYearAverage { get; set; } = string.Empty;
     }
 }
 
