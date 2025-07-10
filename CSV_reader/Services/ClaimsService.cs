@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
-using CSV_reader.Configurations;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -74,8 +73,14 @@ namespace CSV_reader.Services
 
                 // get the headers row of the excel worksheet
                 var daysSheetHeaderRow = daysWorksheet.FirstRowUsed();
+                if (daysSheetHeaderRow == null)
+                {
+                    throw new InvalidDataException("The 'ImportDays' worksheet is empty or missing headers.");
+                }
                 // create a list of these headers
-                var daysSheetHeaders = daysSheetHeaderRow.Cells().Select(c => c.GetValue<string>().Trim()).ToList();               
+                var daysSheetHeaders = daysSheetHeaderRow.Cells()
+                    .Select(c => c.GetValue<string>().Trim())
+                    .ToList();               
 
                 // get the column number based on the index of the list + 1.
                 // these numbers will be used when using Cell()
@@ -102,6 +107,10 @@ namespace CSV_reader.Services
                 // ------------- TURNOVER WORKSHEET ---------------------
 
                 var turnoverSheetHeadersRow = turnoverWorksheet.FirstRowUsed();
+                if (turnoverSheetHeadersRow == null)
+                {
+                    throw new InvalidDataException("The 'ImportTurnover' worksheet is empty or missing headers.");
+                }
                 var turnoverSheetHeaders = turnoverSheetHeadersRow.Cells().Select(c => c.GetValue<string>().Trim()).ToList();
 
                 int turnoverSheetPolicyYearCol = turnoverSheetHeaders.IndexOf("PolicyYear") + 1;
@@ -124,6 +133,10 @@ namespace CSV_reader.Services
                 // ------------- VEHICLES WORKSHEET ---------------------
 
                 var vehiclesSheetHeadersRow = vehiclesWorksheet.FirstRowUsed();
+                if (vehiclesSheetHeadersRow == null)
+                {
+                    throw new InvalidDataException("The 'ImportVehicles' worksheet is empty or missing headers.");
+                }
                 var vehiclesSheetHeaders = vehiclesSheetHeadersRow.Cells().Select(c => c.GetValue<string>().Trim()).ToList();
 
                 int vehiclesSheetClientNameCol = vehiclesSheetHeaders.IndexOf("ClientName") + 1;
@@ -147,6 +160,10 @@ namespace CSV_reader.Services
                 // ------------- FORECAST WORKSHEET ---------------------
 
                 var forecastSheetHeadersRow = forecastWorksheet.FirstRowUsed();
+                if (forecastSheetHeadersRow == null)
+                {
+                    throw new InvalidDataException("The 'ImportForecast' worksheet is empty or missing headers.");
+                }
                 var forecastSheetHeaders = forecastSheetHeadersRow.Cells().Select(c => c.GetValue<string>().Trim()).ToList();
 
                 int forecastSheetClientNameCol = forecastSheetHeaders.IndexOf("ClientName") + 1;
@@ -170,6 +187,10 @@ namespace CSV_reader.Services
                 // ------------- CLAIMS WORKSHEET ---------------------
 
                 var claimsSheetHeadersRow = claimsWorksheet.FirstRowUsed();
+                if (claimsSheetHeadersRow == null)
+                {
+                    throw new InvalidDataException("The 'ImportClaims' worksheet is empty or missing headers.");
+                }
                 var claimsSheetHeaders = claimsSheetHeadersRow.Cells().Select(c => c.GetValue<string>().Trim()).ToList();
 
                 int claimsSheetPolicyYearCol = claimsSheetHeaders.IndexOf("PolicyYear") + 1;
@@ -363,8 +384,8 @@ namespace CSV_reader.Services
                 // data from input model:
                 ClientCoverType = inputModel.SelectedCoverType,
                 ClientExcess = inputModel.Excess,
-                ClientStartDate = inputModel.StartDate?.ToString("yyyy-MM-dd"),
-                ClientEndDate = inputModel.EndDate?.ToString("yyyy-MM-dd"),
+                ClientStartDate = inputModel.StartDate?.ToString("yyyy-MM-dd") ?? "N/A",
+                ClientEndDate = inputModel.EndDate?.ToString("yyyy-MM-dd") ?? "N/A",
 
                 ClientCarLLL = inputModel.CarLLL,
                 ClientVanLLL = inputModel.VanLLL,
@@ -437,8 +458,8 @@ namespace CSV_reader.Services
                 // data from input model:
                 ClientCoverType = inputModel.SelectedCoverType,
                 ClientExcess = inputModel.Excess,
-                ClientStartDate = inputModel.StartDate?.ToString("yyyy-MM-dd"),
-                ClientEndDate = inputModel.EndDate?.ToString("yyyy-MM-dd"),
+                ClientStartDate = inputModel.StartDate?.ToString("yyyy-MM-dd") ?? "N/A",
+                ClientEndDate = inputModel.EndDate?.ToString("yyyy-MM-dd") ?? "N/A",
 
                 ClientCarLLL = inputModel.CarLLL,
                 ClientVanLLL = inputModel.VanLLL,
@@ -564,8 +585,20 @@ namespace CSV_reader.Services
                 .ToList();  //having it as a list makes the summaries to be accessable by index
 
             var year1Data = recentYears.ElementAtOrDefault(0);
+            if (year1Data == null)
+            {
+                throw new InvalidDataException("Insufficient data: At least one year of policy data is required to proceed.");
+            }
             var year2Data = recentYears.ElementAtOrDefault(1);
+            if (year2Data == null)
+            {
+                throw new InvalidDataException("Insufficient data: At least two years of policy data is required to proceed.");
+            }
             var year3Data = recentYears.ElementAtOrDefault(2);
+            if (year3Data == null)
+            {
+                throw new InvalidDataException("Insufficient data: At least three years of policy data is required to proceed.");
+            }
             var year4Data = recentYears.Count > 3 ? recentYears[3] : new PolicyYearSummary();
             var year5Data = recentYears.Count > 4 ? recentYears[4] : new PolicyYearSummary();
 

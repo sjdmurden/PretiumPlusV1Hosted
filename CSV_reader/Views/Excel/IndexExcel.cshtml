@@ -22,7 +22,7 @@
 
     
 
-    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header" @* style="background: #334155;" *@>
+    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header" >
 
         <div class="flex items-center">
             <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
@@ -45,7 +45,7 @@
                         <a asp-controller="Profile"
                            asp-action="AdminProfileIndex"
                            style="color: #e0e0e0;">
-                            @User.Identity.Name
+                            @(User.Identity?.Name ?? "Unknown User")
                         </a>
                     }
                     else
@@ -53,7 +53,7 @@
                         <a asp-controller="Profile"
                            asp-action="ProfileIndex"
                            style="color: #e0e0e0;">
-                            @User.Identity.Name
+                            @(User.Identity?.Name ?? "Unknown User")
                         </a>
                     }
                 </div>

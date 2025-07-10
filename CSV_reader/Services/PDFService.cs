@@ -3,14 +3,8 @@ using CSV_reader.Services;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using CSV_reader.Models;
-using CSV_reader.ViewModels;
-using CSV_reader.database;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json.Linq;
-using DocumentFormat.OpenXml.Bibliography;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 
 namespace CSV_reader.Services
@@ -65,11 +59,11 @@ namespace CSV_reader.Services
             var clientName = _appContext.ClaimsTable
                         .Where(c => c.BatchId == batchId)
                         .Select(c => c.ClientName)
-                        .FirstOrDefault();
+                        .FirstOrDefault() ?? "Unknown Client";
             var clientStartDate = _appContext.ClaimsTable
                         .Where(c => c.BatchId == batchId)
                         .Select(c => c.ClientStartDate)
-                        .FirstOrDefault();
+                        .FirstOrDefault() ?? "Unknown Start Date";
             var clientEndDate = _appContext.ClaimsTable
                         .Where(c => c.BatchId == batchId)
                         .Select(c => c.ClientEndDate)
@@ -77,7 +71,7 @@ namespace CSV_reader.Services
             var clientCoverType = _appContext.ClaimsTable
                         .Where(c => c.BatchId == batchId)
                         .Select(c => c.ClientCoverType)
-                        .FirstOrDefault();
+                        .FirstOrDefault() ?? "Unknown Cover Type";
             var clientExcess = _appContext.ClaimsTable
                         .Where(c => c.BatchId == batchId)
                         .Select(c => c.ClientExcess)
@@ -119,9 +113,20 @@ namespace CSV_reader.Services
             var json = System.IO.File.ReadAllText(jsonFilePath);
             var jsonObj = JObject.Parse(json);
 
-            var clientAddress = jsonObj[clientName]["Address"].ToString();
-            var clientRegNum = jsonObj[clientName]["RegistrationNum"].ToString();
-            var clientVATNum = jsonObj[clientName]["VATNum"].ToString();
+            string clientAddress = "Unknown Address";
+            string clientRegNum = "Unknown Registration Number";
+            string clientVATNum = "Unknown VAT Number";
+            // the following checks if the client name is not null or empty
+            // then after the &&, we try to get a value from the jsonObj dictionary using the clientName key. 
+            // In this case the JToken will hold the JObject of Address, RegNum and VatNum
+            // This is then assigned to the clientObject variable
+            if (!string.IsNullOrEmpty(clientName) && jsonObj.TryGetValue(clientName, out JToken? clientObject))
+            {
+                clientAddress = clientObject["Address"]?.ToString() ?? "Unknown Address";
+                clientRegNum = clientObject["RegistrationNum"]?.ToString() ?? "Unknown Registration Number";
+                clientVATNum = clientObject["VATNum"]?.ToString() ?? "Unknown VAT Number";
+            }
+
 
             var pretiumLogo = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "pretium+nobackground.png");
 
@@ -167,7 +172,11 @@ namespace CSV_reader.Services
                                     .Bold()
                                     .FontColor(QuestPDF.Helpers.Colors.Blue.Medium);
 
-                                column.Item().Height(40).AlignRight().Image(logoBytes, ImageScaling.FitArea);
+                                column.Item()
+                                    .Height(40)
+                                    .AlignRight()
+                                    .Image(Image.FromBinaryData(logoBytes))
+                                    .FitArea();
                             });
                         });
 
@@ -180,39 +189,6 @@ namespace CSV_reader.Services
                     page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
                     {                       
 
-                        
-
-                        // Client Details Card
-                   /*     column.Item().PaddingVertical(15).Background(QuestPDF.Helpers.Colors.Blue.Lighten4).Padding(15)
-                            .Column(card =>
-                            {
-                                card.Item().Text("Client Details")
-                                    .FontSize(14).Bold().FontColor(QuestPDF.Helpers.Colors.Blue.Darken4);
-
-                                card.Item().Table(table =>
-                                {
-                                    table.ColumnsDefinition(columns =>
-                                    {
-                                        columns.RelativeColumn();
-                                        columns.RelativeColumn();
-                                    });
-
-                                    table.Cell().PaddingVertical(6).Background(QuestPDF.Helpers.Colors.White).Text("Company Name").SemiBold();
-                                    table.Cell().PaddingVertical(6).Background(QuestPDF.Helpers.Colors.White).Text(clientName);
-
-                                    table.Cell().PaddingVertical(6).Text("Company Address").SemiBold();
-                                    table.Cell().PaddingVertical(6).Text(clientAddress);
-
-                                    table.Cell().PaddingVertical(6).Background(QuestPDF.Helpers.Colors.White).Text("Registration Number").SemiBold();
-                                    table.Cell().PaddingVertical(6).Background(QuestPDF.Helpers.Colors.White).Text(clientRegNum);
-
-                                    table.Cell().PaddingVertical(6).Text("VAT Number").SemiBold();
-                                    table.Cell().PaddingVertical(6).Text(clientVATNum);
-
-                                    table.Cell().PaddingVertical(6).Background(QuestPDF.Helpers.Colors.White).Text("Contact Details").SemiBold();
-                                    table.Cell().PaddingVertical(6).Background(QuestPDF.Helpers.Colors.White).Text("Dean M - 07436 423050 - alec.mason@gmail.com");
-                                });
-                            });*/
 
                         // Client Details Card
                         column.Item().PaddingVertical(15)

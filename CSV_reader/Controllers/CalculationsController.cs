@@ -20,7 +20,7 @@ namespace CSV_reader.Controllers
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ApplicationContext _appContext;
-        private readonly IGetHistoricDataForQuoteSearchService _getHistoricDataForQuoteSearchService;
+        //private readonly IGetHistoricDataForQuoteSearchService _getHistoricDataForQuoteSearchService;
         private readonly IExcelFileService _excelFileService;
         private readonly IClaimsCalculationsService _claimsCalculationsService;
 
@@ -30,7 +30,7 @@ namespace CSV_reader.Controllers
             IConfiguration configuration, 
             IWebHostEnvironment webHostEnvironment, 
             ApplicationContext appContext, 
-            IGetHistoricDataForQuoteSearchService getHistoricDataForQuoteSearchService, 
+            //IGetHistoricDataForQuoteSearchService getHistoricDataForQuoteSearchService, 
             IExcelFileService excelFileService, 
             IClaimsCalculationsService claimsCalculationsService)
         {
@@ -39,7 +39,7 @@ namespace CSV_reader.Controllers
             _configuration = configuration;
             _webHostEnvironment = webHostEnvironment;
             _appContext = appContext;
-            _getHistoricDataForQuoteSearchService = getHistoricDataForQuoteSearchService;
+            //_getHistoricDataForQuoteSearchService = getHistoricDataForQuoteSearchService;
             _excelFileService = excelFileService;
             _claimsCalculationsService = claimsCalculationsService;
         }

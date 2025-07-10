@@ -29,7 +29,7 @@ namespace CSV_reader.Controllers
         public IActionResult Login()
         {
             // If user still authenticated, redirect to Excel file uploader page
-            if (User.Identity.IsAuthenticated)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("IndexExcel", "Excel");
             }

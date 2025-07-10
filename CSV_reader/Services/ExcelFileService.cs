@@ -44,9 +44,9 @@ namespace CSV_reader.Services
         }
 
         // Retrieves the current ExcelFilePath from the cache as a string
-        public string GetExcelFilePath()
+        public string? GetExcelFilePath()
         {
-            return _memoryCache.TryGetValue(CacheKey, out string filePath)
+            return _memoryCache!.TryGetValue(CacheKey, out string? filePath)
                     ? filePath
                     : "No file path set.";
         }

@@ -7,7 +7,6 @@ using ClosedXML.Excel;
 using CSV_reader.Services;
 using CSV_reader.database;
 using Microsoft.EntityFrameworkCore;
-using CSV_reader.Configurations;
 using QuestPDF.Infrastructure;
 using BCrypt.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -69,7 +68,7 @@ namespace CSV_reader
             builder.Services.AddScoped<ICalculationsService, CalculationsService>();
             builder.Services.AddScoped<IPDFService, PDFService>();
             builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IGetHistoricDataForQuoteSearchService, GetHistoricDataForQuoteSearchService>();
+            //builder.Services.AddScoped<IGetHistoricDataForQuoteSearchService, GetHistoricDataForQuoteSearchService>();
             builder.Services.AddScoped<IExcelFileService, ExcelFileService>();
             builder.Services.AddScoped<IClaimsCalculationsService, ClaimsCalculationsService>();
             builder.Services.AddMemoryCache();

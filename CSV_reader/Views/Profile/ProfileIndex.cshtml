@@ -55,7 +55,9 @@
             <div class="d-flex align-items-center p-3">
                 <div class="me-3">
                     <small style="color: #e0e0e0;">Logged in as:</small><br />
-                    <span class="fw-semibold" style="color: #fafafa;">@User.Identity.Name</span>
+                    <span class="fw-semibold" style="color: #fafafa;">
+                        @(User.Identity?.Name ?? "Unknown User")
+                    </span>
                 </div>
                 <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
                     <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
@@ -78,7 +80,9 @@
             <h1 class="text-3xl font-semibold mb-6 text-white">My Profile</h1>
 
             <div class="bg-white shadow-md rounded-lg p-4 mb-6">
-                <p class="text-gray-600"><span class="font-medium">Email:</span> @User.Identity.Name</p>
+                <p class="text-gray-600"><span class="font-medium">Email:</span>
+                    @(User.Identity?.Name ?? "Unknown User")
+                </p>
             </div>
 
             <h2 class="text-xl font-semibold mb-4 text-white">My Quotes</h2>

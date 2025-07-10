@@ -43,7 +43,12 @@ namespace CSV_reader.Controllers
         {
             
             // get the filepath from memory cache instead of appsettings.json
-            string excelFilePath = _excelFileService.GetExcelFilePath();
+            string? excelFilePath = _excelFileService.GetExcelFilePath();
+
+            if (string.IsNullOrWhiteSpace(excelFilePath) || excelFilePath == "No file path set.")
+            {
+                throw new InvalidOperationException("Excel file path is not set or is invalid.");
+            }
 
             var claimsViewModel = new ClaimsViewModel
             {
@@ -85,7 +90,12 @@ namespace CSV_reader.Controllers
         [HttpGet]
         public JsonResult GetOneYearsClaimsController(string year)
         {
-            var filePath = _excelFileService.GetExcelFilePath();
+            string? filePath = _excelFileService.GetExcelFilePath();
+
+            if (string.IsNullOrWhiteSpace(filePath) || filePath == "No file path set.")
+            {
+                throw new InvalidOperationException("Excel file path is not set or is invalid.");
+            }
 
             Console.WriteLine($"Year Filter: {year}");
 
@@ -102,7 +112,12 @@ namespace CSV_reader.Controllers
 
             string userEmail = User.Identity!.Name!;
 
-            string excelFilePath = _excelFileService.GetExcelFilePath();
+            string? excelFilePath = _excelFileService.GetExcelFilePath();
+
+            if (string.IsNullOrWhiteSpace(excelFilePath) || excelFilePath == "No file path set.")
+            {
+                throw new InvalidOperationException("Excel file path is not set or is invalid.");
+            }
 
             var claimsData = _claimsService.ReadClaimsExcel(excelFilePath);
             string batchId = _claimsService.SaveClaimsToDatabase(claimsData, viewModel.InputModel, userEmail);

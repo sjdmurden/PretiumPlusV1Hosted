@@ -39,12 +39,12 @@ namespace CSV_reader.Services
 
             Console.WriteLine($"quoteId: {quoteId}");
 
-            /*if (data == null)
+            if (tableData == null)
             {
-                return null;
-            }*/
+                throw new InvalidOperationException("table data is null");
+            }
 
-            
+
 
             var calculationsModel = new CalculationsModel();
             // this creates a new instance of the CalculationsModel class as a variable

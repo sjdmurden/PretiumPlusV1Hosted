@@ -46,7 +46,7 @@ namespace CSV_reader.Services
         }
 
 
-        public async Task<User> Authenticate(string userEmail, string password)
+        public async Task<User?> Authenticate(string userEmail, string password)
         {
             // find user in table where UserLogin matches the inputted userLogin
             var user = await _appContext.Users
@@ -64,21 +64,22 @@ namespace CSV_reader.Services
 
         public bool VerifyPassword(string password, string storedHash)
         {
+            // password is the unputted password by the user
+            // storedHash is the hashed password in the database
+
+
+            // this creates an instance of ASP.NET Core's built-in PasswordHasher<TUser>
             var hasher = new PasswordHasher<object>();
 
-            var result = hasher.VerifyHashedPassword(null, storedHash, password);
+            // this compares the stored hash in the database with the hashed inputted password
+            // it returns 'Success' if they match and 'Failed' if they dont'
+            var result = hasher.VerifyHashedPassword(new object(), storedHash, password);
 
+            // this returns true if the result is Success - used above in Authenticate method
             return result == PasswordVerificationResult.Success;
         }
 
-        /*public bool VerifyPassword(User user, string inputPassword)
-        {
-            var hasher = new PasswordHasher<User>();
-
-            var result = hasher.VerifyHashedPassword(user, user.UserPassword, inputPassword);
-
-            return result == PasswordVerificationResult.Success;
-        }*/
+      
     }
 
 }

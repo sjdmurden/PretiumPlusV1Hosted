@@ -1,21 +1,14 @@
 ﻿using CSV_reader.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace CSV_reader.ViewModels
-{
-    /*public class ClaimsPlusCalcsViewModel
-    {
-        public List<IndivClaimDB> BatchClaims { get; set; }
-        public ClaimsCalculationsModel ClaimsCalculationsModel { get; set; }
-
-        public List<IndivClaimDB> FilteredBatchClaims { get; set; }
-    }*/
-
+{    
     public class ClaimsPlusCalcsViewModel
     {
-        public List<IndivClaimDataDB> BatchClaims { get; set; }
-        public List<StaticClientDataDB> StaticClientData { get; set; }
-        public ClaimsCalculationsModel ClaimsCalculationsModel { get; set; }
+        public List<IndivClaimDataDB> BatchClaims { get; set; } = new List<IndivClaimDataDB>();
+        public List<StaticClientDataDB> StaticClientData { get; set; } = new List<StaticClientDataDB>(); 
+        public ClaimsCalculationsModel ClaimsCalculationsModel { get; set; } = new ClaimsCalculationsModel();
 
-        public List<IndivClaimDataDB> FilteredBatchClaims { get; set; }
+        public List<IndivClaimDataDB> FilteredBatchClaims { get; set; } = new List<IndivClaimDataDB>();
     }
 }

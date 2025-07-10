@@ -2,7 +2,7 @@
 {
     public class GeneratePdfRequestViewModel
     {
-        public string BatchId { get; set; }
+        public string BatchId { get; set; } = string.Empty;
         public decimal ClaimsAmount { get; set; }
         public decimal LargeLossFund { get; set; }
         public decimal ReinsuranceCosts { get; set; }
@@ -14,7 +14,7 @@
         public decimal Commissions { get; set; }
         public decimal GrossPremium { get; set; }
         public decimal UpdatedGrossPremiumPlusIPT { get; set; }
-        public string AdjustmentNotes { get; set; }
+        public string AdjustmentNotes { get; set; } = string.Empty;
 
         public int FCDaysCOI { get; set; }
         public int FCDaysNonCOI { get; set; }

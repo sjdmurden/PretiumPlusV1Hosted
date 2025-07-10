@@ -9,6 +9,6 @@ namespace CSV_reader.Services
         bool DeleteFileByPath(string filePath);
         void CleanupExcelFilePath();
         void UpdateExcelFilePathInCache(string filePath);
-        string GetExcelFilePath();
+        string? GetExcelFilePath();
     }
 }

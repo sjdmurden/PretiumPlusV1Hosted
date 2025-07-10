@@ -22,9 +22,16 @@ namespace CSV_reader.Controllers
             _appContext = appContext;
         }
 
+        [Authorize]
         public IActionResult ProfileIndex()
         {
-            var userEmail = User.Identity.Name;
+            var userEmail = User?.Identity?.Name;
+
+            // if user email is null, redirect user to login page
+            if (string.IsNullOrEmpty(userEmail)) 
+            {
+                return RedirectToAction("Login", "Login");
+            }
 
             var staticClientData = _appContext.StaticClientDataDB
                 .Where(x => x.UserEmail == userEmail)
@@ -66,9 +73,16 @@ namespace CSV_reader.Controllers
 
         public IActionResult AdminProfileIndex()
         {
-            var userEmail = User.Identity.Name;
+            var userEmail = User?.Identity?.Name;
 
-            var userType = User.FindFirstValue("UserType");
+            // if user email is null, redirect user to login page
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var userType = User!.FindFirstValue("UserType");
+           
 
             var allQuotesData = _appContext.StaticClientDataDB
                 .Where(data => data.BatchId.Contains("_"))
