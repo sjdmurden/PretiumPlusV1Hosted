@@ -1,54 +1,34 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master  # or your branch name
+- master
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '8.x.x' # or 7.x.x depending on your project
+- task: NuGetToolInstaller@1
 
-- task: DotNetCoreCLI@2
-  displayName: Restore packages
+- task: NuGetCommand@2
   inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+    restoreSolution: '$(solution)'
 
-- task: DotNetCoreCLI@2
-  displayName: Build project
+- task: VSBuild@1
   inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: Publish project
+- task: VSTest@2
   inputs:
-    command: 'publish'
-    publishWebProjects: true
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: true
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'drop'
-    publishLocation: 'Container'
-
-- task: AzureWebApp@1
-  displayName: Deploy to Azure Web App
-  inputs:
-    azureSubscription: '6a78f233-a752-45f4-af4f-62d4570c88de'     # Create this in DevOps -> Project Settings -> Service Connections
-    appName: 'PretiumPlus'                              # Name of your App Service
-    package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
-
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
