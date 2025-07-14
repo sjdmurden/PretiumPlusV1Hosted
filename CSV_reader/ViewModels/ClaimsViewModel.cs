@@ -14,6 +14,7 @@ namespace CSV_reader.ViewModels
             ClaimsRecords = new List<ClaimsModel>();  // Initialise the list
             PolicyYearSummaries = new Dictionary<string, PolicyYearSummary>();
             HistoricYearsData = new HistoricYearsData();
+            InputModel = new InputModel();
             
         }
         public InputModel InputModel { get; set; }

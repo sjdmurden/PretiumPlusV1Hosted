@@ -72,14 +72,9 @@ namespace CSV_reader.Services
 
             /*Console.WriteLine("Policy Years: " + string.Join(", ", orderedPolicyYears));
             Console.WriteLine(orderedPolicyYears[0]);*/
+           
 
-            /*var year1 = orderedPolicyYears[0];
-            var year2 = orderedPolicyYears[1];
-            var year3 = orderedPolicyYears[2];
-            var year4 = orderedPolicyYears[3];
-            var year5 = orderedPolicyYears[4];*/
-
-            string year1 = null, year2 = null, year3 = null, year4 = null, year5 = null;
+            string? year1 = null, year2 = null, year3 = null, year4 = null, year5 = null;
 
             if (orderedPolicyYears.Count >= 3)
             {
@@ -104,6 +99,11 @@ namespace CSV_reader.Services
 
             // ------------------ HISTORIC YEARS DATA TABLE ---------------------
             // NEW LOGIC FOR CLIENTS WITH ONLY 3 YEARS OF DATA ( 5 YEARS STILL WORKS )
+
+            if (year1 is null || year2 is null || year3 is null)
+            {
+                throw new InvalidOperationException("At least three policy years are required for calculations.");
+            }
 
             // rental days COI
             claimsCalculationsModel.Y1RentalDaysCOI = claimsByYear[year1].FirstOrDefault()?.RDaysCOI ?? 0;

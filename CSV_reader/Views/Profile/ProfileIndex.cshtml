@@ -15,64 +15,64 @@
     <link href="~/css/site.css" />
 </head>
 
-<header class="position-absolute top-0 left-0 right-0">
-
-    <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24 header" @* style="background: #334155;" *@>
-        <div class="flex items-center">
-            <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
-        </div>
-
-        <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
-            <a>
-                <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
-            </a>
-        </div>
-
-
-        <div class="flex items-center">
-
-            <script src="~/js/quoteSearch.js"></script>
-
-
-            <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none" style="background: #1e293b;">
-                <span class="font-semibold mb-2 text-gray-100">Search Quotes</span>
-                <div class="flex items-center">
-                    <span class="text-gray-700 font-semibold bg-gray-200 py-1 px-2 rounded-md">PAQ</span>
-                    <input type="text"
-                           name="quoteSearch"
-                           id="quoteIdToSearch"
-                           required
-                           class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
-                           placeholder="Enter Quote #" />
-                    <button type="submit"
-                            class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
-                        Search
-                    </button>
-                </div>
-            </form>
-
-
-            <div class="d-flex align-items-center p-3">
-                <div class="me-3">
-                    <small style="color: #e0e0e0;">Logged in as:</small><br />
-                    <span class="fw-semibold" style="color: #fafafa;">
-                        @(User.Identity?.Name ?? "Unknown User")
-                    </span>
-                </div>
-                <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
-                    <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </div>
-
-
-    </nav>
-
-</header>
 
 <body id="websiteBody">
+    <header class="position-absolute top-0 left-0 right-0">
+
+        <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24 header">
+            <div class="flex items-center">
+                <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
+            </div>
+
+            <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
+                <a>
+                    <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
+                </a>
+            </div>
+
+
+            <div class="flex items-center">
+
+                <script src="~/js/quoteSearch.js"></script>
+
+
+                <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none" style="background: #1e293b;">
+                    <span class="font-semibold mb-2 text-gray-100">Search Quotes</span>
+                    <div class="flex items-center">
+                        <span class="text-gray-700 font-semibold bg-gray-200 py-1 px-2 rounded-md">PAQ</span>
+                        <input type="text"
+                               name="quoteSearch"
+                               id="quoteIdToSearch"
+                               required
+                               class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                               placeholder="Enter Quote #" />
+                        <button type="submit"
+                                class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                            Search
+                        </button>
+                    </div>
+                </form>
+
+
+                <div class="d-flex align-items-center p-3">
+                    <div class="me-3">
+                        <small style="color: #e0e0e0;">Logged in as:</small><br />
+                        <span class="fw-semibold" style="color: #fafafa;">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </span>
+                    </div>
+                    <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
+                        <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+        </nav>
+
+    </header>
 
     <div class="pt-24">
 
