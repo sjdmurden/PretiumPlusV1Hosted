@@ -32,3 +32,15 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'WebApp'
+    publishLocation: 'Container'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'PretiumPlus'  # Replace this with actual Azure service connection name
+    appName: 'PretiumPlus'                             
+    package: '$(Build.ArtifactStagingDirectory)\WebApp.zip'
