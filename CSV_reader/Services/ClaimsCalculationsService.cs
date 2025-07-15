@@ -54,6 +54,11 @@ namespace CSV_reader.Services
             var staticClientData_fromTable = _appContext.StaticClientDataDB
                 .FirstOrDefault(x => x.BatchId == batchId);
 
+            if (staticClientData_fromTable == null)
+            {
+                throw new InvalidOperationException($"Static client data not found for BatchId: {batchId}");
+            }
+
             /*foreach (var kvp in claimsByYear)
             {
                 Console.WriteLine($"Policy Year: {kvp.Key}, Claims Count: {kvp.Value.Count}");
