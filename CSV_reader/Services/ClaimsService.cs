@@ -31,7 +31,7 @@ namespace CSV_reader.Services
          * The turnoverDict also has a key of policy year, and its value is an object containing the turnover COI and non COI.
          * The vehiclesDict has a key of the client name, and its value is an object containing the car, van, minibus and HGV vehicles nums.
          * The forecastDict also has a key of the client name, and its value is an object containing the forecast days and turnover both COI and non COI.
-         * Then for the claims worksheet, an instance of the ClaimsModel is created for each row of the worksheet, and is assigned to the variable 'records'. Doing this creates a collection of objects for each row of the worksheet where the properties of the ClaimsModel are assigned the values in the columns of the worksheet (an object is created for each claim as each row is a claim).
+         * Then for the claims worksheet, an instance of the ClaimsModel is created for each row of the worksheet, and is assigned to the variable 'records'. Doing this creates a collection of objects for each row of the worksheet and the properties of the ClaimsModel are assigned the values from the columns of the worksheet (i.e. an object is created for each claim since each row is a claim).
          * Since the ClaimsModel has properties which the claims worksheet doesn't have, the data from the other dictionaries are merged (eg. the rental days properties' values are obtained from the rentalDaysDict by looking up the policy year as the key).
          * At the start, the 'data' variable initialises an empty list. After each row of the claims worksheet is read and the 'records' variable is populated, data.Add(records) adds this to the list.
          * 

@@ -4,6 +4,15 @@ namespace CSV_reader.Models
 {
     public class ClaimsCalculationsModel
     {
+
+        // data table
+        public List<CalculationsYearsData> CalculationsYears { get; set; } = new List<CalculationsYearsData>();
+        /* The above is a list of rows to be rendered in the table.
+         * Each element of this list is a CalculationsYearsData object (see bottom of this file).
+         * The objects in the 'CalculationsYears' list are being populated with the values calculated in the ClaimsCalculationsService.cs file.
+         * Then in the view, it itereates over the list (with a for loop) and for each object it displays a new row.
+        */
+        
         // ClientName
         public string ClientName { get; set; } = "";
 
@@ -70,7 +79,7 @@ namespace CSV_reader.Models
         public double ThreeY_TotalCCPVY { get; set; }
         public double FiveY_TotalCCPVY { get; set; }
 
-        public List<CalculationsYearsData> CalculationsYears { get; set; } = new List<CalculationsYearsData>();
+        
 
 
         // --------------- INFLATION ----------------------------------------
