@@ -42,4 +42,10 @@
     <None Include="wwwroot\images\traffic1.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\images\pretium+nobackground.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
