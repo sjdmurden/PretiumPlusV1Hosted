@@ -28,7 +28,7 @@ jobs:
         run: nuget restore
 
       - name: Publish to folder
-        run: msbuild /nologo /verbosity:m /t:Build /t:pipelinePreDeployCopyAllFilesToOneFolder /p:_PackageTempDir="\published\"
+        run: msbuild /nologo /verbosity:m /t:Build /p:Configuration=Release /p:DeployOnBuild=True /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl="\published\" /p:DeleteExistingFiles=True
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -39,14 +39,23 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    
-    
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: ASP-app
       
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_358A44B096B540C3BA83337DFAAA493B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5D4C0EC3DC484BACAC9A45EA8D5178FB }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5319EEF494274EF09A8FBB041A91575A }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -54,4 +63,4 @@ jobs:
           app-name: 'PretiumPlus'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_44DC18985A9E4F789C33B3C3241B1FC3 }}
+          
