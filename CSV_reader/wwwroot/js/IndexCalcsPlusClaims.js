@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!existingRow) {
             let newRow = document.createElement("tr");
-            newRow.className = "hover:bg-gray-700  text-sm border-b border-gray-700";
+            newRow.className = "hover:bg-blue-100  text-sm border-b border-blue-200";
             newRow.setAttribute("data-claim-ref", claimRef);
             newRow.innerHTML = `
                                 <td class="p-3 text-sm">${policyYear}</td>

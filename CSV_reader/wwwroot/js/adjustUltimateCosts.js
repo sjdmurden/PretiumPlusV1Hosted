@@ -36,24 +36,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const currentNetPrem = parseFloat(netPremium.textContent.replace(/[£,]/g, ""));
             const newNetPrem = currentNetPrem + adjustmentAmount;
             netPremium.textContent = `£${newNetPrem.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            netPremium.style = "color: #65aacb;";
+            netPremium.style = "font-style: italic;";
 
             // Adjust Commission
             const commissionValue = parseFloat(commission.textContent.replace(/[£,]/g, ""));
             const newCommission = newNetPrem * 0.08;
             commission.textContent = `£${newCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            commission.style = "color: #65aacb;";
+            commission.style = "font-style: italic;";
 
             // Adjust gross premium
             // commissionValue = parseFloat(commission.textContent.replace(/[£,]/g, ""));
             const newGrossPrem = newNetPrem + commissionValue;
             grossPremium.textContent = `£${newGrossPrem.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            grossPremium.style = "color: #65aacb;";
+            grossPremium.style = "font-style: italic;";
 
             // Adjust gross premium plus IPT
             const newGrossPremPlusIPT = newGrossPrem + newGrossPrem * (12 / 100);
             grossPremiumPlusIPT.textContent = `£${newGrossPremPlusIPT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            grossPremiumPlusIPT.style = "color: #65aacb;";
+            grossPremiumPlusIPT.style = "font-style: italic;";
 
             adjustmentMessage = `Net Premium adjusted by £${adjustmentAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 

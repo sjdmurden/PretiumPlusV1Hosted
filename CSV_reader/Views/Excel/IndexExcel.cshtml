@@ -22,7 +22,7 @@
 
     
 
-    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header" >
+    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24" >
 
         <div class="flex items-center">
             <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
@@ -39,12 +39,12 @@
         <div class="flex items-center space-x-4">
             <div class="d-flex align-items-center p-3">
                 <div class="me-3">
-                    <small style="color: #e0e0e0;">Logged in as:</small><br />
+                    <small class="text-black">Logged in as:</small><br />
                     @if (userType == "1")
                     {
                         <a asp-controller="Profile"
                            asp-action="AdminProfileIndex"
-                           style="color: #e0e0e0;">
+                           class="text-gray-700">
                             @(User.Identity?.Name ?? "Unknown User")
                         </a>
                     }
@@ -52,7 +52,7 @@
                     {
                         <a asp-controller="Profile"
                            asp-action="ProfileIndex"
-                           style="color: #e0e0e0;">
+                           class="text-gray-700">
                             @(User.Identity?.Name ?? "Unknown User")
                         </a>
                     }
@@ -74,10 +74,10 @@
     <div class="flex flex-col items-center justify-center h-screen space-y-8 mt-5">
 
         <!-- Quote Search Form -->
-        <form id="quoteSearchForm" class="indexExcelSearchBox p-6 rounded-lg max-w-md w-full border-none">
+        <form id="quoteSearchForm" class="bg-gray-200 p-6 rounded-lg max-w-md w-full border-none">
             <div class="flex flex-col space-y-4">
-                <label for="quoteId" class="text-2xl font-bold text-gray-100">Search Quotes</label>
-                <label for="quoteSearch" class="text-sm font-semibold text-gray-200">Enter Quote Number</label>
+                <label for="quoteId" class="text-2xl font-bold text-blue-700">Search Quotes</label>
+                <label for="quoteSearch" class="text-sm font-semibold text-gray-700">Enter Quote Number</label>
                 <div class="flex items-center space-x-2">
                     <span class="text-gray-700 font-semibold bg-gray-200 py-2 px-3 rounded-md">PAQ</span>
                     <input type="text"
@@ -97,11 +97,11 @@
         </form>
 
         <!-- Excel Upload Form -->
-        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" class="indexExcelUploadBox p-6 rounded-lg max-w-md w-full border-none">
+        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" class="bg-gray-200 p-6 rounded-lg max-w-md w-full border-none">
             <div class="flex flex-col space-y-6">
-                <h1 class="text-2xl font-bold text-gray-100">Create Quote</h1>
+                <h1 class="text-2xl font-bold text-green-700">Create Quote</h1>
                 <div class="flex flex-col space-y-2">
-                    <label for="excelFile" class="text-sm font-semibold text-gray-200">Select Excel File</label>
+                    <label for="excelFile" class="text-sm font-semibold text-gray-700">Select Excel File</label>
                     <input type="file" name="excelFile" id="excelFile" accept=".xlsx" class="bg-white border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                 </div>
                 <div class="flex justify-center">

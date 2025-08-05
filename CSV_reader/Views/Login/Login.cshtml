@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
-<header class="fixed top-0 left-0 right-0">
+<header class="top-0 left-0 right-0">
 
-    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24 header" >
+    <nav class="flex items-center justify-between px-6 py-3 w-screen shadow-lg h-24" >
         <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
             <a>
                 <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
@@ -27,25 +27,25 @@
 
 </header>
 
-<body class="bg-gray-100" id="websiteBody">
+<body id="websiteBody">
 
-    <div class="flex items-center justify-center h-screen mt-4">
+    <div class="flex items-center justify-center h-screen">
 
-        <div class="shadow-md rounded-lg p-8 max-w-lg w-full" style="background: #334155;">
+        <div class="shadow-md rounded-lg p-8 max-w-lg w-full bg-white">
 
             <img src="~/images/pretium+nobackground.png" alt="Pretium+ Logo" style="width: 80%;"/>
 
-            <h3 class="display-6 text-white">Welcome!</h3>
+            <h3 class="display-6 text-black">Welcome to Pretium Plus!</h3>
             
             <form asp-action="Login" method="post">
                 <div class="form-group">
-                    <label asp-for="UserEmail" class="text-white">Email</label>  <!-- asp-for binds a field to a property in the model -->
-                    <input asp-for="UserEmail" class="form-control border-none" required="required" />
+                    <label asp-for="UserEmail" class="text-black">Email</label>  <!-- asp-for binds a field to a property in the model -->
+                    <input asp-for="UserEmail" class="form-control" required="required" />
                     <span asp-validation-for="UserEmail" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="UserPassword" class="text-white">Password</label>
+                    <label asp-for="UserPassword" class="text-black">Password</label>
                     <input asp-for="UserPassword" type="password" class="form-control" required="required" />
                     <span asp-validation-for="UserPassword" class="text-danger"></span>
                 </div>
