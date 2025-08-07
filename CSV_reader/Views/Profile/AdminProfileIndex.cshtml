@@ -18,25 +18,31 @@
 
 <body id="websiteBody">
 
-    <header class="position-absolute top-0 left-0 right-0">
+    <header class="position-absolute top-0 left-0 right-0 z-50 bg-white">
 
-        <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24">
+        <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24 relative">
+            <!-- Left: Home Button -->
             <div class="flex items-center">
-                <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
+                <a href="/Excel/IndexExcel" class="text-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
             </div>
 
-            <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
+            <!-- Center: Logo -->
+            <div class="absolute left-1/2 transform -translate-x-1/2">
                 <a>
-                    <img src="/images/pretium+nobackground.png" alt="Pretium Logo" class="logo">
+                    <img src="@Url.Content("~/images/pretium_nobackground.png")" alt="Pretium Logo" class="h-16 w-auto" />
                 </a>
             </div>
 
+            <div class="md:hidden">
+                <button id="hamburgerBtn" class="focus:outline-none">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
 
-            <div class="flex items-center">
-
-                <script src="~/js/quoteSearch.js"></script>
-
-
+            <div class="hidden md:flex items-center space-x-6">
                 <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none bg-gray-200">
                     <span class="font-semibold mb-2 text-black">Search Quotes</span>
                     <div class="flex items-center">
@@ -54,41 +60,95 @@
                     </div>
                 </form>
 
-
-                <div class="d-flex align-items-center p-3">
-                    <div class="me-3">
+                <div class="flex items-center space-x-4">
+                    <div>
                         <small>Logged in as:</small><br />
                         <span class="text-gray-700">
                             @(User.Identity?.Name ?? "Unknown User")
                         </span>
                     </div>
-                    <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
+                    <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
                         <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
                             Logout
                         </button>
                     </form>
                 </div>
             </div>
-
-
         </nav>
 
+        <div id="hamburgerMenu" class="md:hidden hidden px-6 py-4 bg-gray-100 shadow-md">
+            
+
+            <div class="mb-4">
+                <small>Logged in as:</small><br />
+                <span class="text-gray-700">
+                    @(User.Identity?.Name ?? "Unknown User")
+                </span>
+            </div>
+
+            <form asp-controller="Login" asp-action="Logout" method="post">
+                <button type="submit" class="w-full font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                    Logout
+                </button>
+            </form>
+        </div>
+
     </header>
+
+    <script>
+        // Toggle mobile menu
+        document.getElementById("hamburgerBtn")?.addEventListener("click", function () {
+            const menu = document.getElementById("hamburgerMenu");
+            menu.classList.toggle("hidden");
+        });
+    </script>
+
 
     <div class="pt-24">
 
         <div class="max-w-6xl mx-auto p-6">
-            <h1 class="text-3xl font-semibold mb-6">Admin Profile</h1>
 
-            <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+            <div class="flex gap-4 mb-4">
+
+                <div class="w-1/2">
+                    <h1 class="text-2xl font-semibold mb-6">Admin Profile</h1>
+
+                    <p class="text-gray-600 md:hidden">
+                        <span class="font-medium">Email:</span></br>
+                        @(User.Identity?.Name ?? "Unknown User")
+                    </p>
+                </div>
+
+                <div class="w-1/2 md:hidden">
+                    <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none bg-gray-200">
+                        <span class="font-semibold mb-2 text-black">Search Quotes</span>
+                        <div class="flex items-center">
+                            <span class="text-gray-700 font-semibold bg-gray-300 py-1 px-2 rounded-md">PAQ</span>
+                            <input type="text"
+                                   name="quoteSearch"
+                                   id="quoteIdToSearch"
+                                   required
+                                   class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                                   placeholder="Enter Quote #" />
+                        </div>
+                        <button type="submit"
+                                class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                            Search
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="bg-white shadow-md rounded-lg p-4 mb-6 hidden md:block">
                 <p class="text-gray-600"><span class="font-medium">Email:</span>
                     @(User.Identity?.Name ?? "Unknown User")
                 </p>
             </div>
 
-            <div class="flex gap-6">
+            <div class="flex flex-col md:flex-row gap-6">
 
-                <div class="w-1/2">
+                <div class="w-full md:w-1/2">
                     <h2 class="text-xl font-semibold mb-4">All Users</h2>
 
                     <div class="bg-white rounded-lg overflow-hidden">
@@ -112,7 +172,7 @@
                     </div>
                 </div>
 
-                <div class="w-1/2">
+                <div class="w-full md:w-1/2">
 
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold">All Quotes</h2>
