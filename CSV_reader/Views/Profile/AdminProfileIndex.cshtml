@@ -190,24 +190,24 @@
                         <table class="min-w-full table-auto border-collapse" id="myQuotesTable">
                             <thead>
                                 <tr class="bg-blue-200 text-left text-sm font-medium text-gray-700">
-                                    <th class="px-4 py-2 border-b">User</th>
-                                    <th class="px-4 py-2 border-b">Quote ID</th>
-                                    <th class="px-4 py-2 border-b">Client Name</th>
-                                    <th class="px-4 py-2 border-b">Created Date</th>
+                                    <th class="px-2 py-2 border-b">User</th>
+                                    <th class="px-2 py-2 border-b">Quote ID</th>
+                                    <th class="px-2 py-2 border-b">Client Name</th>
+                                    <th class="px-2 py-2 border-b">Created Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var quote in Model.AllUsersQuotes)
                                 {
                                     <tr class="border-t hover:bg-blue-50 text-sm">
-                                        <td class="px-4 py-2">@quote.UserEmail</td>
-                                        <td class="px-4 py-2">
+                                        <td class="px-2 py-2">@quote.UserEmail</td>
+                                        <td class="px-2 py-2">
                                             <button class="quote-id-button text-blue-600 hover:underline" data-quote-id="@quote.QuoteId">
                                                 @quote.QuoteId
                                             </button>
                                         </td>
-                                        <td class="px-4 py-2">@quote.ClientName</td>
-                                        <td class="px-4 py-2">@quote.CreatedDate</td>
+                                        <td class="px-2 py-2">@quote.ClientName</td>
+                                        <td class="px-2 py-2">@quote.CreatedDate</td>
                                     </tr>
                                 }
                             </tbody>

@@ -1,4 +1,8 @@
 ﻿@model CSV_reader.ViewModels.ClaimsViewModel;
+@using System.Security.Claims;
+@{
+    var userType = User.FindFirstValue("UserType");
+}
 
 <!DOCTYPE html>
 <html>
@@ -10,66 +14,116 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
-<header class="absolute top-0 left-0 right-0">
+    <header class="position-absolute top-0 left-0 right-0 z-50 bg-white">
 
-    <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24">
-        <div class="flex items-center">
-            <a href="/Excel/IndexExcel" class="text-semibold w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
-        </div>
-        
-        <div class="absolute left-1/2 transform -translate-x-1/2 logoBox">
-            <a>
-                <img src="@Url.Content("~/images/pretium_nobackground.png")" alt="Pretium Logo" class="logo">
-            </a>
-        </div>
+        <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24 relative">
+            <!-- Left: Home Button -->
+            <div class="flex items-center">
+                <a href="/Excel/IndexExcel" class="text-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
+            </div>
 
+            <!-- Center: Logo -->
+            <div class="absolute left-1/2 transform -translate-x-1/2">
+                <a>
+                    <img src="@Url.Content("~/images/pretium_nobackground.png")" alt="Pretium Logo" class="h-16 w-auto" />
+                </a>
+            </div>
 
-        <div class="flex items-center space-x-4">
-            <script src="~/js/quoteSearch.js"></script>
+            <div class="md:hidden">
+                <button id="hamburgerBtn" class="focus:outline-none">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
 
+            <div class="hidden md:flex items-center space-x-6">
+                <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none bg-gray-200">
+                    <span class="font-semibold mb-2 text-black">Search Quotes</span>
+                    <div class="flex items-center">
+                        <span class="text-gray-700 font-semibold bg-gray-300 py-1 px-2 rounded-md">PAQ</span>
+                        <input type="text"
+                               name="quoteSearch"
+                               id="quoteIdToSearch"
+                               required
+                               class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                               placeholder="Enter Quote #" />
+                        <button type="submit"
+                                class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                            Search
+                        </button>
+                    </div>
+                </form>
 
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <small>Logged in as:</small><br />
+                        <span class="text-gray-700">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </span>
+                    </div>
+                    <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
+                        <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
 
+        <div id="hamburgerMenu" class="md:hidden hidden px-6 py-4 bg-gray-100 shadow-md">
+            
+
+            <div class="text-sm text-gray-800 mb-2">
+                    <small class="text-gray-600">Logged in as:</small><br />
+                    @if (userType == "1")
+                    {
+                        <a asp-controller="Profile" asp-action="AdminProfileIndex" class="text-blue-700 font-medium">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Profile" asp-action="ProfileIndex" class="text-blue-700 font-medium">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </a>
+                    }
+                </div>
 
             <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none bg-gray-200">
                 <span class="font-semibold mb-2 text-black">Search Quotes</span>
                 <div class="flex items-center">
-                    <span class="text-gray-700 font-semibold bg-gray-200 py-1 px-2 rounded-md">PAQ</span>
+                    <span class="text-gray-700 font-semibold bg-gray-300 py-1 px-2 rounded-md">PAQ</span>
                     <input type="text"
-                           name="quoteSearch"
-                           id="quoteIdToSearch"
-                           required
-                           class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
-                           placeholder="Enter Quote #" />
-                    <button type="submit"
-                            class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
-                        Search
-                    </button>
+                            name="quoteSearch"
+                            id="quoteIdToSearch"
+                            required
+                            class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                            placeholder="Enter Quote #" />
                 </div>
+                <button type="submit"
+                        class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                    Search
+                </button>
             </form>
 
-
-            <div class="d-flex align-items-center p-3">
-                <div class="me-3">
-                    <small class="text-black">Logged in as:</small><br />
-                    <a asp-controller="Profile"
-                       asp-action="ProfileIndex"
-                       asp-route-userEmail="@(User.Identity?.Name ?? "Unknown User")"
-                       class="text-gray-700">
-                        @(User.Identity?.Name ?? "Unknown User")
-                    </a>
-                </div>
-                <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post" class="ms-auto">
-                    <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
-                        Logout
-                    </button>
-                </form>
-            </div>
+            <form asp-controller="Login" asp-action="Logout" method="post">
+                <button type="submit" class="w-full font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                    Logout
+                </button>
+            </form>
         </div>
 
+    </header>
 
-    </nav>
-
-</header>
+    <script>
+        // Toggle mobile menu
+        document.getElementById("hamburgerBtn")?.addEventListener("click", function () {
+            const menu = document.getElementById("hamburgerMenu");
+            menu.classList.toggle("hidden");
+        });
+    </script>
 
     <body id="websiteBody">
 
@@ -95,19 +149,16 @@
            </div>
 
 
+           <div class="text-md md:text-center">
+               Please fill out these extra details before submitting.
+           </div>
+
+
            <form asp-controller="Home" asp-action="ImportClaims" method="post" onsubmit="return validateForm()" id="excelUploadForm">
 
-                <div class="shadow-lg w-1/2 rounded-lg p-6 mx-auto my-3 bg-white">
+                <div class="shadow-lg w-full md:w-1/2 rounded-lg p-6 mx-auto mt-3 mb-6 bg-white">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @* <div class="space-y-2">
-                            @Html.LabelFor(m => m.InputModel.QuoteNumber, "Quote Number:", new { @class = "font-semibold text-gray-700" })
-                            @Html.TextBoxFor(m => m.InputModel.QuoteNumber, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
-                        </div> *@
-
-                        @* <div class="space-y-2">
-                            @Html.LabelFor(m => m.InputModel.ClientName, "Select Client Name:", new { @class = "font-semibold text-gray-700" })
-                            @Html.DropDownListFor(m => m.InputModel.ClientName, Model.InputModel.ClientNames, new { @class = "w-full border border-gray-300 rounded-md focus:ring focus:ring-indigo-200 focus:border-indigo-400", @required = "required" })
-                        </div> *@
+                      
                         <div class="space-y-2">
                             @Html.LabelFor(m => m.InputModel.SelectedCoverType, "Select Cover:", new { @class = "font-semibold text-black" })
                             @Html.DropDownListFor(m => m.InputModel.SelectedCoverType, Model.InputModel.CoverTypes, new
@@ -154,20 +205,20 @@
                 </div>
 
 
-                <div class="flex flex-row justify-between">
-                    <div class="w-1/2 mx-auto">
+                <div class="flex flex-col md:flex-row justify-between">
+                    <div class="w-full md:w-1/2 mx-auto">
 
                         <div class="text-black display-6">Vehicle Details</div>
 
-                        <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-4">
+                        <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-4 mb-6">
 
                             <table class="relative overflow-x-auto rounded-lg w-full mx-auto">
                                 <thead class="text-xs uppercase">
                                     <tr class="border-b border-gray-400 bg-blue-200">
-                                        <th class="px-6 py-3"></th>
-                                        <th class="px-6 py-3 text-left">Vehicle Numbers</th>
-                                        <th scope="col" class="px-6 py-3">Large Loss Loading (£)</th>
-                                        <th scope="col" class="px-6 py-3">Exposure Rating (£)</th>
+                                        <th class="px-2 py-3"></th>
+                                        <th class="px-2 py-3 text-left">Vehicle Numbers</th>
+                                        <th scope="col" class="px-2 py-3">Large Loss Loading (£)</th>
+                                        <th scope="col" class="px-2 py-3">Exposure Rating (£)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -217,7 +268,7 @@
                         </div>
                     </div>
 
-                    <div class="w-1/3 mx-auto">
+                    <div class="w-full md:w-1/3 mx-auto">
 
                         <div class="display-6 text-black">Business Forecast</div>
 
@@ -248,7 +299,7 @@
                         <div class="mt-6 bg-white shadow-lg p-4 rounded-lg">
                             <h1 class="text-black">Apply % Exposure</h1>
 
-                            <div class="form-group mt-2" style="max-width: 90%">
+                            <div class="form-group mt-2">
                                 @Html.DropDownListFor(m => m.InputModel.SelectedPercentage, Model.InputModel.Percentages, new { @class = "w-full form-control bg-gray-200 rounded-md" })
                             </div>
                         </div>
