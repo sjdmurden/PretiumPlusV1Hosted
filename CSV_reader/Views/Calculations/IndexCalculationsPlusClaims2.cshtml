@@ -149,15 +149,15 @@
 
     <input type="hidden" id="batchIdHidden" value="@ViewBag.BatchId" />
 
-    <div class="container pt-24" id="mainContent">
+    <div class="pt-24" id="mainContent">
 
 
 
 
         <!-------------- CLIENT, TABLES, FILTERS BOX ----------------->
-        <div class="container mx-auto rounded-lg shadow-lg p-1 border-none bg-gray-200" style="margin: 3rem auto;">
+        <div class="mx-4 rounded-lg shadow-lg p-1 border-none bg-white my-4">
 
-            <div class="flex flex-row md:flex-row items-start justify-between gap-3 p-0 border-none">
+            <div class="flex flex-col md:flex-row items-start justify-between border-none">
 
                 <!-- CLIENT INFO SECTION -->
                 <div class="flex-grow w-1/8">
@@ -195,12 +195,12 @@
                     </div>
                 </div>
 
-                <!-- FORM SECTION -->
-                <div class="flex-grow w-1/2">
+                <!-- FORM SECTION - FILTERS -->
+                <div class="flex-grow w-full md:w-1/2">
                     <form id="combinedForm" class="rounded-lg p-3">
                         <span class="font-bold text-2xl mb-6 block text-black">Filters</span>
 
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div class="md:grid grid-cols-5 gap-4 hidden">
                             @foreach (var item in new[]
                             {
                             new { Id = "selectedNumOfMonthsDropdown", Label = "Months", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedNumOfMonths), List = Model.ClaimsCalculationsModel.InflationMonths },
@@ -209,6 +209,34 @@
                             new { Id = "pricingMetricDropdown", Label = "Metric", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPricingMetric), List = Model.ClaimsCalculationsModel.PricingMetrics },
                             new { Id = "priceByDropdown", Label = "Price By", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPriceBy), List = Model.ClaimsCalculationsModel.PriceByFilters }
                             })
+                            {
+                                <div class="relative">
+                                    <label for="@item.Id" class="text-sm font-medium text-gray-700">@item.Label</label>
+                                    @Html.DropDownList(item.ModelProp, item.List, new { @class = "w-full px-2 py-2 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition", @id = item.Id })
+                                </div>
+                            }
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 md:hidden">
+                            @foreach (var item in new[]
+                                                        {
+                                new { Id = "selectedNumOfMonthsDropdown", Label = "Months", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedNumOfMonths), List = Model.ClaimsCalculationsModel.InflationMonths },
+                                new { Id = "projYearsDropdown", Label = "Years", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedProjYears), List = Model.ClaimsCalculationsModel.ProjectedYears },
+                                new { Id = "COIFeeDropdown", Label = "COI Fee", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedCOIFee), List = Model.ClaimsCalculationsModel.ChargeCOIFee },                                
+                                })
+                            {
+                                <div class="relative">
+                                    <label for="@item.Id" class="text-sm font-medium text-gray-700">@item.Label</label>
+                                    @Html.DropDownList(item.ModelProp, item.List, new { @class = "w-full px-2 py-2 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition", @id = item.Id })
+                                </div>
+                            }
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 md:hidden">
+                            @foreach (var item in new[]
+                                {                                
+                                new { Id = "pricingMetricDropdown", Label = "Metric", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPricingMetric), List = Model.ClaimsCalculationsModel.PricingMetrics },
+                                new { Id = "priceByDropdown", Label = "Price By", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPriceBy), List = Model.ClaimsCalculationsModel.PriceByFilters }
+                                })
                             {
                                 <div class="relative">
                                     <label for="@item.Id" class="text-sm font-medium text-gray-700">@item.Label</label>
@@ -232,7 +260,7 @@
         </div>
 
 
-        <button id="toggleTableBtn" class="mx-auto bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+        <button id="toggleTableBtn" class="mx-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
             Show Claims
         </button>
 
@@ -241,10 +269,10 @@
 
         <!----------- CLAIMS LIST PLUS FILTER BOX --------------->
 
-        <div id="claimsLists">
+        <div id="claimsLists" class="w-full">
 
 
-            <div class="gap-6 p-10">
+            <div class="gap-6 p-10 w-full">
 
                 <h1 class="display-6 text-black mb-2">Claims</h1>
                 <!-------- Filter Section -------->
@@ -301,9 +329,9 @@
                 </div>
 
                 <!---------------------------- INDIVIDUAL CLAIMS TABLE ------------------------->
-                <div class="flex flex-row gap-4 mt-4">
+                <div class="flex flex-col md:flex-row gap-4 mt-4">
 
-                    <div class="overflow-scroll h-screen shadow-lg rounded-lg max-w-5xl">
+                    <div class="overflow-scroll h-screen md:h-screen shadow-lg rounded-lg max-w-5xl">
                         <table id="claimsTable">
                             <thead class="sticky top-0">
                                 <tr class="border-b border-gray-400 bg-blue-200 text-black">
@@ -381,7 +409,7 @@
                         <div class="relative overflow-x-auto shadow-lg rounded-lg w-full">
                             <table class="relative overflow-x-auto rounded-lg max-w-6xl mx-auto" id="excludedClaimsTable">
                                 <thead>
-                                    <tr class="border-b border-gray-500 bg-blue-200">
+                                    <tr class="border-b border-gray-500 bg-red-200">
                                         <th scope="col" class="p-4 text-sm leading-none font-normal">Policy Year</th>
                                         <th scope="col" class="p-4 text-sm leading-none font-normal">Claim Reference</th>
                                         <th scope="col" class="p-4 text-sm leading-none font-normal">Total Incurred</th>

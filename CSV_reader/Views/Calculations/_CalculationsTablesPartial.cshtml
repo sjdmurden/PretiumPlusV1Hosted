@@ -17,23 +17,23 @@
     <link rel="stylesheet" href="~/css/output.css" />
     <link href="~/css/site.css" />
 </head>
-<body id="websiteBody" class="bg-grey-700">
+<body id="websiteBody">
 
   
 
     <input type="hidden" id="batchIdHidden" value="@ViewBag.BatchId" />
 
-    <div class="container" id="mainContent">
+    <div id="mainContent">
        
         
         <!---------------------------- Historic data table ---------------->        
         
-        <div id="historicDataTableSection" class="w-100 tab-content active">
+        <div id="historicDataTableSection" class="w-full md:w-100 tab-content active">
 
             <div class="display-6 text-black">Historic Data</div>
             
             <div class="relative flex flex-col h-full bg-clip-border mt-3 rounded-lg">
-                <div class="rounded-lg overflow-hidden shadow-lg">
+                <div class="rounded-lg overflow-scroll md:overflow-hidden shadow-lg">
                 <table class="w-full text-left table-auto min-w-max bg-white">
                     <thead>
                         <tr class="border-b border-gray-400 bg-blue-200">
@@ -290,7 +290,7 @@
         <div id="dataInfSection" class="tab-content">
             <h1 class="display-6">Data</h1>
             <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3">
-                <div class="rounded-lg overflow-hidden shadow-lg">
+                <div class="rounded-lg overflow-scroll md:overflow-hidden shadow-lg">
                     <table class="w-full text-left table-auto min-w-max bg-white">
                         <thead>
                             <tr class="border-b border-gray-400 bg-blue-200">
@@ -351,7 +351,7 @@
 
 
             <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3">
-                <div class="rounded-lg overflow-hidden shadow-lg">
+                <div class="rounded-lg overflow-scroll md:overflow-hidden shadow-lg">
                     <table class="w-full text-left table-auto min-w-max bg-white">
                         <thead>
                             <tr class="border-b border-gray-300 bg-blue-200">
@@ -393,7 +393,7 @@
 
         <!-------------- ADDITIONAL STATS ---------------------------->
 
-        <div id="additionalStatsSection" class="w-1/2 tab-content">
+        <div id="additionalStatsSection" class="w-full md:w-1/2 tab-content">
 
             <h1 class="display-6">Additional Stats</h1>
             <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3">
@@ -443,7 +443,7 @@
 
         <!------------- TECHNICAL PRICE POINTS -------------------------->
 
-        <div id="technicalPriceSection" class="w-1/2 tab-content">
+        <div id="technicalPriceSection" class="w-full md:w-1/2 tab-content">
 
             <h1 class="display-6">Technical Price Points</h1>
 
@@ -489,13 +489,13 @@
         <!-------------------------------- ULTIMATE COSTS ----------------------------------------->
 
         <div id="ultimateCostsSection" class="tab-content">
-            <div class="flex flex-row justify-between gap-8 items-end">
+            <div class="flex flex-col md:flex-scroll md:flex-row justify-between gap-8 items-end">
 
-                <div class="w-1/2">
+                <div class="w-full md:w-1/2">
 
                     <h1 class="display-6">Ultimate Costs</h1>
 
-                    <div class="flex flex-row justify-between w-full">
+                    <div class="flex flex-col md:flex-row justify-between w-full">
 
                         <!-------------- ULTIMATE COSTS TABLE --------------------->
                         <div class="relative overflow-x-auto shadow-lg rounded-lg mt-3 w-full">
@@ -618,7 +618,7 @@
                 </div>
 
                 <!----------- ADJUSTING NET PREMIUM ---------------->
-                <div class="w-1/2">
+                <div class="w-full md:w-1/2">
 
                     <!------COI contingent adjustment section ---------->
 
@@ -646,10 +646,10 @@
                                 <tr class="hover:bg-blue-50 p-4 text-sm">
                                     <th scope="row" class="px-6 py-4 bg-purple-200 border-b border-gray-400">
                                         <span class="text-sm font-normal">Or select your own daily fee:</span></br>
-                                        COI Contingent Fixed Figure Per Day
+                                        COI Contingent Fixed Figure Per Day (£)
                                     </th>
-                                    <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
-                                        £
+                                    <td class="px-4 py-4 text-left md:text-right text-gray-900 border-b border-gray-300">
+                                        
                                         <input type="number" id="COI_ContingentFixedFigureInput"
                                                class="w-24 text-right px-2 py-1 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition"
                                                value="@Model.ClaimsCalculationsModel.COI_ContingentFixedFigure"
