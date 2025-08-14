@@ -57,11 +57,20 @@
                 </form>
 
                 <div class="flex items-center space-x-4">
-                    <div>
-                        <small>Logged in as:</small><br />
-                        <span class="text-gray-700">
-                            @(User.Identity?.Name ?? "Unknown User")
-                        </span>
+                    <div class="text-left">
+                        <small class="text-gray-600">Logged in as:</small><br />
+                        @if (userType == "1")
+                        {
+                            <a asp-controller="Profile" asp-action="AdminProfileIndex" class="text-blue-700 font-medium">
+                                @(User.Identity?.Name ?? "Unknown User")
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Profile" asp-action="ProfileIndex" class="text-blue-700 font-medium">
+                                @(User.Identity?.Name ?? "Unknown User")
+                            </a>
+                        }
                     </div>
                     <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
                         <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
