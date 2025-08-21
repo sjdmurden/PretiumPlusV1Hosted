@@ -63,7 +63,6 @@ namespace CSV_reader.Services
                 var turnoverWorksheet = workbook.Worksheet("ImportTurnover");
                 var vehiclesWorksheet = workbook.Worksheet("ImportVehicles");
                 var forecastWorksheet = workbook.Worksheet("ImportForecast");
-                var additionalInputsWorksheet = workbook.Worksheet("AdditionalInputs");
 
                 // the following dictionaries have the policy years as keys
 
