@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using CSV_reader.database;
 using static System.Net.WebRequestMethods;
+using System.Security.Claims;
 
 namespace CSV_reader.Controllers
     //The controller focuses on handling HTTP requests. It doesn't handle PDF creation directly, the service does that.
@@ -22,7 +23,6 @@ namespace CSV_reader.Controllers
             _pdfService = pdfService;
         }
 
-        
 
         [HttpPost]
         public IActionResult GeneratePDF([FromBody] GeneratePdfRequestViewModel request)
@@ -30,10 +30,13 @@ namespace CSV_reader.Controllers
             Console.WriteLine($"GeneratePDF inside PDFController:");
             Console.WriteLine($"quoteId: {request.BatchId}");
             Console.WriteLine($"updatedGrossPremium: {request.UpdatedGrossPremiumPlusIPT}");
+            
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
 
             var pdfBytes = 
                 _pdfService.CreatePDFReport
                 (
+                    userEmail,
                     request.BatchId, 
                     request.ClaimsAmount,
                     request.LargeLossFund,

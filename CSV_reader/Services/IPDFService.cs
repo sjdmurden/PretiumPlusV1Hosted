@@ -6,6 +6,7 @@ namespace CSV_reader.Services
     public interface IPDFService
     {
         byte[] CreatePDFReport(
+            string userEmail,
             string batchId,
             decimal claimsAmount,
             decimal largeLossFund,

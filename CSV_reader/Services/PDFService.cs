@@ -1,10 +1,11 @@
 ﻿using CSV_reader.database;
+using CSV_reader.Models;
 using CSV_reader.Services;
+using Newtonsoft.Json.Linq;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Newtonsoft.Json.Linq;
-
+using System.Security.Claims;
 
 
 namespace CSV_reader.Services
@@ -21,6 +22,7 @@ namespace CSV_reader.Services
         }
 
         public byte[] CreatePDFReport(
+            string userEmail,
             string batchId, 
             decimal claimsAmount,
             decimal largeLossFund,
@@ -47,7 +49,7 @@ namespace CSV_reader.Services
             //var tableData = _appContext.ClientDetails.FirstOrDefault(x => x.Id == quoteId);
             var batchOfClaims = _appContext.ClaimsTable
                                     .Where(c => c.BatchId == batchId)
-                                    .ToList();
+                                    .ToList();       
 
             var quoteId = batchId.Split("_")[0];
 
@@ -146,7 +148,7 @@ namespace CSV_reader.Services
                     {
                         headerCol.Item().Row(row =>
                         {
-                            var pretiumLogo = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "pretium+nobackground.png");
+                            var pretiumLogo = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "pretium_nobackground.png");
                             var logoBytes = File.ReadAllBytes(pretiumLogo);
 
                             row.RelativeItem().AlignLeft().Column(column =>
@@ -161,6 +163,9 @@ namespace CSV_reader.Services
                                     .FontSize(12)
                                     .Bold();
                                 column.Item().Text($"{currentDate}")
+                                    .FontSize(12)
+                                    .Bold();
+                                column.Item().Text($"{userEmail}")
                                     .FontSize(12)
                                     .Bold();
                             });
