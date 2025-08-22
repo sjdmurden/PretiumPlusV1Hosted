@@ -97,7 +97,7 @@ namespace CSV_reader.Controllers
                 throw new InvalidOperationException("Excel file path is not set or is invalid.");
             }
 
-            Console.WriteLine($"Year Filter: {year}");
+            // Console.WriteLine($"Year Filter: {year}");
 
             var data = _claimsService.ReadClaimsExcel(filePath); // Read directly
             var filteredClaims = data.Where(c => c.PolicyYearCol == year).ToList();

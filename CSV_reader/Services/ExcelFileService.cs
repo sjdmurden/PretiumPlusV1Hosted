@@ -68,14 +68,27 @@ namespace CSV_reader.Services
                 string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
 
                 // Ensure the uploads folder exists
-                Directory.CreateDirectory(uploadsFolder); 
+                Directory.CreateDirectory(uploadsFolder);
 
-                // Create string file path which is the excel file and uploads folder paths concatenated
-                string filePath = Path.Combine(uploadsFolder, excelFile.FileName);
+                // Short unique ID (8 chars instead of full GUID)
+                string shortId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
+                // Sanitize original file name (remove spaces and invalid chars)
+                string safeFileName = Path.GetFileNameWithoutExtension(excelFile.FileName)
+                                            .Replace(" ", "_")
+                                            .Replace("'", "")
+                                            .Replace("\"", "");
+                string extension = Path.GetExtension(excelFile.FileName);
+
+                // New file name: shortId_originalName.xlsx
+                string fileName = $"{shortId}_{safeFileName}{extension}";
+
+                // Full physical path to save the file
+                string filePath = Path.Combine(uploadsFolder, fileName);
+
+                // Save the file
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    // save file to uploads folder
                     await excelFile.CopyToAsync(fileStream);
                 }
 
@@ -84,12 +97,10 @@ namespace CSV_reader.Services
 
                 // return the full path to the uploaded file - file path to the excel file inside the uploads folder
                 return filePath;
-                
+                 
             }
 
             throw new ArgumentException("Invalid file uploaded.");
-
-
         }
 
         

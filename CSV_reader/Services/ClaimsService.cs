@@ -225,7 +225,7 @@ namespace CSV_reader.Services
                 int claimsSheetTPPaidTotal = claimsSheetHeaders.IndexOf("TP - Paid") + 1;
                 int claimsSheetTPOSTotal = claimsSheetHeaders.IndexOf("TP - OS") + 1;
 
-                Console.WriteLine($"claimsSheetHeadersRow: {claimsSheetHeadersRow}");
+                //Console.WriteLine($"claimsSheetHeadersRow: {claimsSheetHeadersRow}");
 
                 foreach (var row in claimsWorksheet.RowsUsed().Skip(1))
                 {
@@ -314,7 +314,7 @@ namespace CSV_reader.Services
 
                     data.Add(records);
 
-                    Console.WriteLine(JsonConvert.SerializeObject(records, Formatting.Indented));
+                    //Console.WriteLine(JsonConvert.SerializeObject(records, Formatting.Indented));
                 }
 
 
@@ -322,7 +322,7 @@ namespace CSV_reader.Services
 
             }
 
-           Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
+           // Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
 
             return data;
 

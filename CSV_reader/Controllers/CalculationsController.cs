@@ -191,7 +191,7 @@ namespace CSV_reader.Controllers
                 .Where(c => c.BatchId == request.BatchId)
                 .ToList();
 
-            Console.WriteLine("selected claims: " + request.SelectedClaims);
+            // Console.WriteLine("selected claims: " + request.SelectedClaims);
 
             var calculations = _claimsCalculationsService.GetCalculationsFromClaims(
                 batchFilteredClaims,

@@ -40,7 +40,8 @@ namespace CSV_reader.Controllers
             try
             {
                 // Use the service to upload the file
-                string filePath = await _excelFileService.UploadFile_Service(excelFile);                
+                string filePath = await _excelFileService.UploadFile_Service(excelFile);         
+                Console.WriteLine($"excel file path {filePath}");
 
                 // Redirect to Index action method inside Home controller
                 return RedirectToAction("Index2", "Home");
