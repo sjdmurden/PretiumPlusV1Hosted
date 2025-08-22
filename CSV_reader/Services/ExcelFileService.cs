@@ -70,8 +70,8 @@ namespace CSV_reader.Services
                 // Ensure the uploads folder exists
                 Directory.CreateDirectory(uploadsFolder);
 
-                // Short unique ID (8 chars instead of full GUID)
-                string shortId = Guid.NewGuid().ToString("N").Substring(0, 8);
+                // Short unique ID (5 chars instead of full GUID)
+                string shortId = Guid.NewGuid().ToString("N").Substring(0, 5);
 
                 // Sanitize original file name (remove spaces and invalid chars)
                 string safeFileName = Path.GetFileNameWithoutExtension(excelFile.FileName)
