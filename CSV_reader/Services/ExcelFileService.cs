@@ -73,7 +73,7 @@ namespace CSV_reader.Services
                 // Short unique ID (5 chars instead of full GUID)
                 string shortId = Guid.NewGuid().ToString("N").Substring(0, 5);
 
-                // Sanitize original file name (remove spaces and invalid chars)
+                // remove spaces and invalid chars
                 string safeFileName = Path.GetFileNameWithoutExtension(excelFile.FileName)
                                             .Replace(" ", "_")
                                             .Replace("'", "")

@@ -31,7 +31,7 @@ namespace CSV_reader.Controllers
             Console.WriteLine($"quoteId: {request.BatchId}");
             Console.WriteLine($"updatedGrossPremium: {request.UpdatedGrossPremiumPlusIPT}");
             
-            var userEmail = User.FindFirstValue(ClaimTypes.Name);
+            var userEmail = User.FindFirstValue(ClaimTypes.Name) ?? "Unknown User";
 
             var pdfBytes = 
                 _pdfService.CreatePDFReport
