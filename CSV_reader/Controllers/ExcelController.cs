@@ -34,6 +34,11 @@ namespace CSV_reader.Controllers
             return View();
         }
 
+        public IActionResult LandingPage()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> UploadFile_Controller(IFormFile excelFile)
         {

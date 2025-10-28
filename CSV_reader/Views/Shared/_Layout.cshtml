@@ -17,32 +17,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
  
-    <div>
+    <div class="flex-grow">
         <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <div class="container2">
         
-        <footer class="text-center text-lg-start text-black mt-4 bg-gray-300">
+    <footer class="text-center text-lg-start text-black mt-8 bg-gray-300 w-full">
             
-            <div class="container p-4 pb-0">
-                <!-- Section: Links -->
-                <section class="">
+        <div class="p-4 pb-0">
+            <!-- Section: Links -->
+            <section class="">
                    
-                    <div class="row">
+                <div class="row">
                        
-                        <div class="col-lg-8 col-md-6 mb-4 mb-md-0">                            
+                    <div class="col-lg-8 col-md-6 mb-4 mb-md-0">                            
 
-                            <p class="text-left">
-                                Pretium Agency Limited is an Appointed Representative of Pro MGA Solutions Ltd who is authorised and regulated by the Financial Conduct Authority under reference 770419. Pretium Agency Limited is registered in England (No: 14676979), Registered Office: Charlotte House Stanier Way, Chaddesden, Derby, England, DE21 6BF
-                                Copyright Pretium Agency 2023 | All Rights Reserved
-                            </p>
-                        </div>
+                        <p class="text-left">
+                            Pretium Agency Limited is an Appointed Representative of Pro MGA Solutions Ltd who is authorised and regulated by the Financial Conduct Authority under reference 770419. Pretium Agency Limited is registered in England (No: 14676979), Registered Office: Charlotte House Stanier Way, Chaddesden, Derby, England, DE21 6BF
+                            Copyright Pretium Agency 2023 | All Rights Reserved
+                        </p>
+                    </div>
                         
+                    <div class="flex flex-row md:contents">
+
                         <div class="col-lg-2 col-md-6 mb-4 mb-md-0">                            
 
                             <ul class="list-disc mb-0">
@@ -64,46 +65,48 @@
 
                                 <!-- Linkedin -->
                                 <a class="btn btn-outline-dark btn-floating m-1"
-                                   role="button"
-                                   target="_blank"
-                                   href="https://www.linkedin.com/company/tts360/posts/?feedView=all">
+                                    role="button"
+                                    target="_blank"
+                                    href="https://www.linkedin.com/company/tts360/posts/?feedView=all">
                                     <i class="fab fa-linkedin-in"></i>
                                 </a>
 
                                 <!-- pretium website -->
                                 <a class="btn btn-outline-dark btn-floating m-1"
-                                   href="https://pretiumagency.co.uk/"
-                                   target="_blank"
-                                   role="button">
+                                    href="https://pretiumagency.co.uk/"
+                                    target="_blank"
+                                    role="button">
                                     <i >P</i>
                                 </a>
 
                                 <!-- Twitter -->
                                 <a class="btn btn-outline-dark btn-floating m-1"
-                                   href="https://x.com/tts360?s=21"
-                                   target="_blank"
-                                   role="button">
+                                    href="https://x.com/tts360?s=21"
+                                    target="_blank"
+                                    role="button">
                                     <i class="fab fa-twitter"></i>
                                 </a>
 
                             </section>
                         </div>
-                       
+
+
                     </div>
+                       
+                </div>
                     
-                </section>
+            </section>
                
-            </div>
+        </div>
             
-            <!-- Copyright -->
-            <div class="text-center p-3 bg-gray-400">
-                © 2025 Copyright:
-                <a class="text-black" href="https://tts360.co.uk/">TTS360</a>
-            </div>
+        <!-- Copyright -->
+        <div class="text-center p-3 bg-gray-400">
+            © 2025 Copyright:
+            <a class="text-black" href="https://tts360.co.uk/">TTS360</a>
+        </div>
            
-        </footer>
+    </footer>
         
-    </div>
     
 
     

@@ -1,4 +1,4 @@
-﻿function downloadPDF(pdfBase64) {
+﻿function downloadPDF(pdfBase64, batchId) {
     /*const iframe = document.querySelector('iframe');
 
     const pdfBase64 = iframe.src.split(',')[1]  // Extract base64 part of iframe:src attribute*/
@@ -31,7 +31,10 @@
     // create a temp url variable that points to the blob object in browser's memory. Then assign it to the href attribute of the link anchor tag
     const url = URL.createObjectURL(blob);
     link.href = url;
-    link.download = 'FleetInsuranceQuote.pdf';  // names the downloaded file
+    /*let batchId = params.get("batchId")*/
+
+    console.log("pdfDownload.js file - batch ID: ", batchId);
+    link.download = `FleetInsuranceQuote_${batchId}.pdf`;  // names the downloaded file
     document.body.appendChild(link);  // this adds the anchor tag to the body
 
     link.click();  // simulates a click on the anchor tag 

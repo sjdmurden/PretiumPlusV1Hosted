@@ -31,7 +31,8 @@ namespace CSV_reader.Controllers
             // If user still authenticated, redirect to Excel file uploader page
             if (User?.Identity?.IsAuthenticated == true)
             {
-                return RedirectToAction("IndexExcel", "Excel");
+                //return RedirectToAction("IndexExcel", "Excel");
+                return RedirectToAction("LandingPage", "Excel");
             }
             return View(new LoginViewModel());
         }
@@ -84,7 +85,9 @@ namespace CSV_reader.Controllers
 
 
             // Redirect to Excel file uploader page
-            return RedirectToAction("IndexExcel", "Excel");
+            //return RedirectToAction("IndexExcel", "Excel");
+
+            return RedirectToAction("LandingPage", "Excel");
         }
 
         // Logout

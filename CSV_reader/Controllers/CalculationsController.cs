@@ -100,6 +100,19 @@ namespace CSV_reader.Controllers
 
             viewModel.ClaimsCalculationsModel.SelectedNumOfMonths = string.IsNullOrEmpty(selectedNumOfMonths) ? "12" : selectedNumOfMonths;
 
+            Console.WriteLine($"Selected claims count: {batchClaimsData.Count}");
+
+            var claimsByYear = batchClaimsData
+                .GroupBy(c => c.PolicyYear)
+                .Select(g => new { Year = g.Key, Count = g.Count() })
+                .OrderBy(g => g.Year)
+                .ToList();
+
+            foreach (var group in claimsByYear)
+            {
+                Console.WriteLine($"Year {group.Year}: {group.Count} claims");
+            }
+
             // the following defines the dropdown lists for the view.
             // This guarantees that the dropdowns are populated before the view is rendered, making sure they are never null or empty which would lead to errors.
             // It also centralises the data preparation meaning if more dropdown values are needed, they can be added here easily.
@@ -154,31 +167,7 @@ namespace CSV_reader.Controllers
 
 
 
-        /*[HttpPost]
-        public IActionResult GetFilteredClaims([FromBody] BatchClaimsRequest request)
-        {
-            List<IndivClaimDB> batchFilteredClaims = _appContext.ClaimsTable
-                .Where(c => c.BatchId == request.BatchId && request.SelectedClaims.Contains(c.ClaimRef))
-                .ToList();
 
-            var calculations = _claimsCalculationsService.GetCalculationsFromClaims(
-                batchFilteredClaims,
-                request.BatchId,
-                request.SelectedNumOfMonths,
-                request.ProjYears,
-                request.ChargeCOIFee,
-                request.PricingMetric,
-                request.PriceBy
-            );
-
-            var viewModel = new ClaimsPlusCalcsViewModel
-            {
-                BatchClaims = batchFilteredClaims,
-                ClaimsCalculationsModel = calculations
-            };
-
-            return View("_CalculationsTablesPartial", viewModel);
-        }*/
 
         [HttpPost]
         public IActionResult GetFilteredClaims([FromBody] BatchClaimsRequest request)
@@ -207,6 +196,66 @@ namespace CSV_reader.Controllers
             var viewModel = new ClaimsPlusCalcsViewModel
             {
                 FilteredBatchClaims = batchFilteredClaims,
+                StaticClientData = staticClientData,
+                ClaimsCalculationsModel = calculations
+            };
+
+            return View("_CalculationsTablesPartial", viewModel);
+        }
+
+
+
+        // ----------- SELECTED YEARS FILTER ---------------
+
+        [HttpPost]
+        public IActionResult FilteredYears([FromBody] SelectedYearsBatchClaimsRequest request)
+        {
+
+            // the following does this:
+            // From the IndivClaimData table, fetch all claims where the claim’s PolicyYear matches one of the user-selected years, and put those into a list
+            /*List<IndivClaimDataDB> selectedYearsBatchOfClaims = _appContext.IndivClaimData
+                .Where(c => request.SelectedYears.Contains(c.PolicyYear.ToString()))
+                .ToList();*/
+
+            List<IndivClaimDataDB> selectedYearsBatchOfClaims = _appContext.IndivClaimData
+                .Where(c => request.SelectedYears.Contains(c.PolicyYear.ToString())
+                            && c.BatchId == request.BatchId)
+                .ToList();
+
+            List<StaticClientDataDB> staticClientData = _appContext.StaticClientDataDB
+                .Where(c => c.BatchId == request.BatchId)
+                .ToList();
+
+            Console.WriteLine("selected years: " + string.Join(", ", request.SelectedYears));
+
+            Console.WriteLine($"Selected claims count: {selectedYearsBatchOfClaims.Count}");
+            Console.WriteLine($"Static client data count: {staticClientData.Count}");
+
+            var claimsByYear = selectedYearsBatchOfClaims
+                .GroupBy(c => c.PolicyYear)
+                .Select(g => new { Year = g.Key, Count = g.Count() })
+                .OrderBy(g => g.Year)
+                .ToList();
+
+            string summary = string.Join(", ", claimsByYear.Select(g => $"Year {g.Year}: {g.Count} claims"));
+
+            Console.WriteLine($"Claims per year: {summary}");
+            
+
+            var calculations = _claimsCalculationsService.GetCalculationsFromClaims(
+                selectedYearsBatchOfClaims,
+                staticClientData,
+                request.BatchId,
+                request.SelectedNumOfMonths,
+                request.ProjYears,
+                request.ChargeCOIFee,
+                request.PricingMetric,
+                request.PriceBy
+            );
+
+            var viewModel = new ClaimsPlusCalcsViewModel
+            {
+                FilteredBatchClaims = selectedYearsBatchOfClaims,
                 StaticClientData = staticClientData,
                 ClaimsCalculationsModel = calculations
             };

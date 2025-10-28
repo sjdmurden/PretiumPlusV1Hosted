@@ -9,7 +9,9 @@ module.exports = {
            
         },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindplus/elements')
+    ],
 };
 
 //C: \Users\SebastianMurden\OneDrive\CSV_reader - Copy\CSV_reader\Views\Calculations\_CalculationsTablesPartial.cshtml

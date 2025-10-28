@@ -23,7 +23,7 @@ namespace CSV_reader.Services
 
         public byte[] CreatePDFReport(
             string userEmail,
-            string batchId, 
+            string batchId,
             decimal claimsAmount,
             decimal largeLossFund,
             decimal reinsuranceCosts,
@@ -34,7 +34,7 @@ namespace CSV_reader.Services
             decimal netPremium,
             decimal commissions,
             decimal grossPremium,
-            decimal updatedGrossPremiumPlusIPT, 
+            decimal updatedGrossPremiumPlusIPT,
             string adjustmentNotes,
             int FCDaysCOI,
             int FCDaysNonCOI,
@@ -49,7 +49,7 @@ namespace CSV_reader.Services
             //var tableData = _appContext.ClientDetails.FirstOrDefault(x => x.Id == quoteId);
             var batchOfClaims = _appContext.ClaimsTable
                                     .Where(c => c.BatchId == batchId)
-                                    .ToList();       
+                                    .ToList();
 
             var quoteId = batchId.Split("_")[0];
 
@@ -136,7 +136,7 @@ namespace CSV_reader.Services
 
 
             // Define a new PDF document
-            var document = Document.Create(container =>
+            var quoteDocument = Document.Create(container =>
             {
                 container.Page(page =>
                 {
@@ -185,14 +185,14 @@ namespace CSV_reader.Services
                             });
                         });
 
-                       
+
                         headerCol.Item().PaddingTop(10).LineHorizontal(1).LineColor(QuestPDF.Helpers.Colors.Grey.Lighten2);
                     });
 
 
 
                     page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
-                    {                       
+                    {
 
 
                         // Client Details Card
@@ -304,40 +304,7 @@ namespace CSV_reader.Services
                         column.Item().PageBreak();
 
 
-                        // Quote Specifics Card
-                        /*   column.Item().PaddingTop(20).Background(QuestPDF.Helpers.Colors.Grey.Lighten4).Padding(15)
-                               .Column(card =>
-                               {
-                                   card.Item().Text("Quote Details")
-                                       .FontSize(14).Bold().FontColor(QuestPDF.Helpers.Colors.Blue.Darken4);
 
-                                   card.Item().Table(table =>
-                                   {
-                                       table.ColumnsDefinition(columns =>
-                                       {
-                                           columns.RelativeColumn();
-                                           columns.RelativeColumn();
-                                       });
-
-                                       table.Cell().Text("Policy Start Date").SemiBold();
-                                       table.Cell().Text($"{clientStartDate}");
-
-                                       table.Cell().Text("Cover").SemiBold();
-                                       table.Cell().Text($"{clientCoverType}");
-
-                                       table.Cell().Text("Excess").SemiBold();
-                                       table.Cell().Text($"£{clientExcess}");
-
-                                       table.Cell().Text("Drivers").SemiBold();
-                                       table.Cell().Text("Any Driver Aged 21+ with 2+ years' license.");
-
-                                       table.Cell().Text("Vehicles").SemiBold();
-                                       table.Cell().Text("Any motor vehicle in policyholder's custody or control.");
-
-                                       table.Cell().Text("Use").SemiBold();
-                                       table.Cell().Text("Social, Domestic & Pleasure and the Business Use of the Policyholder or any person to whom the vehicle has been hired under a hire agreement.");
-                                   });
-                               });*/
 
 
 
@@ -345,26 +312,7 @@ namespace CSV_reader.Services
                         var imagePath1 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "traffic1.jpg");
                         var imagePath2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "road.jpg");
 
-                        // Image section with 2 images
-                        /*column.Item().PaddingTop(20).Row(row =>
-                        {
-                            
-                            row.RelativeItem().Image(File.ReadAllBytes(imagePath1));
-                            row.RelativeItem().Image(File.ReadAllBytes(imagePath2));
-                        });*/
 
-                        /*column.Item().Row(row =>
-                        {
-                            row.RelativeItem().Width(150).Height(200)
-                                .Image(File.ReadAllBytes(imagePath1))
-                                .FitHeight();
-
-                            row.RelativeItem().Width(150).Height(200)
-                                .Image(File.ReadAllBytes(imagePath2))
-                                .FitHeight();
-                        });*/
-
-                        // Quote specifics 
 
                         // ------------ EXPOSURE -------------------
 
@@ -392,16 +340,16 @@ namespace CSV_reader.Services
                                 carExp, vanExp, minibusExp, hgvExp
                             ];
 
-                            for (int i = 0; i<vehNums.Length; i++)
+                            for (int i = 0; i < vehNums.Length; i++)
                             {
                                 var bgColor = i % 2 == 0 ? QuestPDF.Helpers.Colors.Grey.Lighten4 : QuestPDF.Helpers.Colors.White;
 
                                 table.Cell().Background(bgColor).Padding(4).Text(labels[i]).SemiBold();
                                 table.Cell().Background(bgColor).Padding(4).Text($"{vehNums[i]} @ £{vehExposures[i]} each.").SemiBold();
                             }
-                                                      
+
                             table.Cell().Padding(4).Background(QuestPDF.Helpers.Colors.Grey.Lighten4).Text("Adjustment");
-                            table.Cell().Padding(4).Background(QuestPDF.Helpers.Colors.Grey.Lighten4).Text("The annual premium will be adjusted on an annual basis calculated on the number of days as per the MID.");         
+                            table.Cell().Padding(4).Background(QuestPDF.Helpers.Colors.Grey.Lighten4).Text("The annual premium will be adjusted on an annual basis calculated on the number of days as per the MID.");
                         });
 
                         // ------------- BUSINESS FORECAST ------------------
@@ -424,7 +372,7 @@ namespace CSV_reader.Services
                             [
                                 FCDaysCOI, FCDaysNonCOI, FCTurnoverCOI, FCTurnoverNonCOI
                             ];
-                            
+
 
                             for (int i = 0; i < values.Length; i++)
                             {
@@ -455,7 +403,7 @@ namespace CSV_reader.Services
                                 columns.RelativeColumn();
                                 columns.RelativeColumn();
                             });
-                        
+
                             string[] labels =
                             [
                                 "Claims Amount", "Large Loss Fund", "Reinsurance Costs", "Claims Handling Fee",
@@ -479,7 +427,7 @@ namespace CSV_reader.Services
                                 .Text($"£{values[i]:N2}").SemiBold();
                             }
                         });
-                       
+
 
                         // Notes section
                         column.Item().PaddingTop(20).Border(1).Padding(15).Column(innerColumn =>
@@ -494,10 +442,10 @@ namespace CSV_reader.Services
                                 .FontSize(12)
                                 .FontColor("#666666")
                                 .AlignLeft();
-                                
+
                         });
 
-                      
+
 
                         // -------------------- NEW PAGE ------------------------
 
@@ -544,9 +492,71 @@ namespace CSV_reader.Services
 
             // Generate the PDF file as a byte array
             // GeneratePdf() is the library's own method to generate the PDF
-            return document.GeneratePdf();
+            return quoteDocument.GeneratePdf();
         }
-    }
+   
+        
+        
+        
+        // -------------------------- POLICY DOC ------------------------
+        /*public byte[] CreatePolicyDoc(
+                string userEmail,
+                string batchId,
+                decimal claimsAmount,
+                decimal largeLossFund,
+                decimal reinsuranceCosts,
+                decimal claimsHandlingFee,
+                decimal levies,
+                decimal expenses,
+                decimal profit,
+                decimal netPremium,
+                decimal commissions,
+                decimal grossPremium,
+                decimal updatedGrossPremiumPlusIPT,
+                string adjustmentNotes,
+                int FCDaysCOI,
+                int FCDaysNonCOI,
+                decimal FCTurnoverCOI,
+                decimal FCTurnoverNonCOI
+            )
+        {
+            var policyDocument = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.DefaultTextStyle(x => x.FontSize(24));
+
+                    page.Header()
+                        .Text("Hello, World!")
+                        .FontSize(48).Bold();
+
+                    page.Content()
+                        .PaddingVertical(25)
+                        .Text(Placeholders.LoremIpsum())
+                        .Justify();
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(text =>
+                        {
+                            text.CurrentPageNumber();
+                            text.Span(" / ");
+                            text.TotalPages();
+                        });
+                });
+            });
+
+            return policyDocument.GeneratePdf();
+        }*/
+    };
+
+
+
+
+
+
 
 }
 

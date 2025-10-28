@@ -473,6 +473,7 @@ namespace CSV_reader.Services
                 // Handle invalid number of months, default to 12 if parsing fails
                 claimsCalculationsModel.InfMonth = 12;
             }
+
             claimsCalculationsModel.SelectedProjYears = projYears;
             if (int.TryParse(projYears, out int parsedYears))
             {

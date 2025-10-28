@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="logs\" />
+    <Folder Include="Views\LandingPage\" />
     <Folder Include="Views\Register\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>

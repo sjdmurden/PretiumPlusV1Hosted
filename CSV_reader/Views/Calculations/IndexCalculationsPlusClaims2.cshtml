@@ -19,6 +19,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
 
     <link href="~/css/site.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/%40tailwindplus/elements@1" type="module"></script>
+
 </head>
 
 
@@ -209,11 +212,17 @@
                     <form id="combinedForm" class="rounded-lg p-3">
                         <span class="font-bold text-2xl mb-6 block text-black">Filters</span>
 
+                        <!-- this div is showing the filters for desktop screens -->
                         <div class="md:grid grid-cols-5 gap-4 hidden">
                             @foreach (var item in new[]
                             {
                             new { Id = "selectedNumOfMonthsDropdown", Label = "Months", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedNumOfMonths), List = Model.ClaimsCalculationsModel.InflationMonths },
-                            new { Id = "projYearsDropdown", Label = "Years", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedProjYears), List = Model.ClaimsCalculationsModel.ProjectedYears },
+
+                            new { 
+                                Id = "projYearsDropdown", 
+                                Label = "Years", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedProjYears), 
+                                List = Model.ClaimsCalculationsModel.ProjectedYears },
+
                             new { Id = "COIFeeDropdown", Label = "COI Fee", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedCOIFee), List = Model.ClaimsCalculationsModel.ChargeCOIFee },
                             new { Id = "pricingMetricDropdown", Label = "Metric", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPricingMetric), List = Model.ClaimsCalculationsModel.PricingMetrics },
                             new { Id = "priceByDropdown", Label = "Price By", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPriceBy), List = Model.ClaimsCalculationsModel.PriceByFilters }
@@ -226,6 +235,7 @@
                             }
                         </div>
 
+                        <!-- these next two divs are showing the filters on mobile screens. 2 divs as there are 2 rows of dropdown boxes -->
                         <div class="grid grid-cols-3 gap-4 md:hidden">
                             @foreach (var item in new[]
                                                         {
@@ -266,12 +276,93 @@
 
             </div>
 
+            <!-- SELECT WHICH YEARS -->
+
+           @*  <div class="relative inline-block text-left m-16">
+                <details class="group">
+                    <summary class="flex cursor-pointer items-center gap-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                        Options
+                        
+                    </summary>
+
+                    <ul class="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black/10 text-sm text-gray-700">
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Account settings</a></li>
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Support</a></li>
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">License</a></li>
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Sign out</a></li>
+                    </ul>
+                </details>
+            </div> *@
+
+            <form>
+                <div class="space-y-2 bg-gray-100">
+                    @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year1Name))
+                    {
+                        <span>Year 1</span>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year1Name"
+                                   class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                            <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year1Name</span>
+                        </label>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year2Name))
+                    {
+                        <span>Year 2</span>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year2Name"
+                                   class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                            <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year2Name</span>
+                        </label>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year3Name))
+                    {
+                        <span>Year 3</span>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year3Name"
+                                   class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                            <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year3Name</span>
+                        </label>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year4Name))
+                    {
+                        <span>Year 4</span>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year4Name"
+                                   class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                            <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year4Name</span>
+                        </label>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year5Name))
+                    {
+                        <span>Year 5</span>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year5Name"
+                                   class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                            <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year5Name</span>
+                        </label>
+                    }
+                </div>
+
+                <div>
+                    <button type="submit" id="selectedYearsBtn" class="mx-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                        Select these years
+                    </button>
+                </div>
+
+            </form>
+
         </div>
 
 
         <button id="toggleTableBtn" class="mx-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
             Show Claims
         </button>
+
+
 
 
 

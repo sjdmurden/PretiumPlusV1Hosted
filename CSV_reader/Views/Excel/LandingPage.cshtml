@@ -1,0 +1,480 @@
+﻿@using System.Security.Claims;
+
+
+@{
+    var userType = User.FindFirstValue("UserType");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rating Guide</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/quoteSearch.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/output.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<header class="top-0 left-0 right-0 w-full bg-white shadow-md">
+    <nav class="flex items-center justify-between px-4 md:px-6 py-3 w-full h-20">
+
+        <div class="flex items-center">
+            <a href="/Excel/IndexExcel"
+               class="text-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                Home
+            </a>
+        </div>
+
+        <div class="absolute left-1/2 transform -translate-x-1/2">
+            <a href="/">
+                <img src="@Url.Content("~/images/pretium_nobackground.png")"
+                     alt="Pretium Logo"
+                     class="h-12 object-contain" />
+            </a>
+        </div>
+
+        <div class="relative">
+            <button id="hamburgerBtn" class="focus:outline-none md:hidden">
+                <!-- Hamburger Icon -->
+                <!-- hamburger is hidden when the screen is medium or larger using 'md:hidden'-->
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <div id="hamburgerMenu"
+                 class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg p-4 z-50">
+                <div class="text-sm text-gray-800 mb-2">
+                    <small class="text-gray-600">Logged in as:</small><br />
+                    @if (userType == "1")
+                    {
+                        <a asp-controller="Profile" asp-action="AdminProfileIndex" class="text-blue-700 font-medium">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Profile" asp-action="ProfileIndex" class="text-blue-700 font-medium">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </a>
+                    }
+                </div>
+
+                <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
+                    <button type="submit"
+                            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-4">
+            <div class="text-left">
+                <small class="text-gray-600">Logged in as:</small><br />
+                @if (userType == "1")
+                {
+                    <a asp-controller="Profile" asp-action="AdminProfileIndex" class="text-blue-700 font-medium">
+                        @(User.Identity?.Name ?? "Unknown User")
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Profile" asp-action="ProfileIndex" class="text-blue-700 font-medium">
+                        @(User.Identity?.Name ?? "Unknown User")
+                    </a>
+                }
+            </div>
+            <form id="logoutFormDesktop" asp-controller="Login" asp-action="Logout" method="post">
+                <button type="submit"
+                        class="bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- script for hamburger button -->
+    <script>
+        document.getElementById('hamburgerBtn')?.addEventListener('click', function () {
+            const menu = document.getElementById('hamburgerMenu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</header>
+
+<body id="websiteBody">
+
+
+    <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        <span class="sr-only">Open sidebar</span>
+        
+    </button>
+
+    <style>
+        sidebar-content{
+            scrollbar-gutter: stable;
+        }
+    </style>
+
+    <aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+
+        <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 sidebar-content">
+            <ul class="space-y-2 font-medium">
+
+                <li class="w-full">
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group w-full">
+                        <span class="ms-3 text-lg text-blue-600">Pretium Plus</span>
+                    </a>
+                </li> 
+
+                <!-- QUOTES -->
+                <li class="w-full bg-white rounded-lg shadow-md p-4 space-y-4">
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-lg font-semibold text-gray-900 dark:text-white">Quotes</span>
+                    </div>
+
+                    <!-- Search Section -->
+                    <div class="space-y-3 w-full">
+                        <button type="button"
+                                onclick="toggleForm('quoteSearchForm', this)"
+                                class="w-full flex justify-between items-center px-3 py-2 text-left rounded-md bg-blue-100 text-gray-900 hover:bg-blue-200 transition">
+                            <span>Search</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <form id="quoteSearchForm" class="hidden space-y-3 w-full">
+                            <div class="flex items-center w-full">
+                                <span class="text-gray-700 text-sm font-semibold bg-gray-200 py-1 px-2 rounded-l">PAQ</span>
+                                <input type="text"
+                                       name="quoteSearch"
+                                       id="quoteIdToSearch"
+                                       required
+                                       class="w-full bg-gray-100 px-2 py-1 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r"
+                                       placeholder="Quote #" />
+                            </div>
+                            <button type="submit"
+                                    class="w-full bg-blue-600 text-white font-semibold py-2 px-3 rounded-md shadow hover:bg-blue-700 transition">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Create Section -->
+                    <div class="space-y-2 w-full">
+                        <button type="button"
+                                onclick="toggleForm('createQuoteForm', this)"
+                                class="w-full flex justify-between items-center px-3 py-2 text-left rounded-md bg-green-100 text-gray-900 hover:bg-green-200 transition">
+                            <span>Create</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" id="createQuoteForm"
+                              class="hidden space-y-3 w-full">
+                            <div class="w-full">
+                                <label for="excelFile" class="block text-sm font-semibold text-gray-700">Select Excel File</label>
+                                <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none"
+                                       id="excelFile"
+                                       type="file"
+                                       name="excelFile"
+                                       accept=".xlsx">
+                            </div>
+                            <button id="uploadButton" type="submit"
+                                    class="w-full font-semibold bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition"
+                                    disabled>
+                                Upload
+                            </button>
+                        </form>
+                    </div>
+                </li>
+
+                <!-- POLICIES -->
+                <li class="w-full bg-white rounded-lg shadow-md p-4 space-y-4">
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-lg font-semibold text-gray-900 dark:text-white">Policies</span>
+                    </div>
+
+                    <!-- Search Section -->
+                    <div class="space-y-2 w-full">
+                        <button type="button"
+                                onclick="toggleForm('policySearchForm', this)"
+                                class="w-full flex justify-between items-center px-3 py-2 text-left rounded-md bg-blue-100 text-gray-900 hover:bg-blue-200 transition">
+                            <span>Search</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <form id="policySearchForm" class="hidden space-y-3 w-full">
+                            <div class="flex items-center w-full">
+                                <span class="text-gray-700 text-sm font-semibold bg-gray-200 py-1 px-2 rounded-l">PAQ</span>
+                                <input type="text"
+                                       name="quoteSearch"
+                                       id="quoteIdToSearch"
+                                       required
+                                       class="w-full bg-gray-100 px-2 py-1 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r"
+                                       placeholder="Quote #" />
+                            </div>
+                            <button type="submit"
+                                    class="w-full bg-blue-600 text-white font-semibold py-2 px-3 rounded-md shadow hover:bg-blue-700 transition">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Create Section -->
+                    <div class="space-y-2 w-full">
+                        <button type="button"
+                                onclick="toggleForm('createPolicyForm', this)"
+                                class="w-full flex justify-between items-center px-3 py-2 text-left rounded-md bg-green-100 text-gray-900 hover:bg-green-200 transition">
+                            <span>Create</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" id="createPolicyForm"
+                              class="hidden space-y-3 w-full">
+                            <div class="w-full">
+                                <label for="excelFile" class="block text-sm font-semibold text-gray-700">Select Excel File</label>
+                                <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none"
+                                       id="excelFile"
+                                       type="file"
+                                       name="excelFile"
+                                       accept=".xlsx">
+                            </div>
+                            <button id="uploadButton" type="submit"
+                                    class="w-full font-semibold bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition"
+                                    disabled>
+                                Upload
+                            </button>
+                        </form>
+                    </div>
+                </li>
+
+                <!-- DASHBOARD -->
+                <li class="w-full bg-white rounded-lg shadow-md p-4 space-y-4">
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-lg font-semibold text-gray-900 dark:text-white">Dashboard</span>
+                    </div>
+                    <div class="flex items-center justify-between w-full">
+                        All
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </aside>
+
+
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center justify-center h-48 mb-4 rounded-sm bg-gray-50 dark:bg-gray-800">
+                <p class="text-2xl text-gray-400 dark:text-gray-500">
+                    <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                    </svg>
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center justify-center h-48 mb-4 rounded-sm bg-gray-50 dark:bg-gray-800">
+                <p class="text-2xl text-gray-400 dark:text-gray-500">
+                    <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                    </svg>
+                </p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+                <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
+                    <p class="text-2xl text-gray-400 dark:text-gray-500">
+                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                        </svg>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.5/dist/xlsx.full.min.js"></script>  <!--  add SheetJS library -->
+
+    <script>
+
+        // JS for showing/hiding forms
+
+        function toggleForm(formId, button) {
+            const form = document.getElementById(formId);
+            const svgPath = button.querySelector("svg path");
+
+            // Down and up arrows
+            const downArrow = "M19 9l-7 7-7-7";
+            const upArrow = "M5 15l7-7 7 7";
+
+            // Close all other forms
+            document.querySelectorAll("form[id$='Form']").forEach(f => {
+                if (f.id !== formId) {
+                    f.classList.add("hidden");
+                    // reset arrow for that form's button
+                    const otherButton = f.previousElementSibling;
+                    if (otherButton) {
+                        const otherPath = otherButton.querySelector("svg path");
+                        if (otherPath) otherPath.setAttribute("d", downArrow);
+                    }
+                }
+            });
+
+            // Toggle the clicked form
+            form.classList.toggle("hidden");
+
+            if (form.classList.contains("hidden")) {
+                svgPath.setAttribute("d", downArrow);
+            } else {
+                svgPath.setAttribute("d", upArrow);
+            }
+        }
+
+
+
+
+
+        // JS for selecting an Excel file and verifies it
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const fileInput = document.getElementById('excelFile')
+            const uploadButton = document.getElementById('uploadButton')
+
+            const requiredSheets = ['ImportClaims', 'ImportDays', 'ImportTurnover', 'ImportVehicles', 'ImportForecast']
+
+            uploadButton.disabled = true;
+
+            fileInput.addEventListener('change', function ()
+            {
+                const file = fileInput.files[0]
+
+                if (file && file.name.endsWith('.xlsx'))
+                {
+                    const reader = new FileReader()
+
+                    // parse it
+                    reader.onload = function (e) {
+                        const data = new Uint8Array(e.target.result)
+                        const workbook = XLSX.read(data, { type: 'array' })
+
+                        // Get the sheet names
+                        const sheetNames = workbook.SheetNames
+
+                        // Check if all required sheets exist in the uploaded file
+                        const hasAllRequiredSheets = requiredSheets.every(sheet => sheetNames.includes(sheet))
+
+                        if (hasAllRequiredSheets)
+                        {
+                            uploadButton.disabled = false
+                        } else
+                        {
+                            uploadButton.disabled = true
+                            alert("The uploaded file must contain the following sheets: " + requiredSheets.join(", "))
+                        }
+                    };
+
+                    // need to read the file as an ArrayBuffer (binary format)
+                    reader.readAsArrayBuffer(file)
+                }
+                else
+                {
+                    uploadButton.disabled = true;
+                    alert("Please upload a valid .xlsx file.");
+                }
+            });
+        });
+
+
+
+
+    </script>
+
+</body>
+
+
+</html>

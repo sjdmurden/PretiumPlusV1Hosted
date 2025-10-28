@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let adjustmentNotes = document.getElementById("adjustmentNotes").value
 
+        let userEmail = document.querySelector("[data-user-email]")?.dataset.userEmail;
+
         let claimsAmountValue = parseFloat(document.getElementById("ProjClaimsAmount").textContent.replace(/[£,]/g, ''));
         let largeLossValue = parseFloat(document.getElementById("ProjLLFund").textContent.replace(/[£,]/g, ''));
         let reinsuranceCostsValue = parseFloat(document.getElementById("ReinsuranceCosts").textContent.replace(/[£,]/g, ''));
@@ -35,6 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+
+                userEmail: userEmail,
                 batchId: batchId,
 
                 claimsAmount: claimsAmountValue,
@@ -69,9 +73,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error('Missing PDF data in response');
                 }
                 const pdfBase64 = data.pdfBase64; // Extract the Base64 string from the response
-                downloadPDF(pdfBase64); // Call download method
+                downloadPDF(pdfBase64, batchId); // Call download method
             })
-            .catch(error => {
+            .catch(error => { 
                 console.error('Error generating PDF:', error);
                 alert('Failed to generate PDF. Please try again.');
             });
