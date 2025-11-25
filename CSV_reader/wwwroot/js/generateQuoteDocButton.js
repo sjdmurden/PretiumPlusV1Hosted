@@ -1,7 +1,7 @@
-﻿// ------------------- Generate pdf button ----------------------
+﻿// ------------------- Generate quote pdf button ----------------------
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("generatePdfButton").addEventListener("click", function () {
+    document.getElementById("generateQuotePDFButton").addEventListener("click", function () {
         let params = new URLSearchParams(document.location.search)
         let batchId = params.get("batchId")
         var quoteId = batchId.split("_")[0];
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`quoteId: ${quoteId}`)
         console.log(`updatedGrossPremiumPlusIPT: ${formattedGrossPremiumPlusIPT}`)
 
-        fetch('/PDF/GeneratePDF', {
+        fetch('/PDF/GenerateQuoteDoc', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +73,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error('Missing PDF data in response');
                 }
                 const pdfBase64 = data.pdfBase64; // Extract the Base64 string from the response
-                downloadPDF(pdfBase64, batchId); // Call download method
+                const docType = "quote";
+                downloadPDF(pdfBase64, batchId, docType); // Call download method
             })
             .catch(error => { 
                 console.error('Error generating PDF:', error);
@@ -82,3 +83,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 })
+
+
+
+
+

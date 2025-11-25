@@ -58,58 +58,44 @@ namespace CSV_reader.Services
                 throw new Exception($"No data found for QuoteId: {batchId}");
             }
 
-            var clientName = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.ClientName)
-                        .FirstOrDefault() ?? "Unknown Client";
-            var clientStartDate = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.ClientStartDate)
-                        .FirstOrDefault() ?? "Unknown Start Date";
-            var clientEndDate = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.ClientEndDate)
-                        .FirstOrDefault();
-            var clientCoverType = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.ClientCoverType)
-                        .FirstOrDefault() ?? "Unknown Cover Type";
-            var clientExcess = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.ClientExcess)
-                        .FirstOrDefault();
-            var carNums = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.CarNums)
-                        .FirstOrDefault();
-            var carExp = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.CarExposure)
-                        .FirstOrDefault();
-            var vanNums = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.VanNums)
-                        .FirstOrDefault();
-            var vanExp = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.VanExposure)
-                        .FirstOrDefault();
-            var minibusNums = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.MinibusNums)
-                        .FirstOrDefault();
-            var minibusExp = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.MinibusExposure)
-                        .FirstOrDefault();
-            var hgvNums = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.HGVNums)
-                        .FirstOrDefault();
-            var hgvExp = _appContext.ClaimsTable
-                        .Where(c => c.BatchId == batchId)
-                        .Select(c => c.HGVExposure)
-                        .FirstOrDefault();
+            var clientData = _appContext.ClaimsTable
+                .Where(c => c.BatchId == batchId)
+                .Select(c => new
+                {
+                    c.ClientName,
+                    c.ClientStartDate,
+                    c.ClientEndDate,
+                    c.ClientCoverType,
+                    c.ClientExcess,
+                    c.CarNums,
+                    c.CarExposure,
+                    c.VanNums,
+                    c.VanExposure,
+                    c.MinibusNums,
+                    c.MinibusExposure,
+                    c.HGVNums,
+                    c.HGVExposure
+                })
+                .FirstOrDefault();
+
+            if (clientData == null)
+            {
+                throw new Exception($"No data found for Batch ID: {batchId}");
+            }
+
+            var clientName = clientData.ClientName ?? "Unknown Client";
+            var clientStartDate = clientData.ClientStartDate ?? "Unknown Start Date";
+            var clientEndDate = clientData.ClientEndDate;
+            var clientCoverType = clientData.ClientCoverType ?? "Unknown Cover Type";
+            var clientExcess = clientData.ClientExcess;
+            var carNums = clientData.CarNums;
+            var carExp = clientData.CarExposure;
+            var vanNums = clientData.VanNums;
+            var vanExp = clientData.VanExposure;
+            var minibusNums = clientData.MinibusNums;
+            var minibusExp = clientData.MinibusExposure;
+            var hgvNums = clientData.HGVNums;
+            var hgvExp = clientData.HGVExposure;
 
             var jsonFilePath = Path.Combine(_env.ContentRootPath, "AdditionalMaterial", "clientDetails.json");
             var json = System.IO.File.ReadAllText(jsonFilePath);
@@ -494,14 +480,15 @@ namespace CSV_reader.Services
             // GeneratePdf() is the library's own method to generate the PDF
             return quoteDocument.GeneratePdf();
         }
-   
-        
-        
-        
+
+
+
+
         // -------------------------- POLICY DOC ------------------------
-        /*public byte[] CreatePolicyDoc(
+        public byte[] CreatePolicyDoc(
                 string userEmail,
                 string batchId,
+                int policyNumber,
                 decimal claimsAmount,
                 decimal largeLossFund,
                 decimal reinsuranceCosts,
@@ -520,22 +507,141 @@ namespace CSV_reader.Services
                 decimal FCTurnoverNonCOI
             )
         {
+
+            var batchOfClaims = _appContext.ClaimsTable
+                                    .Where(c => c.BatchId == batchId)
+                                    .ToList();
+
+            var quoteId = batchId.Split("_")[0];
+
+            if (batchOfClaims == null)
+            {
+                throw new Exception($"No data found for QuoteId: {batchId}");
+            }
+
+            var clientData = _appContext.ClaimsTable
+                .Where(c => c.BatchId == batchId)
+                .Select(c => new
+                {
+                    c.ClientName,
+                    c.ClientStartDate,
+                    c.ClientEndDate,
+                    c.ClientCoverType,
+                    c.ClientExcess,
+                    c.CarNums,
+                    c.CarExposure,
+                    c.VanNums,
+                    c.VanExposure,
+                    c.MinibusNums,
+                    c.MinibusExposure,
+                    c.HGVNums,
+                    c.HGVExposure
+                })
+                .FirstOrDefault();
+
+            if (clientData == null)
+            {
+                throw new Exception($"No data found for Batch ID: {batchId}");
+            }
+
+            
+
+            var clientName = clientData.ClientName ?? "Unknown Client";
+            var clientStartDate = clientData.ClientStartDate ?? "Unknown Start Date";
+            var clientEndDate = clientData.ClientEndDate;
+            var clientCoverType = clientData.ClientCoverType ?? "Unknown Cover Type";
+            var clientExcess = clientData.ClientExcess;
+            var carNums = clientData.CarNums;
+            var carExp = clientData.CarExposure;
+            var vanNums = clientData.VanNums;
+            var vanExp = clientData.VanExposure;
+            var minibusNums = clientData.MinibusNums;
+            var minibusExp = clientData.MinibusExposure;
+            var hgvNums = clientData.HGVNums;
+            var hgvExp = clientData.HGVExposure;
+
+            var currentDate = DateTime.Now.ToString("dd MMMM yyyy");
+
+
+            // --------------- DOCUMENT START ------------------------------------
             var policyDocument = Document.Create(container =>
             {
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(2, Unit.Centimetre);
-                    page.DefaultTextStyle(x => x.FontSize(24));
+                    page.DefaultTextStyle(x => x.FontSize(11));
 
                     page.Header()
-                        .Text("Hello, World!")
-                        .FontSize(48).Bold();
+                        .Text("Certificate of Motor Insurance")
+                        .FontSize(30).Bold();
 
-                    page.Content()
-                        .PaddingVertical(25)
-                        .Text(Placeholders.LoremIpsum())
-                        .Justify();
+                    // put horizontal line here -------------------------
+
+                    // ------------------- PAGE 1 --------------------------------
+                    page.Content().Column(column =>
+                    {
+                        const float nestingSize = 25;
+                        column.Spacing(10);
+
+                        column.Item()
+                            .Text($"POLICY NUMBER: {policyNumber}")
+                            .FontSize(11)
+                            .FontColor(Colors.Blue.Darken2);
+
+                        column.Item()
+                            .Text($"QUOTE NUMBER: {quoteId}")
+                            .FontSize(11)
+                            .FontColor(Colors.Blue.Darken2);
+
+                        // 1
+                        AddListItem(column, 0, "1.", "Description of vehicle(s)");
+                        AddListItem(column, 1, "-", "Any motor vehicle the property of, or on hire or loan or lease to the policyholder");
+
+                        // 2
+                        AddListItem(column, 0, "2.", "Name of policyholder");
+                        AddListItem(column, 1, "-", $"{clientName}");
+
+                        // 3
+                        AddListItem(column, 0, "3.", "Effective date and time of the commencement of insurance for the purpose of the relevant law");
+                        AddListItem(column, 1, "-", $"{clientStartDate}");
+
+                        // 4
+                        AddListItem(column, 0, "4.", "Date of expiry of insurance");
+                        AddListItem(column, 1, "-", $"{clientEndDate}");
+
+                        // 5
+                        AddListItem(column, 0, "5.", "Persons or classes of persons entitled to drive");
+                        AddListItem(column, 1, "-", "Any person who is driving on the order or with the permission of the policyholder.");
+                        AddListItem(column, 1, "-", "Providing that the person driving has a licence to drive the vehicle or has held and is not disqualified from or prohibited by law from holding or obtaining such a licence");
+
+                        // 6
+                        AddListItem(column, 0, "6.", "Limitations as to use");
+                        AddListItem(column, 1, "-", "Use for social, domestic and pleasure purposes");
+                        AddListItem(column, 1, "-", "Use in connection with the policyholder's business.");
+                        AddListItem(column, 1, "-", "Use in connection with the business of any hirer including the carriage of goods for hire and reward.");
+
+                        AddListItem(column, 0, "", "Unless specified under section 6 of this certificate of insurance, this policy does not cover:");
+                        AddListItem(column, 0, "", "Use for hiring, the letting on hire, the carriage of passengers and goods for hire or reward, racing, pacemaking, use in any contest, reliability or speed trial or the use for any purpose in connection with the motor trade.");
+                        AddListItem(column, 0, "", "I hereby certify that the policy to which this certificate of insurance relates satisfies the requirements of the relevant law applicable in Great Britain, Northern Ireland, Isle of Man and the Islands of Guernsey, Jersey and Alderney.");
+                        AddListItem(column, 0, "", "For and on behalf of the Underwriter subscribing ERS, 30 Fenchurch Street, London EC3M 3BD");
+                        AddListItem(column, 0, "", "Authorised Insurer");
+                        AddListItem(column, 0, "", "--- signature here ---");
+                        AddListItem(column, 0, "", "Active Underwriter");
+                       
+
+
+                        // Helper function
+                        void AddListItem(ColumnDescriptor col, int nestingLevel, string bulletText, string text)
+                        {
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(nestingSize * nestingLevel); // indentation
+                                row.ConstantItem(nestingSize).Text(bulletText).FontSize(11); // bullet
+                                row.RelativeItem().Text(text).FontSize(11); // main text
+                            });
+                        }
+                    });
 
                     page.Footer()
                         .AlignCenter()
@@ -546,10 +652,210 @@ namespace CSV_reader.Services
                             text.TotalPages();
                         });
                 });
+
+
+                // ------------------- PAGE 2 --------------------------------
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.DefaultTextStyle(x => x.FontSize(11));
+
+                    // ----------------- HEADER -------------------
+                    page.Header().Padding(5).Column(headerCol =>
+                    {
+                        headerCol.Item().Row(row =>
+                        {
+                            row.RelativeItem().AlignLeft().Column(column =>
+                            {
+                                column.Item().PaddingBottom(10).Text("Policy Document")
+                                    .FontSize(16).Bold();
+                                column.Item().Text($"{clientName}")
+                                    .FontSize(16).Bold();
+                                column.Item().PaddingBottom(10).Text($"Policy Number: {policyNumber}")
+                                    .FontSize(12).Bold();
+                                column.Item().PaddingBottom(10).Text($"Broker Agency Number: --broker num--")
+                                    .FontSize(12).Bold();
+                                column.Item().PaddingBottom(10).Text($"Scheme: -- scheme num here --")
+                                    .FontSize(12).Bold();
+                                column.Item().Text($"{currentDate}")
+                                    .FontSize(12).Bold();
+                            });
+
+                            row.RelativeItem().AlignRight().Column(column =>
+                            {
+                                column.Item().PaddingBottom(10).Text("Pretium Agency")
+                                    .FontSize(12).Bold()
+                                    .FontColor(QuestPDF.Helpers.Colors.Blue.Medium);
+                            });
+                        });
+
+                        headerCol.Item().PaddingTop(10)
+                            .LineHorizontal(1)
+                            .LineColor(QuestPDF.Helpers.Colors.Grey.Lighten2);
+                    });
+                    // ------------- HEADER END ------------------------------
+
+                    
+                    page.Content().PaddingTop(25).Column(column =>
+                    {
+                        // ---------- FIRST TABLE (Policy Details) ----------
+                        column.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().BorderBottom(2).Padding(8).Text("Policy").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("").Bold();
+                            });
+
+                            table.Cell().Padding(8).Text("Policyholder").Bold();
+                            table.Cell().Padding(8).Text("policy holder name here");
+
+                            table.Cell().Padding(8).Text("Address").Bold();
+                            table.Cell().Padding(8).Text("address here");
+
+                            table.Cell().Padding(8).Text("Commencement date and time").Bold();
+                            table.Cell().Padding(8).Text("start date here");
+
+                            table.Cell().Padding(8).Text("Expiry Date").Bold();
+                            table.Cell().Padding(8).Text("end date here");
+
+                            table.Cell().Padding(8).Text("Reason for issue").Bold();
+                            table.Cell().Padding(8).Text("reason here");
+
+                            table.Cell().Padding(8).Text("Declaration Frequency").Bold();
+                            table.Cell().Padding(8).Text("declaration here");
+                        });
+
+                        // some spacing between tables
+                        column.Item().PaddingTop(25);
+
+
+
+
+
+                        // ---------- SECOND TABLE (Premium Details) ----------
+                        column.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().BorderBottom(2).Padding(8).Text("Premium").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("").Bold();
+                            });
+
+                            table.Cell().Padding(8).Text("Premium (excluding IPT)").Bold();
+                            table.Cell().Padding(8).Text("gross premium here");
+
+                            table.Cell().Padding(8).Text("IPT").Bold();
+                            table.Cell().Padding(8).Text("IPT here");
+
+                            table.Cell().Padding(8).Text("Total Premium Due").Bold();
+                            table.Cell().Padding(8).Text("gross premium plus IPT here");
+                        });
+
+                        // some spacing between tables
+                        column.Item().PaddingTop(25);
+
+                        // ------------------- VEHICLE DETAILS TABLE -------------------
+
+                        column.Item().DefaultTextStyle(x => x.FontSize(7)).Table(table =>
+                        {                            
+
+                            // define cols for table
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                                columns.RelativeColumn(50);
+                            });
+
+                            // define headers for table
+                            table.Header(header =>
+                            {
+                                header.Cell().BorderBottom(2).Padding(8).Text("Vehicle Type").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("Vehicle Numbers").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("Registration Number").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("CC").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("GVW").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("No. of Seats").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("Cover").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("Class of Use").Bold();
+                                header.Cell().BorderBottom(2).Padding(8).Text("Annual rate per vehicle(excl. IPT").Bold();
+                            });
+
+                            // each chunk here is a row
+                            // essentially each line is a cell in the table, going left to right, and overlaps to the next row
+                            table.Cell().Padding(8).Text("Cars");
+                            table.Cell().Padding(8).Text("car nums");
+                            table.Cell().Padding(8).Text("All");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("gvw?");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("cover type here");
+                            table.Cell().Padding(8).Text("class of use?");
+                            table.Cell().Padding(8).Text("vehicle exposure rating?");
+
+                            table.Cell().Padding(8).Text("Vans");
+                            table.Cell().Padding(8).Text("van nums");
+                            table.Cell().Padding(8).Text("All");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("gvw?");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("cover type here");
+                            table.Cell().Padding(8).Text("class of use?");
+                            table.Cell().Padding(8).Text("vehicle exposure rating?");
+
+                            table.Cell().Padding(8).Text("HGVs");
+                            table.Cell().Padding(8).Text("HGV nums");
+                            table.Cell().Padding(8).Text("All");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("gvw?");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("cover type here");
+                            table.Cell().Padding(8).Text("class of use?");
+                            table.Cell().Padding(8).Text("vehicle exposure rating?");
+
+                            table.Cell().Padding(8).Text("Minibuses");
+                            table.Cell().Padding(8).Text("mbus nums");
+                            table.Cell().Padding(8).Text("All");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("gvw?");
+                            table.Cell().Padding(8).Text("");
+                            table.Cell().Padding(8).Text("cover type here");
+                            table.Cell().Padding(8).Text("class of use?");
+                            table.Cell().Padding(8).Text("vehicle exposure rating?");
+
+                        });
+                    });
+
+                    // --------------------- END OF PAGE 2 ---------------------
+
+                });
+
             });
 
+            // ------------------ DOCUMENT END --------------------------------
+
             return policyDocument.GeneratePdf();
-        }*/
+        }
     };
 
 

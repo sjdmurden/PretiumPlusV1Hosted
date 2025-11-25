@@ -5,6 +5,11 @@
     string tailwindLink = "https://cdn.jsdelivr.net/npm/tailwindcss@3.0.0/dist/tailwind.min.css";
 }
 
+@using System.Security.Claims;
+@{
+    var userType = User.FindFirstValue("UserType");
+}
+
 <!DOCTYPE html>
 
 <html>
@@ -14,21 +19,23 @@
     <link href="@tailwindLink" rel="stylesheet">
     <script src="~/js/quoteSearch.js"></script>
     <script src="~/js/downloadPDF.js"></script>
+    
+    
     <link rel="stylesheet" href="~/css/output.css" />
     <link href="~/css/site.css" />
 </head>
 <body id="websiteBody">
 
-  
-
+    <div type="hidden" id="user-info" data-user-email="@(User.Identity?.Name ?? "No Username Available")"></div>
+    
     <input type="hidden" id="batchIdHidden" value="@ViewBag.BatchId" />
 
-    <div id="mainContent">
+    <div>
        
         
         <!---------------------------- Historic data table ---------------->        
         
-        <div id="historicDataTableSection" class="w-full md:w-100 tab-content active">
+        <div id="historicDataTableSection" class="md:w-100 tab-content active">
 
             <div class="display-6 text-black">Historic Data</div>
             
@@ -38,11 +45,36 @@
                     <thead>
                         <tr class="border-b border-gray-400 bg-blue-200">
                             <th scope="col" class="p-4"></th>
-                            <th scope="col" class="p-4 text-sm leading-none font-bold">@Model.ClaimsCalculationsModel.Year1Name</th>
-                            <th scope="col" class="p-4 text-sm leading-none font-bold">@Model.ClaimsCalculationsModel.Year2Name</th>
-                            <th scope="col" class="p-4 text-sm leading-none font-bold">@Model.ClaimsCalculationsModel.Year3Name</th>
-                            <th scope="col" class="p-4 text-sm leading-none font-bold">@Model.ClaimsCalculationsModel.Year4Name</th>
-                            <th scope="col" class="p-4 text-sm leading-none font-bold">@Model.ClaimsCalculationsModel.Year5Name</th>
+                            <th scope="col" class="p-4 text-sm leading-none font-bold">
+                                @(string.IsNullOrWhiteSpace(Model.ClaimsCalculationsModel.Year1Name)
+                                    ? "N/A"
+                                    : Model.ClaimsCalculationsModel.Year1Name
+                                    )
+                            </th>
+                            <th scope="col" class="p-4 text-sm leading-none font-bold">
+                                @(string.IsNullOrWhiteSpace(Model.ClaimsCalculationsModel.Year2Name)
+                                    ? "N/A"
+                                    : Model.ClaimsCalculationsModel.Year2Name
+                                    )
+                            </th>
+                            <th scope="col" class="p-4 text-sm leading-none font-bold">
+                                @(string.IsNullOrWhiteSpace(Model.ClaimsCalculationsModel.Year3Name)
+                                    ? "N/A"
+                                    : Model.ClaimsCalculationsModel.Year3Name
+                                    )
+                            </th>
+                            <th scope="col" class="p-4 text-sm leading-none font-bold">
+                                @(string.IsNullOrWhiteSpace(Model.ClaimsCalculationsModel.Year4Name)
+                                    ? "N/A"
+                                    : Model.ClaimsCalculationsModel.Year4Name
+                                    )
+                            </th>
+                            <th scope="col" class="p-4 text-sm leading-none font-bold">
+                                @(string.IsNullOrWhiteSpace(Model.ClaimsCalculationsModel.Year5Name)
+                                    ? "N/A"
+                                    : Model.ClaimsCalculationsModel.Year5Name
+                                )
+                            </th>                            
                             <th scope="col" class="p-4 text-sm leading-none font-bold text-blue-700">3 Year Aggr.</th>
                             <th scope="col" class="p-4 text-sm leading-none font-bold text-blue-700">5 Year Aggr.</th>
                         </tr>
@@ -396,7 +428,7 @@
         <div id="additionalStatsSection" class="w-full md:w-1/2 tab-content">
 
             <h1 class="display-6">Additional Stats</h1>
-            <div class="relative overflow-x-auto shadow-lg rounded-lg max-w-5xl mt-3">
+            <div class="relative overflow-x-auto shadow-lg rounded-lg w-full mt-3">
                 <table class="w-full text-left table-auto min-w-max">
                     <tbody>
                         <tr class="hover:bg-blue-50 p-4 text-sm">
@@ -710,12 +742,18 @@
                     </div>
 
                     <div class="flex flex-col items-start space-y-2 mt-4">
-                        <h2 class="text-2xl font-bold mb-4">Generate Fleet Insurance Quote</h2>
+                        <h2 class="text-2xl font-bold mb-4">Generate Fleet Insurance Quote and Policy Doc</h2>
 
-                        <button id="generatePdfButton" class="w-auto font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                        <button id="generateQuotePDFButton" class="w-auto font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
                             Get Quote
                         </button>
+                        <button id="generatePolicyDocButton" class="w-auto font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Get Policy Doc
+                        </button>
 
+                        <button id="generateBothDocsBtn" class="w-auto font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Get Documents
+                        </button>
                     </div>
 
                 </div>
@@ -727,15 +765,7 @@
     </div>
 
 
-    <script>
-
-        
-
-
-       
-
-
-    </script>
+    <script src="~/js/saveDocToDB.js"></script>
 
 </body>
 </html>

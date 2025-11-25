@@ -14,6 +14,7 @@ namespace CSV_reader.database
         public DbSet<IndivClaimDataDB> IndivClaimData { get; set; }
 
         public DbSet<StaticClientDataDB> StaticClientDataDB { get; set; }
+        public DbSet<DocumentDBTable> DocumentDBTable { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

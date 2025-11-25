@@ -1,4 +1,4 @@
-﻿function downloadPDF(pdfBase64, batchId) {
+﻿function downloadPDF(pdfBase64, batchId, docType) {
     /*const iframe = document.querySelector('iframe');
 
     const pdfBase64 = iframe.src.split(',')[1]  // Extract base64 part of iframe:src attribute*/
@@ -34,7 +34,14 @@
     /*let batchId = params.get("batchId")*/
 
     console.log("pdfDownload.js file - batch ID: ", batchId);
-    link.download = `FleetInsuranceQuote_${batchId}.pdf`;  // names the downloaded file
+
+    if (docType == "quote") {
+        link.download = `FleetInsuranceQuote_${batchId}.pdf`;  // names the downloaded file
+    }
+    if (docType == "policy") {
+        link.download = `PolicyDocument_${batchId}.pdf`;  // names the downloaded file
+    }
+
     document.body.appendChild(link);  // this adds the anchor tag to the body
 
     link.click();  // simulates a click on the anchor tag 

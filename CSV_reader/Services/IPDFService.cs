@@ -26,9 +26,10 @@ namespace CSV_reader.Services
             decimal FCTurnoverNonCOI
             );
 
-        /*byte[] CreatePolicyDoc(
+        byte[] CreatePolicyDoc(
             string userEmail,
             string batchId,
+            int policyNumber,
             decimal claimsAmount,
             decimal largeLossFund,
             decimal reinsuranceCosts,
@@ -45,7 +46,7 @@ namespace CSV_reader.Services
             int FCDaysNonCOI,
             decimal FCTurnoverCOI,
             decimal FCTurnoverNonCOI
-            );*/
+            );
 
 
     }

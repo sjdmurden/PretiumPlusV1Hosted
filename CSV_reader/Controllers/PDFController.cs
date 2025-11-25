@@ -16,28 +16,20 @@ namespace CSV_reader.Controllers
     public class PDFController : Controller
     {
         private readonly IPDFService _pdfService;
+        private readonly ApplicationContext _appContext;
 
         // dependency injection to recieve instance of IPDFService
-        public PDFController(IPDFService pdfService)
+        public PDFController(IPDFService pdfService, ApplicationContext appContext)
         {
             _pdfService = pdfService;
+            _appContext = appContext;
         }
 
 
         [HttpPost]
-        public IActionResult GeneratePDF([FromBody] GeneratePdfRequestViewModel request)
+        public IActionResult GenerateQuoteDoc([FromBody] GeneratePdfRequestViewModel request)
         {
-            Console.WriteLine("GeneratePDF inside PDFController:");
-            Console.WriteLine($"BatchId: {request.BatchId}");
-            Console.WriteLine($"UpdatedGrossPremiumPlusIPT: {request.UpdatedGrossPremiumPlusIPT}");
-            Console.WriteLine($"ClaimsAmount: {request.ClaimsAmount}");
-            Console.WriteLine($"LargeLossFund: {request.LargeLossFund}");
-            Console.WriteLine($"ReinsuranceCosts: {request.ReinsuranceCosts}");
-            Console.WriteLine($"AdjustmentNotes: {request.AdjustmentNotes}");
-            Console.WriteLine($"FCDaysCOI: {request.FCDaysCOI}");
-            Console.WriteLine($"FCDaysNonCOI: {request.FCDaysNonCOI}");
-            Console.WriteLine($"FCTurnoverCOI: {request.FCTurnoverCOI}");
-            Console.WriteLine($"FCTurnoverNonCOI: {request.FCTurnoverNonCOI}");
+            Console.WriteLine("GenerateQuoteDoc method inside PDFController:");          
 
             try
             {
@@ -64,12 +56,6 @@ namespace CSV_reader.Controllers
                     request.FCTurnoverNonCOI
                 );
 
-                if (pdfBytes == null || pdfBytes.Length == 0)
-                {
-                    Console.WriteLine("❌ PDF generation failed — pdfBytes is null or empty.");
-                    return StatusCode(500, new { error = "PDF generation failed." });
-                }
-
                 var pdfBase64 = Convert.ToBase64String(pdfBytes);
                 return Json(new { pdfBase64 });
             }
@@ -86,12 +72,10 @@ namespace CSV_reader.Controllers
 
         // ---------------- POLICY DOC ---------------------
 
-        /*[HttpPost]
+        [HttpPost]
         public IActionResult GeneratePolicyDoc([FromBody] PolicyDocPDFViewModel request)
         {
-            Console.WriteLine($"GeneratePDF inside PDFController:");
-            Console.WriteLine($"quoteId: {request.BatchId}");
-            Console.WriteLine($"updatedGrossPremium: {request.UpdatedGrossPremiumPlusIPT}");
+            Console.WriteLine($"GeneratePolicyDoc inside PDFController:");
 
             var userEmail = User.FindFirstValue(ClaimTypes.Name) ?? "Unknown User";
 
@@ -100,6 +84,7 @@ namespace CSV_reader.Controllers
                 (
                     userEmail,
                     request.BatchId,
+                    request.PolicyNumber,
 
                     request.ClaimsAmount,
                     request.LargeLossFund,
@@ -122,10 +107,48 @@ namespace CSV_reader.Controllers
             var pdfBase64 = Convert.ToBase64String(pdfBytes);
 
             return Json(new { pdfBase64 });
-        }*/
+        }
+
+
+        // -------------- SAVING DOC DETAILS TO DOC DB TABLE -------------------------
+        [HttpPost]
+        public IActionResult SaveDocumentToDB([FromBody] DocumentSaveToDBViewModel request)
+        {
+            if (request == null)
+                return BadRequest("Invalid request data");
+
+            Console.WriteLine("inside SaveDocumentToDB in PDF controller");
+
+            try
+            {
+                // Create a new document record
+                var document = new DocumentDBTable
+                {
+                    DocumentId = new Random().Next(100000, 999999), // placeholder for now
+                    CreatedDate = DateTime.UtcNow,
+                    DocumentType = request.DocumentType, // or "Policy PDF" depending on the doc type
+                    QuoteNumber = request.QuoteNumber,
+                    PolicyNumber = request.PolicyNumber,
+                    BatchId = request.BatchId,
+                    ClientName = request.ClientName,
+                    UserEmail = request.UserEmail
+                };
+
+                _appContext.DocumentDBTable.Add(document);
+                _appContext.SaveChanges();
+
+                return Ok(new { success = true, message = "Document saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                // log excep msg
+                return StatusCode(500, new { success = false, message = "Error saving document.", error = ex.Message });
+            }
+        }
 
 
 
+        
 
     }
 }

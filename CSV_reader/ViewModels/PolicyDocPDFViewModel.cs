@@ -3,6 +3,7 @@
     public class PolicyDocPDFViewModel
     {
         public string BatchId { get; set; } = string.Empty;
+        public int PolicyNumber { get; set; }
         public decimal ClaimsAmount { get; set; }
         public decimal LargeLossFund { get; set; }
         public decimal ReinsuranceCosts { get; set; }
