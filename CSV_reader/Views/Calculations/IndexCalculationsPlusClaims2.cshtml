@@ -164,10 +164,10 @@
     <div class="pt-24" id="mainContent">
 
 
-        <div class="flex w-full">
+        <div class="md:flex w-full">
 
             <!---------------------- SIDEBAR -------------------------->
-            <div class="w-min shrink-0">
+            <div class="w-min shrink-0 hidden md:block">
                 <div class="w-full md:w-64 bg-white shadow-xl rounded-lg p-4 space-y-6">
 
                     <!-- CLIENT INFO -->
@@ -188,7 +188,7 @@
                         <span class="font-bold text-black block mb-2">Tables</span>
 
                         <label class="text-sm font-medium text-gray-700">Showing</label>
-                        <select id="tableSelect"
+                        <select id="tableSelectDesktop"
                                 class="w-full px-2 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 transition">
                             <option value="historicDataTableSection">Historic Data</option>
                             <option value="businessFCSection">Business Forecast</option>
@@ -317,6 +317,182 @@
                     </button>
 
                 </div>
+            </div>
+
+
+
+            <!-------------- HEADER FOR SMALLER DISPLAYS ------------------>
+            <div class="mx-4 rounded-lg shadow-lg p-1 border-none bg-white my-4 block md:hidden">
+
+                <div class="flex flex-col md:flex-row items-start justify-between border-none">
+
+                    <!-- CLIENT INFO SECTION -->
+                    <div class="flex-grow w-1/8">
+                        <div class="rounded-lg p-3">
+                            <div class="space-y-4">
+                                <p class="text-sm">
+                                    <span class="text-2xl block mb-1 font-bold text-black">Client Name:</span>
+                                    <span class="text-lg font-semibold text-blue-700" id="clientName">@ViewBag.ClientName</span>
+                                </p>
+                                <p class="text-sm">
+                                    <span class="text-2xl block mb-1 font-bold text-black">Quote Number:</span>
+                                    <span class="text-lg font-semibold text-blue-700">@ViewBag.QuoteId</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLE DROPDOWN SECTION -->
+                    <div class="flex-grow w-1/8 ">
+                        <div class="rounded-lg p-3">
+                            <span class="text-2xl font-bold mb-4 block text-black">Tables</span>
+
+                            <div class="relative">
+                                <label for="tableSelectMobile" class="text-sm font-medium text-gray-700">Showing</label>
+                                <select id="tableSelectMobile"
+                                        class="w-full px-2 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                                    <option value="historicDataTableSection">Historic Data</option>
+                                    <option value="businessFCSection">Business Forecast</option>
+                                    <option value="dataInfSection">Data & Inflated Data</option>
+                                    <option value="additionalStatsSection">Additional Stats</option>
+                                    <option value="technicalPriceSection">Technical Price Points</option>
+                                    <option value="ultimateCostsSection">Ultimate Costs</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM SECTION - FILTERS -->
+                    <div class="flex-grow w-full md:w-1/2">
+                        <form id="combinedForm" class="rounded-lg p-3">
+                            <span class="font-bold text-2xl mb-6 block text-black">Filters</span>
+
+                            <!-- this div is showing the filters for desktop screens -->
+                            <div class="md:grid grid-cols-5 gap-4 hidden">
+                                @foreach (var item in new[]
+                                    {
+                                        new { Id = "selectedNumOfMonthsDropdown", Label = "Months", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedNumOfMonths), List = Model.ClaimsCalculationsModel.InflationMonths },
+
+                                        new {
+                                        Id = "projYearsDropdown",
+                                        Label = "Years", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedProjYears),
+                                        List = Model.ClaimsCalculationsModel.ProjectedYears },
+
+                                        new { Id = "COIFeeDropdown", Label = "COI Fee", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedCOIFee), List = Model.ClaimsCalculationsModel.ChargeCOIFee },
+                                        new { Id = "pricingMetricDropdown", Label = "Metric", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPricingMetric), List = Model.ClaimsCalculationsModel.PricingMetrics },
+                                        new { Id = "priceByDropdown", Label = "Price By", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPriceBy), List = Model.ClaimsCalculationsModel.PriceByFilters }
+                                    })
+                                {
+                                    <div class="relative">
+                                        <label for="@item.Id" class="text-sm font-medium text-gray-700">@item.Label</label>
+                                        @Html.DropDownList(item.ModelProp, item.List, new { @class = "w-full px-2 py-2 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition", @id = item.Id })
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- these next two divs are showing the filters on mobile screens. 2 divs as there are 2 rows of dropdown boxes -->
+                            <div class="grid grid-cols-3 gap-4 md:hidden">
+                                @foreach (var item in new[]
+                                    {
+                                        new { Id = "selectedNumOfMonthsDropdown", Label = "Months", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedNumOfMonths), List = Model.ClaimsCalculationsModel.InflationMonths },
+                                        new { Id = "projYearsDropdown", Label = "Years", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedProjYears), List = Model.ClaimsCalculationsModel.ProjectedYears },
+                                        new { Id = "COIFeeDropdown", Label = "COI Fee", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedCOIFee), List = Model.ClaimsCalculationsModel.ChargeCOIFee },
+                                    })
+                                {
+                                    <div class="relative">
+                                        <label for="@item.Id" class="text-sm font-medium text-gray-700">@item.Label</label>
+                                        @Html.DropDownList(item.ModelProp, item.List, new { @class = "w-full px-2 py-2 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition", @id = item.Id })
+                                    </div>
+                                }
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 md:hidden">
+                                @foreach (var item in new[]
+                                    {
+                                    new { Id = "pricingMetricDropdown", Label = "Metric", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPricingMetric), List = Model.ClaimsCalculationsModel.PricingMetrics },
+                                    new { Id = "priceByDropdown", Label = "Price By", ModelProp = nameof(Model.ClaimsCalculationsModel.SelectedPriceBy), List = Model.ClaimsCalculationsModel.PriceByFilters }
+                                    })
+                                {
+                                    <div class="relative">
+                                        <label for="@item.Id" class="text-sm font-medium text-gray-700">@item.Label</label>
+                                        @Html.DropDownList(item.ModelProp, item.List, new { @class = "w-full px-2 py-2 bg-gray-100 text-gray-700 border rounded-lg focus:ring-2 focus:ring-blue-500 transition", @id = item.Id })
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="mt-6 flex justify-center">
+                                <button type="submit"
+                                        class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+                                        id="goButton">
+                                    Go
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- SELECT WHICH YEARS -->
+                <form>
+                    <div class="space-y-2 bg-gray-100">
+                        @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year1Name))
+                        {
+                            <span>Year 1</span>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year1Name"
+                                       class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year1Name</span>
+                            </label>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year2Name))
+                        {
+                            <span>Year 2</span>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year2Name"
+                                       class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year2Name</span>
+                            </label>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year3Name))
+                        {
+                            <span>Year 3</span>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year3Name"
+                                       class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year3Name</span>
+                            </label>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year4Name))
+                        {
+                            <span>Year 4</span>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year4Name"
+                                       class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year4Name</span>
+                            </label>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.ClaimsCalculationsModel.Year5Name))
+                        {
+                            <span>Year 5</span>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="SelectedYears" value="@Model.ClaimsCalculationsModel.Year5Name"
+                                       class="year-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                <span class="text-gray-700">@Model.ClaimsCalculationsModel.Year5Name</span>
+                            </label>
+                        }
+                    </div>
+
+                    <div>
+                        <button type="submit" id="selectedYearsBtn" class="mx-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                            Select these years
+                        </button>
+                    </div>
+
+                </form>
+
             </div>
 
              
@@ -549,6 +725,7 @@
     <script src="~/js/quoteSearch.js"></script>
     <script src="~/js/pdfDownload.js"></script>
     <script src="~/js/IndexCalcsPlusClaims.js"></script>
+    <script src="~/js/tableSwitching.js"></script>
     <script src="~/js/filteredClaims.js"></script>
 
     <script src="~/js/generatePDFButton.js"></script>

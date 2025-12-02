@@ -487,35 +487,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // ------------- JavaScript for tab switching ------------------
-
-    const tableSelect = document.getElementById("tableSelect");
-
-    function updateActiveSection() {
-        const selectedValue = tableSelect.value;
-        const sections = document.querySelectorAll(".tab-content");
-
-        sections.forEach(section => {
-            section.classList.remove("active");
-        });
-
-        if (selectedValue) {
-            const selectedSection = document.getElementById(selectedValue);
-            if (selectedSection) {
-                selectedSection.classList.add("active");
-            }
-        }
-    }
-
-    tableSelect.addEventListener("change", updateActiveSection);
-
-    // Ensure only the first section is visible when the page loads
-    updateActiveSection();
-
-    // Reapply tab switching after AJAX request
-    document.addEventListener("ajaxComplete", function () {
-        updateActiveSection();
-    });
 
 
 
