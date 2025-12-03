@@ -392,15 +392,13 @@ namespace CSV_reader.Services
 
                             string[] labels =
                             [
-                                "Claims Amount", "Large Loss Fund", "Reinsurance Costs", "Claims Handling Fee",
-                                "Levies", "Expenses", "Profit", "Net Premium", "Commissions",
+                                "Net Premium", "Commissions",
                                 "Gross Premium", "Gross Premium Plus IPT"
                             ];
 
                             decimal[] values =
                             [
-                                claimsAmount, largeLossFund, reinsuranceCosts, claimsHandlingFee,
-                                levies, expenses, profit, netPremium, commissions,
+                                netPremium, commissions,
                                 grossPremium, updatedGrossPremiumPlusIPT
                             ];
 
