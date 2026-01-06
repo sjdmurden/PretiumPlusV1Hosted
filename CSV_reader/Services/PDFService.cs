@@ -104,6 +104,8 @@ namespace CSV_reader.Services
             string clientAddress = "Unknown Address";
             string clientRegNum = "Unknown Registration Number";
             string clientVATNum = "Unknown VAT Number";
+
+            // THIS BELOW SECTION NEEDS CHANGING TO INCORPORATE DB INSTEAD OF JSON FILE
             // the following checks if the client name is not null or empty
             // then after the &&, we try to get a value from the jsonObj dictionary using the clientName key. 
             // In this case the JToken will hold the JObject of Address, RegNum and VatNum
@@ -482,7 +484,22 @@ namespace CSV_reader.Services
 
 
 
-        // -------------------------- POLICY DOC ------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // -------------------------- POLICY DOC --------------------------------------
         public byte[] CreatePolicyDoc(
                 string userEmail,
                 string batchId,
@@ -568,7 +585,7 @@ namespace CSV_reader.Services
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(2, Unit.Centimetre);
-                    page.DefaultTextStyle(x => x.FontSize(11));
+                    page.DefaultTextStyle(x => x.FontSize(9));
 
                     page.Header()
                         .Text("Certificate of Motor Insurance")
@@ -713,7 +730,7 @@ namespace CSV_reader.Services
                             });
 
                             table.Cell().Padding(8).Text("Policyholder").Bold();
-                            table.Cell().Padding(8).Text("policy holder name here");
+                            table.Cell().Padding(8).Text($"{clientName}");
 
                             table.Cell().Padding(8).Text("Address").Bold();
                             table.Cell().Padding(8).Text("address here");

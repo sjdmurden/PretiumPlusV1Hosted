@@ -444,9 +444,16 @@ namespace CSV_reader.Services
             claimsCalculationsModel.FiveY_Total = claimsCalculationsModel.ThreeY_Total + claimsCalculationsModel.Y4Total + claimsCalculationsModel.Y5Total;
 
 
+            // ----------------------- BURN RATE ----------------------
 
-
+            claimsCalculationsModel.Y1BurnRate = claimsCalculationsModel.Y1Total / claimsCalculationsModel.Y1RentalDaysNonCOI;
+            claimsCalculationsModel.Y2BurnRate = claimsCalculationsModel.Y2Total / claimsCalculationsModel.Y2RentalDaysNonCOI;
+            claimsCalculationsModel.Y3BurnRate = claimsCalculationsModel.Y3Total / claimsCalculationsModel.Y3RentalDaysNonCOI;
+            claimsCalculationsModel.Y4BurnRate = claimsCalculationsModel.Y4Total / claimsCalculationsModel.Y4RentalDaysNonCOI;
+            claimsCalculationsModel.Y5BurnRate = claimsCalculationsModel.Y5Total / claimsCalculationsModel.Y5RentalDaysNonCOI;
             
+
+
 
             // business forecast
 

@@ -372,6 +372,14 @@ namespace CSV_reader.Models
         public double ThreeY_Total { get; set; }
         public double FiveY_Total { get; set; }
 
+        // burn rate
+        public double Y1BurnRate { get; set; }
+        public double Y2BurnRate { get; set; }
+        public double Y3BurnRate { get; set; }
+        public double Y4BurnRate { get; set; }
+        public double Y5BurnRate { get; set; }
+        
+
     }
 
     public class CalculationsYearsData

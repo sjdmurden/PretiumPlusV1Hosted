@@ -16,6 +16,8 @@ namespace CSV_reader.database
         public DbSet<StaticClientDataDB> StaticClientDataDB { get; set; }
         public DbSet<DocumentDBTable> DocumentDBTable { get; set; }
 
+        public DbSet<ClientInfo> ClientInfo { get; set; }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
         }
