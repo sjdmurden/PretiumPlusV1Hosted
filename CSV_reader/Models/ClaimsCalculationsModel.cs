@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks.Dataflow;
 
 namespace CSV_reader.Models
 {
@@ -378,7 +379,22 @@ namespace CSV_reader.Models
         public double Y3BurnRate { get; set; }
         public double Y4BurnRate { get; set; }
         public double Y5BurnRate { get; set; }
-        
+        public double TwoYAvBurnRate { get; set; }
+        public double ThreeYAvBurnRate { get; set; }
+        public double FourYAvBurnRate { get; set; }
+        public double FiveYAvBurnRate { get; set; }
+
+        // factored burn rate
+        public double FactoredY1BurnRate { get; set; }
+        public double FactoredY2BurnRate { get; set; }
+        public double FactoredY3BurnRate { get; set; }
+        public double FactoredY4BurnRate { get; set; }
+        public double FactoredY5BurnRate { get; set; }
+        public double FactoredTwoYAvBurnRate { get; set; }
+        public double FactoredThreeYAvBurnRate { get; set; }
+        public double FactoredFourYAvBurnRate { get; set; }
+        public double FactoredFiveYAvBurnRate { get; set; }
+
 
     }
 

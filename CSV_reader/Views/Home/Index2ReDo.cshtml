@@ -1,0 +1,263 @@
+﻿@model CSV_reader.ViewModels.ClaimsViewModel;
+@using System.Security.Claims;
+@{
+    var userType = User.FindFirstValue("UserType");
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Reader</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+    <header class="position-absolute top-0 left-0 right-0 z-50 bg-white">
+
+        <nav class="flex items-center justify-between px-6 py-3 w-full shadow-lg h-24 relative">
+            <!-- Left: Home Button -->
+            <div class="flex items-center">
+                <a href="/Excel/IndexExcel" class="text-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">Home</a>
+            </div>
+
+            <!-- Center: Logo -->
+            <div class="absolute left-1/2 transform -translate-x-1/2">
+                <a>
+                    <img src="@Url.Content("~/images/pretium_nobackground.png")" alt="Pretium Logo" class="h-16 w-auto" />
+                </a>
+            </div>
+
+            <div class="md:hidden">
+                <button id="hamburgerBtn" class="focus:outline-none">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-6">
+                <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none bg-gray-200">
+                    <span class="font-semibold mb-2 text-black">Search Quotes</span>
+                    <div class="flex items-center">
+                        <span class="text-gray-700 font-semibold bg-gray-300 py-1 px-2 rounded-md">PAQ</span>
+                        <input type="text"
+                               name="quoteSearch"
+                               id="quoteIdToSearch"
+                               required
+                               class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                               placeholder="Enter Quote #" />
+                        <button type="submit"
+                                class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                            Search
+                        </button>
+                    </div>
+                </form>
+
+                <div class="flex items-center space-x-4">
+                    <div class="text-left">
+                        <small class="text-gray-600">Logged in as:</small><br />
+                        @if (userType == "1")
+                        {
+                            <a asp-controller="Profile" asp-action="AdminProfileIndex" class="text-blue-700 font-medium">
+                                @(User.Identity?.Name ?? "Unknown User")
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Profile" asp-action="ProfileIndex" class="text-blue-700 font-medium">
+                                @(User.Identity?.Name ?? "Unknown User")
+                            </a>
+                        }
+                    </div>
+                    <form id="logoutForm" asp-controller="Login" asp-action="Logout" method="post">
+                        <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <div id="hamburgerMenu" class="md:hidden hidden px-6 py-4 bg-gray-100 shadow-md">
+            
+
+            <div class="text-sm text-gray-800 mb-2">
+                    <small class="text-gray-600">Logged in as:</small><br />
+                    @if (userType == "1")
+                    {
+                        <a asp-controller="Profile" asp-action="AdminProfileIndex" class="text-blue-700 font-medium">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Profile" asp-action="ProfileIndex" class="text-blue-700 font-medium">
+                            @(User.Identity?.Name ?? "Unknown User")
+                        </a>
+                    }
+                </div>
+
+            <form id="quoteSearchForm" class="p-2 rounded-lg shadow-md border-none bg-gray-200">
+                <span class="font-semibold mb-2 text-black">Search Quotes</span>
+                <div class="flex items-center">
+                    <span class="text-gray-700 font-semibold bg-gray-300 py-1 px-2 rounded-md">PAQ</span>
+                    <input type="text"
+                            name="quoteSearch"
+                            id="quoteIdToSearch"
+                            required
+                            class="bg-gray-100 border border-gray-300 px-2 py-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 rounded-md mx-2 w-32"
+                            placeholder="Enter Quote #" />
+                </div>
+                <button type="submit"
+                        class="bg-blue-600 text-white font-semibold py-1 px-3 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                    Search
+                </button>
+            </form>
+
+            <form asp-controller="Login" asp-action="Logout" method="post">
+                <button type="submit" class="w-full font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300">
+                    Logout
+                </button>
+            </form>
+        </div>
+
+    </header>
+
+    <script>
+        // Toggle mobile menu
+        document.getElementById("hamburgerBtn")?.addEventListener("click", function () {
+            const menu = document.getElementById("hamburgerMenu");
+            menu.classList.toggle("hidden");
+        });
+    </script>
+
+    <body id="websiteBody">
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+            <div class="flex flex-col items-center space-y-4">
+                <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+                <p class="text-lg font-medium text-gray-700 animate-pulse">Reading file...</p>
+            </div>
+        </div>
+
+
+
+       <div class="container pt-24" id="mainContent" style="display: none;">
+
+           
+
+        <div class="bg-white rounded-pill shadow-lg px-6 py-6 mb-6 mt-20 mx-auto w-full md:w-1/3">
+            <div class="text-center space-y-4">
+
+                <p class="text-sm text-gray-500">
+                    You have entered details for
+                </p>
+
+                <p class="text-xl font-semibold text-gray-900">
+                    @Model.PolicyYearSummaries.FirstOrDefault().Value.ClientName
+                </p>
+
+                <p class="text-sm text-gray-500">
+                    With the following years of data
+                </p>
+
+                <div class="flex flex-wrap items-center gap-1">
+                    @foreach (var summary in Model.PolicyYearSummaries
+                                        .OrderBy(kvp => kvp.Key)
+                                        .Select(kvp => kvp.Value))
+                    {
+                        <span class=" px-2 py-1 rounded-full bg-gray-100 text-sm font-medium text-gray-800">
+                            @summary.PolicyYearName
+                        </span>
+                    }
+                </div>
+
+                <form 
+                    asp-controller="Home" 
+                    asp-action="ImportAndSaveClaimsDataToDB" 
+                    method="post">
+                    
+                    <button type="submit" class="font-semibold bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-300 mx-auto">
+                        Continue
+                    </button>
+                </form> 
+
+            </div>
+        </div>
+
+
+
+           
+
+           
+           
+       </div>
+            
+        
+        <script>
+
+            // ----------------- LOADING DIV ICON --------------------------
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadingDiv = document.getElementById("loadingIndicator");
+            const mainContent = document.getElementById("mainContent");
+
+            // Show the loading indicator
+            loadingDiv.style.display = "flex";
+
+            // Wait for 3 seconds
+            setTimeout(() => {
+                // Hide the loading indicator
+                loadingDiv.style.display = "none";
+
+                // Show the main content
+                mainContent.style.display = "block";
+            }, 500);
+        });
+
+        // --------------------- VALIDATE FORM INPUTS ---------------------
+        function validateForm() {
+            var LLLInputs = document.querySelectorAll(".LLLInput"); // Select all LLL input fields
+            var LLLErrors = document.querySelectorAll(".LLLError"); // Select all LLL error spans
+            var isValid = true;
+
+            // Reset error messages and highlight on all inputs
+            LLLErrors.forEach(function (error) {
+                error.classList.add("hidden");
+            });
+            LLLInputs.forEach(function (input) {
+                input.classList.remove("border-red-500");
+            });
+
+            // Check each LLL input field for value zero or empty
+            LLLInputs.forEach(function (input, index) {
+                if (input.value == 0 || input.value === "") {
+                    // Show the corresponding error message
+                    LLLErrors[index].classList.remove("hidden");
+
+                    // Scroll to the input field smoothly
+                    input.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                    // Highlight the field
+                    input.focus();
+                    input.classList.add("border-red-500");
+
+                    isValid = false; // Prevent form submission
+                }
+            });
+
+            return isValid; // If true, the form will submit
+        }
+
+        
+
+        </script>
+    </body>
+
+</html>

@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using static CSV_reader.Services.ExcelFileService;
 using Org.BouncyCastle.Crypto.Engines;
 using Serilog;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace CSV_reader
@@ -23,15 +24,18 @@ namespace CSV_reader
     {
         public static void Main(string[] args)
         {
-            /*string adminPass = BCrypt.Net.BCrypt.HashPassword("adminPassword");
-            string normalPass = BCrypt.Net.BCrypt.HashPassword("normalPassword");
+            // NO LONGER USING BCRYPT
 
-            Console.WriteLine("User1 Password Hash: " + adminPass);
+
+            /*Console.WriteLine("User1 Password Hash: " + adminPass);
             Console.WriteLine("User2 Password Hash: " + normalPass);*/
 
-            /*string bobPass = BCrypt.Net.BCrypt.HashPassword("bobPassword");
-            Console.WriteLine("Bob password hash: " + bobPass);*/
-            // $2a$11$5z2CK8UrBddxdMJlbrt0Ye1uz3zqYJhgQjJOmT9RJPUjsUja4siWu
+
+
+            var hasher = new PasswordHasher<object>();
+            string hashedTestPass = hasher.HashPassword(null, "testPassword");
+
+            Console.WriteLine("Hashed test password: " + hashedTestPass);
 
 
             var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +75,8 @@ namespace CSV_reader
             //builder.Services.AddScoped<IGetHistoricDataForQuoteSearchService, GetHistoricDataForQuoteSearchService>();
             builder.Services.AddScoped<IExcelFileService, ExcelFileService>();
             builder.Services.AddScoped<IClaimsCalculationsService, ClaimsCalculationsService>();
+            builder.Services.AddScoped<IDeletionService, DeletionService>();
+
             builder.Services.AddMemoryCache();
 
             builder.Services.AddDbContext<ApplicationContext>(options =>

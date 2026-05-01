@@ -478,7 +478,8 @@ namespace CSV_reader.Services
                 ExpoPercentage = Convert.ToDouble(inputModel.SelectedPercentage),
             };
 
-            _appContext.ClaimsTable.AddRange(claimsToInsert);
+/*            _appContext.ClaimsTable.AddRange(claimsToInsert);
+*/            // need to work out whether the claims table is actually needed
 
             _appContext.IndivClaimData.AddRange(indivClaimDataToInsert);
             _appContext.StaticClientDataDB.AddRange(staticDataToInsert);
@@ -512,22 +513,30 @@ namespace CSV_reader.Services
 
 
 
-    // creating a function to get one years' claims from the previous method's data list
+        // creating a function to get one years' claims from the previous method's data list
 
-    /*public List<ClaimsModel> GetOneYearsClaims(string filePath, string year)
-    {
+        /*public List<ClaimsModel> GetOneYearsClaims(string filePath, string year)
+        {
 
-        var data = ReadClaimsExcel(filePath);
+            var data = ReadClaimsExcel(filePath);
 
-        var filteredClaims = data.Where( c => c.PolicyYearCol == year ).ToList();
+            var filteredClaims = data.Where( c => c.PolicyYearCol == year ).ToList();
 
-        return filteredClaims;
+            return filteredClaims;
 
-    }*/
+        }*/
 
 
-    // This method returns a dictionary where the keys are the policy years and the values are objects containing all calculated summary data for that policy year.
-    public Dictionary<string, PolicyYearSummary> GetPolicyYearSummaries(string filePath)
+
+
+
+
+
+
+
+
+        // This method returns a dictionary where the keys are the policy years and the values are objects containing all calculated summary data for that policy year.
+        public Dictionary<string, PolicyYearSummary> GetPolicyYearSummaries(string filePath)
         {
             var data = ReadClaimsExcel(filePath);
 
@@ -561,7 +570,7 @@ namespace CSV_reader.Services
                         VanNums = group.First().VanNumsCol,
                         MinibusNums = group.First().MinibusNumsCol,
                         HGVNums = group.First().HGVNumsCol,
-                       
+
                         CarExposure = carExposure,
                         VanExposure = vanExposure,
                         MinibusExposure = minibusExposure,
@@ -576,6 +585,7 @@ namespace CSV_reader.Services
 
             return result; // Returns a dictionary with policy year as key and PolicyYearSummary as value
         }
+
 
         // This method returns each years' summarised data and also the rolling aggregates for three and five years
         public HistoricYearsData Historic3Years5YearsData(string filePath)
@@ -793,8 +803,31 @@ namespace CSV_reader.Services
         }
 
 
-    }
 
+
+        // setting input model values here - making the index2 view obsolete
+        public InputModel SetInputModelValues()
+        {
+            var inputModel = new InputModel
+            {
+                SelectedCoverType = "Self Drive Hire",
+                Excess = 1000.0,
+
+                StartDate = DateTime.Today,
+                EndDate = DateTime.Today.AddYears(1),
+
+                CarLLL = 40.0,
+                VanLLL = 50.0,
+                MinibusLLL = 120.0,
+                HGVLLL = 120.0,
+
+                SelectedPercentage = "0.25"
+            };
+
+            return inputModel;
+        }
+
+    }
 }
 
 

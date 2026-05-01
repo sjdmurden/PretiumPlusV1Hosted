@@ -2,6 +2,7 @@
 using CSV_reader.database;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CSV_reader.ViewModels;
+using Org.BouncyCastle.Security;
 
 namespace CSV_reader.Services
 {
@@ -18,8 +19,10 @@ namespace CSV_reader.Services
             _claimsService = claimsService;
         }
 
-        public List<IndivClaimDB> GetClaimsByBatchId(string batchId)
+        /*public List<IndivClaimDB> GetClaimsByBatchId(string batchId)
         {
+
+            // changed this from .ClaimsTable to .IndivClaimDB
             return _appContext.ClaimsTable
                         .Where(c => c.BatchId == batchId)
                         .ToList();
@@ -30,7 +33,10 @@ namespace CSV_reader.Services
             return _appContext.ClaimsTable
                 .Where(c => c.BatchId == batchId && selectedClaims.Contains(c.ClaimRef))
                 .ToList();
-        }
+        }*/
+       
+
+        
 
 
         public ClaimsCalculationsModel GetCalculationsFromClaims(
@@ -446,12 +452,38 @@ namespace CSV_reader.Services
 
             // ----------------------- BURN RATE ----------------------
 
+            
+
             claimsCalculationsModel.Y1BurnRate = claimsCalculationsModel.Y1Total / claimsCalculationsModel.Y1RentalDaysNonCOI;
             claimsCalculationsModel.Y2BurnRate = claimsCalculationsModel.Y2Total / claimsCalculationsModel.Y2RentalDaysNonCOI;
             claimsCalculationsModel.Y3BurnRate = claimsCalculationsModel.Y3Total / claimsCalculationsModel.Y3RentalDaysNonCOI;
             claimsCalculationsModel.Y4BurnRate = claimsCalculationsModel.Y4Total / claimsCalculationsModel.Y4RentalDaysNonCOI;
             claimsCalculationsModel.Y5BurnRate = claimsCalculationsModel.Y5Total / claimsCalculationsModel.Y5RentalDaysNonCOI;
-            
+
+            claimsCalculationsModel.TwoYAvBurnRate = 
+                (claimsCalculationsModel.Y1Total + claimsCalculationsModel.Y2Total) / 
+                (claimsCalculationsModel.Y1RentalDaysNonCOI + claimsCalculationsModel.Y2RentalDaysNonCOI);
+            claimsCalculationsModel.ThreeYAvBurnRate = 
+                (claimsCalculationsModel.ThreeY_Total) / 
+                (claimsCalculationsModel.ThreeY_RDaysNonCOI);
+            claimsCalculationsModel.FourYAvBurnRate = 
+                (claimsCalculationsModel.ThreeY_Total + claimsCalculationsModel.Y4Total) / (
+                    claimsCalculationsModel.ThreeY_RDaysNonCOI + claimsCalculationsModel.Y4RentalDaysNonCOI);
+            claimsCalculationsModel.FiveYAvBurnRate = 
+                (claimsCalculationsModel.FiveY_Total) / claimsCalculationsModel.FiveY_RDaysNonCOI;
+
+
+            claimsCalculationsModel.FactoredY1BurnRate = FactorBurnRate(claimsCalculationsModel.Y1BurnRate);
+            claimsCalculationsModel.FactoredY2BurnRate = FactorBurnRate(claimsCalculationsModel.Y2BurnRate);
+            claimsCalculationsModel.FactoredY3BurnRate = FactorBurnRate(claimsCalculationsModel.Y3BurnRate);
+            claimsCalculationsModel.FactoredY4BurnRate = FactorBurnRate(claimsCalculationsModel.Y4BurnRate);
+            claimsCalculationsModel.FactoredY5BurnRate = FactorBurnRate(claimsCalculationsModel.Y5BurnRate);
+
+            claimsCalculationsModel.FactoredTwoYAvBurnRate = FactorBurnRate(claimsCalculationsModel.TwoYAvBurnRate);
+            claimsCalculationsModel.FactoredThreeYAvBurnRate = FactorBurnRate(claimsCalculationsModel.ThreeYAvBurnRate);
+            claimsCalculationsModel.FactoredFourYAvBurnRate = FactorBurnRate(claimsCalculationsModel.FourYAvBurnRate);
+            claimsCalculationsModel.FactoredFiveYAvBurnRate = FactorBurnRate(claimsCalculationsModel.FiveYAvBurnRate);
+
 
 
 
@@ -1353,6 +1385,12 @@ namespace CSV_reader.Services
             
             return claimsCalculationsModel;
 
+        }
+
+        private static double FactorBurnRate(double burnRate)
+        {
+            const double burnRateFactor = 100.0 / 55.0;
+            return burnRate * burnRateFactor;
         }
     }
 }

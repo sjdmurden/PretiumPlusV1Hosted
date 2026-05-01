@@ -126,7 +126,7 @@
 
     <div class="flex items-start">
 
-        <!--------------- SIDEBAR ------------------->
+@*         <!--------------- SIDEBAR ------------------->
         <aside id="default-sidebar" class="md:mt-4 w-64 h-auto bg-gray-200 shadow-md rounded-lg
               transform -translate-x-full sm:translate-x-0
               fixed sm:static inset-y-0 left-0 z-40
@@ -275,47 +275,219 @@
     </aside>
     
         <div id="sidebarBackdrop"
-             class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden sm:hidden"></div>
+             class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden sm:hidden"></div> *@
 
         <!---------- PLACEHOLDER BLOCKS --------------->
         <div class="flex-1 ">
             <div class="p-4 ">
                 <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-                    <div class="grid grid-cols-3 gap-4 mb-4">
-                        <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
-                            <p class="text-2xl text-gray-400 dark:text-gray-500">
-                                <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                </svg>
-                            </p>
-                        </div>
-                        <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
-                            <p class="text-2xl text-gray-400 dark:text-gray-500">
-                                <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                </svg>
-                            </p>
-                        </div>
-                        <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
-                            <p class="text-2xl text-gray-400 dark:text-gray-500">
-                                <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                </svg>
-                            </p>
-                        </div>
-                    </div>
                     <div class="flex items-center justify-center h-48 mb-4 rounded-sm bg-gray-50 dark:bg-gray-800">
                         <p class="text-2xl text-gray-400 dark:text-gray-500">
                             Welcome to Pretium Plus!
                         </p>
                     </div>
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+
+                        <!-- CLICKABLE HEADER -->
+                        <div class="relative">
+                            <div onclick="toggleQuotesDropdown()"
+                                 class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800 cursor-pointer">
+
+                                <img src="@Url.Content("~/images/rabbitsVehicleHireLogo.png")"
+                                     alt="Rabbits Vehicle Hire Logo"
+                                     class="h-12 object-contain" />
+                            </div>
+
+                            <!-- DROPDOWN CONTENT -->
+                            <div id="quotesDropdown"
+                                 class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-lg shadow-lg p-4 z-50 transition-all duration-200">
+
+                                <div class="space-y-4">
+
+                                    <!-- Title -->
+                                    <div class="flex justify-between">
+                                        <span class="text-lg font-semibold text-gray-900">Quotes</span>
+                                    </div>
+
+                                    <!-- SEARCH -->
+                                    <div class="space-y-2">
+                                        <button onclick="toggleForm('quoteSearchForm')"
+                                                class="w-full px-3 py-2 bg-blue-100 rounded-md hover:bg-blue-200">
+                                            Search
+                                        </button>
+
+                                        <form id="quoteSearchForm" class="hidden space-y-3 w-full">
+                                            <div class="flex items-center w-full">
+                                                <span class="text-gray-700 text-sm font-semibold bg-gray-200 py-1 px-2 rounded-l">PAQ</span>
+                                                <input type="text"
+                                                       name="quoteSearch"
+                                                       id="quoteIdToSearch"
+                                                       required
+                                                       class="w-full bg-gray-100 px-2 py-1 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r"
+                                                       placeholder="Quote #" />
+                                            </div>
+                                            <button type="submit"
+                                                    class="w-full bg-blue-600 text-white font-semibold py-2 px-3 rounded-md shadow hover:bg-blue-700 transition">
+                                                Search
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- CREATE -->
+                                    <div class="space-y-2">
+                                        <button onclick="toggleForm('createQuoteForm')"
+                                                class="w-full px-3 py-2 bg-green-100 rounded-md hover:bg-green-200">
+                                            Create
+                                        </button>
+
+                                        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" id="createQuoteForm"
+                                              class="hidden space-y-3 w-full">
+                                            <div class="w-full">
+                                                <label for="excelFile" class="block text-sm font-semibold text-gray-700">Select Excel File</label>
+                                                <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none"
+                                                       id="excelFile"
+                                                       type="file"
+                                                       name="excelFile"
+                                                       accept=".xlsx">
+                                            </div>
+                                            <button id="uploadButton" type="submit"
+                                                    class="w-full font-semibold bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition"
+                                                    disabled>
+                                                Upload
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- DROPDWON JAVASCRIPT -->
+                        <script>
+                            function toggleQuotesDropdown() {
+                                const dropdown = document.getElementById("quotesDropdown");
+                                dropdown.classList.toggle("hidden");
+                            }
+
+                            function toggleForm(formId, button) {
+                                const form = document.getElementById(formId);
+                                form.classList.toggle("hidden");
+                            }
+                        </script>
+
+                        <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">                            
+                            <div onclick="toggleQuotesDropdown()"
+                                 class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800 cursor-pointer">
+
+                                <img src="@Url.Content("~/images/badshot_logo.png")"
+                                     alt="Badshot Logo"
+                                     class="h-12 object-contain" />
+                            </div>
+
+                            <!-- DROPDOWN CONTENT -->
+                            <div id="quotesDropdown"
+                                 class="hidden absolute top-full left-0 mt-2 w-full bg-white rounded-lg shadow-lg p-4 z-50 transition-all duration-200">
+
+                                <div class="space-y-4">
+
+                                    <!-- Title -->
+                                    <div class="flex justify-between">
+                                        <span class="text-lg font-semibold text-gray-900">Quotes</span>
+                                    </div>
+
+                                    <!-- SEARCH -->
+                                    <div class="space-y-2">
+                                        <button onclick="toggleForm2('quoteSearchForm')"
+                                                class="w-full px-3 py-2 bg-blue-100 rounded-md hover:bg-blue-200">
+                                            Search
+                                        </button>
+
+                                        <form id="quoteSearchForm2" class="hidden space-y-3 w-full">
+                                            <div class="flex items-center w-full">
+                                                <span class="text-gray-700 text-sm font-semibold bg-gray-200 py-1 px-2 rounded-l">PAQ</span>
+                                                <input type="text"
+                                                       name="quoteSearch"
+                                                       id="quoteIdToSearch2"
+                                                       required
+                                                       class="w-full bg-gray-100 px-2 py-1 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r"
+                                                       placeholder="Quote #" />
+                                            </div>
+                                            <button type="submit"
+                                                    class="w-full bg-blue-600 text-white font-semibold py-2 px-3 rounded-md shadow hover:bg-blue-700 transition">
+                                                Search
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- CREATE -->
+                                    <div class="space-y-2">
+                                        <button onclick="toggleForm2('createQuoteForm')"
+                                                class="w-full px-3 py-2 bg-green-100 rounded-md hover:bg-green-200">
+                                            Create
+                                        </button>
+
+                                        <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" id="createQuoteForm2"
+                                              class="hidden space-y-3 w-full">
+                                            <div class="w-full">
+                                                <label for="excelFile" class="block text-sm font-semibold text-gray-700">Select Excel File</label>
+                                                <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none"
+                                                       id="excelFile"
+                                                       type="file"
+                                                       name="excelFile"
+                                                       accept=".xlsx">
+                                            </div>
+                                            <button id="uploadButton" type="submit"
+                                                    class="w-full font-semibold bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition"
+                                                    disabled>
+                                                Upload
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!-- DROPDWON JAVASCRIPT -->
+                        <script>
+                            function toggleQuotesDropdown2() {
+                                const dropdown = document.getElementById("quotesDropdown");
+                                dropdown.classList.toggle("hidden");
+                            }
+
+                            function toggleForm2(formId, button) {
+                                const form = document.getElementById(formId);
+                                form.classList.toggle("hidden");
+                            }
+                        </script>
+                      
+                        
+
+                        <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
+                            <div onclick="toggleQuotesDropdown()"
+                                 class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800 cursor-pointer">
+
+                                <img src="@Url.Content("~/images/rentruck_logo.png")"
+                                     alt="Rentruck Logo"
+                                     class="h-12 object-contain" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                   
+                    
                     <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
-                            <p class="text-2xl text-gray-400 dark:text-gray-500">
-                                <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                </svg>
-                            </p>
+                        <div class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800">
+                            <a href="@Url.Action("IndexExcel", "Excel", new { clientName = "Addhire" })"
+                               class="flex items-center justify-center h-24 rounded-sm bg-gray-50 dark:bg-gray-800 hover:shadow cursor-pointer">
+
+                                <img src="@Url.Content("~/images/addhire_logo.png")"
+                                     alt="Addhire Logo"
+                                     class="h-12 object-contain" />
+                            </a>
+
                         </div>
                         <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28 dark:bg-gray-800">
                             <p class="text-2xl text-gray-400 dark:text-gray-500">
@@ -390,39 +562,7 @@
 
     <script>
 
-        // JS for showing/hiding forms
-
-        function toggleForm(formId, button) {
-            const form = document.getElementById(formId);
-            const svgPath = button.querySelector("svg path");
-
-            // Down and up arrows
-            const downArrow = "M19 9l-7 7-7-7";
-            const upArrow = "M5 15l7-7 7 7";
-
-            // Close all other forms
-            document.querySelectorAll("form[id$='Form']").forEach(f => {
-                if (f.id !== formId) {
-                    f.classList.add("hidden");
-                    // reset arrow for that form's button
-                    const otherButton = f.previousElementSibling;
-                    if (otherButton) {
-                        const otherPath = otherButton.querySelector("svg path");
-                        if (otherPath) otherPath.setAttribute("d", downArrow);
-                    }
-                }
-            });
-
-            // Toggle the clicked form
-            form.classList.toggle("hidden");
-
-            if (form.classList.contains("hidden")) {
-                svgPath.setAttribute("d", downArrow);
-            } else {
-                svgPath.setAttribute("d", upArrow);
-            }
-        }
-
+        
 
 
 
@@ -476,32 +616,7 @@
                 }
             });
         });
-
-
-        
-
-        document.addEventListener("DOMContentLoaded", () => {
-
-            const sidebar = document.getElementById("default-sidebar");
-            const backdrop = document.getElementById("sidebarBackdrop");
-            const toggleBtn = document.getElementById("mobileSidebarToggle");
-
-            function openSidebar() {
-                sidebar.classList.remove("-translate-x-full");
-                backdrop.classList.remove("hidden");
-            }
-
-            function closeSidebar() {
-                sidebar.classList.add("-translate-x-full");
-                backdrop.classList.add("hidden");
-            }
-
-            // Open when user clicks the toggle button
-            toggleBtn.addEventListener("click", openSidebar);
-
-            // Close when user taps outside the sidebar
-            backdrop.addEventListener("click", closeSidebar);
-        });
+       
     </script>
 
 

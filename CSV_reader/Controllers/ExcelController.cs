@@ -1,6 +1,7 @@
 ﻿using CSV_reader.database;
 using CSV_reader.Models;
 using CSV_reader.Services;
+using CSV_reader.ViewModels;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -34,10 +35,11 @@ namespace CSV_reader.Controllers
             return View();
         }
 
-        public IActionResult LandingPage()
+        public IActionResult LandingPage2()
         {
             return View();
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> UploadFile_Controller(IFormFile excelFile)
@@ -49,7 +51,7 @@ namespace CSV_reader.Controllers
                 Console.WriteLine($"excel file path {filePath}");
 
                 // Redirect to Index action method inside Home controller
-                return RedirectToAction("Index2", "Home");
+                return RedirectToAction("Index2ReDo", "Home");
             }
             catch (ArgumentException ex)
             {
@@ -59,7 +61,16 @@ namespace CSV_reader.Controllers
             }
         }
 
-        
+
+
+        public IActionResult GoToIndex2(string clientName)
+        {
+            ViewBag.ClientName = clientName;
+            return RedirectToAction("IndexExcel", "Excel");
+        }
+
+
+
 
 
         /*[HttpGet]

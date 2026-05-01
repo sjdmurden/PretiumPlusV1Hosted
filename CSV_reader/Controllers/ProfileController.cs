@@ -7,6 +7,7 @@ using DocumentFormat.OpenXml.InkML;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using CSV_reader.Services;
 
 namespace CSV_reader.Controllers
 {
@@ -15,11 +16,14 @@ namespace CSV_reader.Controllers
     {
 
         private readonly ApplicationContext _appContext;
+        private readonly IDeletionService _deletionService;
 
         public ProfileController(
-            ApplicationContext appContext)
+            ApplicationContext appContext,
+            IDeletionService deletionService)
         {
             _appContext = appContext;
+            _deletionService = deletionService;
         }
 
         [Authorize]
@@ -133,6 +137,44 @@ namespace CSV_reader.Controllers
 
             return View(model);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string userEmail)
+        {
+            if (string.IsNullOrWhiteSpace(userEmail))
+                return BadRequest();
+
+            if (userEmail.Equals("admin@gmail.com", StringComparison.OrdinalIgnoreCase))
+                return Forbid();
+
+            var success = await _deletionService.DeleteUserByUsernameAsync(userEmail);
+
+            if (!success)
+                return NotFound();
+
+            return RedirectToAction("AdminProfileIndex");
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteQuote(string quoteId)
+        {
+            if (string.IsNullOrWhiteSpace(quoteId))
+                return BadRequest();
+
+            var success = await _deletionService.DeleteQuoteByQuoteIdAsync(quoteId);
+
+            if (!success)
+                return NotFound();
+
+            // Redirect back to profile page so table refreshes
+            return RedirectToAction("AdminProfileIndex");
+        }
+
 
     }
 }

@@ -111,6 +111,11 @@
             <div class="flex gap-4 mb-4">
 
                 <div class="w-1/2">
+                    <a asp-controller="Excel"
+                       asp-action="LandingPage"
+                       class="inline-block font-semibold bg-gray-200 text-gray-800 py-2 px-4 rounded-md shadow transition">
+                        Back
+                    </a>
                     <h1 class="text-2xl font-semibold mb-6">Admin Profile</h1>
 
                     <p class="text-gray-600 md:hidden">
@@ -148,7 +153,10 @@
 
             <div class="flex flex-col md:flex-row gap-6">
 
-                <div class="w-full md:w-1/2">
+                <div class="w-full md:w-1/3">
+
+                    <!------------------------- USERS LIST TABLE ----------------------------->
+
                     <h2 class="text-xl font-semibold mb-4">All Users</h2>
 
                     <div class="bg-white rounded-lg overflow-hidden">
@@ -157,22 +165,44 @@
                                 <tr class="bg-blue-200 text-left text-sm font-medium">
                                     <th class="px-4 py-2 border-b">User Email</th>                            
                                     <th class="px-4 py-2 border-b">Created Date</th>
+                                    <th></th> <!--delete button col -->
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var user in Model.AllUsersInfo)
                                 {
                                     <tr class="border-t hover:bg-blue-50 text-sm">
-                                        <td class="px-4 py-2">@user.UserEmail</td>                                
+                                        <td class="px-4 py-2">@user.UserEmail</td>
                                         <td class="px-4 py-2">@user.CreatedDate</td>
+                                        <td class="px-4 py-2">
+                                            @if (user.CanBeDeleted)
+                                            {
+                                                <form asp-controller="Profile"
+                                                      asp-action="DeleteUser"
+                                                      method="post"
+                                                      onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                                      class="inline">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <input type="hidden" name="userEmail" value="@user.UserEmail" />
+
+                                                    <button type="submit"
+                                                            class="bg-red-500 text-white px-2 py-1 rounded">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
+
                         </table>
                     </div>
                 </div>
 
-                <div class="w-full md:w-1/2">
+                <div class="w-full md:w-2/3">
 
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-semibold">All Quotes</h2>
@@ -186,6 +216,7 @@
                     </div>
                   
                   
+                    <!---------------------- QUOTES LIST TABLE ----------------------->
                     <div class="bg-white rounded-lg overflow-hidden">
                         <table class="min-w-full table-auto border-collapse" id="myQuotesTable">
                             <thead>
@@ -194,6 +225,7 @@
                                     <th class="px-2 py-2 border-b">Quote ID</th>
                                     <th class="px-2 py-2 border-b">Client Name</th>
                                     <th class="px-2 py-2 border-b">Created Date</th>
+                                    <th></th> <!-- delete button col-->
                                 </tr>
                             </thead>
                             <tbody>
@@ -208,6 +240,21 @@
                                         </td>
                                         <td class="px-2 py-2">@quote.ClientName</td>
                                         <td class="px-2 py-2">@quote.CreatedDate</td>
+                                        <td>
+                                            <form asp-controller="Profile"
+                                                  asp-action="DeleteQuote"
+                                                  method="post">
+
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="quoteId" value="@quote.QuoteId" />
+
+                                                <button type="submit"
+                                                        class="bg-red-200 px-2 py-1 rounded hover:bg-red-300"
+                                                        onclick="return confirm('Are you sure you want to delete this quote and all related data?');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -223,9 +270,17 @@
     </div>
 
 
+  
+
+
+    <script src="~/js/deletingUsersAndQuotes.js"></script>
     <script src="~/js/QuoteSearchProfilePage.js"></script>
 
     <script>
+
+
+        // -------------------  SCRIPT FOR SORTING THE QUOTES LIST ------------------------
+
         document.addEventListener("DOMContentLoaded", function () {
             const table = document.getElementById("myQuotesTable");
             const sortBtn = document.getElementById("sortCreatedDate");

@@ -113,6 +113,12 @@
 
 <body id="websiteBody">
 
+
+    <h2 class="text-2xl font-bold">
+        @ViewBag.ClientName
+    </h2>
+
+
     <div class="flex flex-col md:flex-row items-center justify-center m-16 space-y-8 md:space-y-0 gap-md-4 md:h-[30vh]">
 
         <!-- Quote Search Form -->
@@ -138,6 +144,10 @@
             </div>
         </form>
 
+        <h2 class="text-2xl font-bold">
+            @ViewBag.ClientName
+        </h2>
+
         <!-- Excel Upload Form -->
         <form asp-action="UploadFile_Controller" enctype="multipart/form-data" method="post" class="bg-gray-200 p-6 rounded-lg max-w-md w-3/4 border-none shadow-md">
             <div class="flex flex-col space-y-6">
@@ -155,6 +165,10 @@
             </div>
         </form>
     </div>
+
+    <h2>
+        List Client info and previous quotes here potentially
+    </h2>
 
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.5/dist/xlsx.full.min.js"></script>  <!--  add SheetJS library -->

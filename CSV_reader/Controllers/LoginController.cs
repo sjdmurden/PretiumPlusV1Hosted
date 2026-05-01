@@ -32,7 +32,7 @@ namespace CSV_reader.Controllers
             if (User?.Identity?.IsAuthenticated == true)
             {
                 //return RedirectToAction("IndexExcel", "Excel");
-                return RedirectToAction("LandingPage", "Excel");
+                return RedirectToAction("LandingPage2", "Excel");
             }
             return View(new LoginViewModel());
         }
@@ -87,7 +87,7 @@ namespace CSV_reader.Controllers
             // Redirect to Excel file uploader page
             //return RedirectToAction("IndexExcel", "Excel");
 
-            return RedirectToAction("LandingPage", "Excel");
+            return RedirectToAction("LandingPage2", "Excel");
         }
 
         // Logout

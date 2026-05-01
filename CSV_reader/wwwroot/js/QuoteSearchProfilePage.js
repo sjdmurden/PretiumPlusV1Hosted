@@ -9,8 +9,11 @@
             // get the quote ID from the attribute "data-quote-id"
             const quoteIdInput = button.getAttribute("data-quote-id").trim();
 
+            console.log("Inside QuoteSearchProfilePage js file")
+            console.log("quoteIdInput: " + quoteIdInput)
+
             // Check if the input is valid ie is a number
-            if (!/^[a-zA-Z0-9]+$/.test(quoteIdInput)) {
+            if (!/^[a-zA-Z0-9&]+$/.test(quoteIdInput)) {
                 alert("Please enter a valid quote ID with only letters and numbers.");
                 return;
             }

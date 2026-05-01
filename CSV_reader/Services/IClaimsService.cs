@@ -13,5 +13,7 @@ namespace CSV_reader.Services
         /*Dictionary<string, double> GetSumByPolicyYear(string filePath);
         public Dictionary<string, (int OpenClaims, int ClosedClaims)> GetSumOfStatusOfClaims(string filePath);*/
         //public List<ClaimsModel> GetOneYearsClaims(string filePath, string year);
+
+        InputModel SetInputModelValues();
     }
 }

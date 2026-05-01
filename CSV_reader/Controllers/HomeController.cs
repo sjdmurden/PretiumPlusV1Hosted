@@ -39,7 +39,7 @@ namespace CSV_reader.Controllers
        
 
         [HttpGet]
-        public IActionResult Index2()
+        public IActionResult Index2ReDo()
         {
             
             // get the filepath from memory cache instead of appsettings.json
@@ -56,7 +56,7 @@ namespace CSV_reader.Controllers
                 PolicyYearSummaries = _claimsService.GetPolicyYearSummaries(excelFilePath),
                 HistoricYearsData = _claimsService.Historic3Years5YearsData(excelFilePath),
 
-                InputModel = new InputModel(),
+                InputModel = _claimsService.SetInputModelValues(),
 
             };
 
@@ -109,7 +109,6 @@ namespace CSV_reader.Controllers
         [HttpPost]
         public IActionResult ImportClaims(ClaimsViewModel viewModel)
         {
-
             string userEmail = User.Identity!.Name!;
 
             string? excelFilePath = _excelFileService.GetExcelFilePath();
@@ -134,9 +133,40 @@ namespace CSV_reader.Controllers
                 chargeCOIFee = "Yes",
                 pricingMetric = "CCPVY",
                 priceBy = "Experience",
-            });
+            });            
+        }
 
-            
+        // ---------------- NEW BUTTON FOR SAVING CLAIM DATA MAKING INDEX2 PAGE OBSOLETE ----------------------------
+        [HttpPost]
+        public IActionResult ImportAndSaveClaimsDataToDB(ClaimsViewModel viewModel)
+        {
+            string userEmail = User.Identity!.Name!;
+
+            string? excelFilePath = _excelFileService.GetExcelFilePath();
+
+            if (string.IsNullOrWhiteSpace(excelFilePath) || excelFilePath == "No file path set.")
+            {
+                throw new InvalidOperationException("Excel file path is not set or is invalid.");
+            }
+
+            var inputModel = _claimsService.SetInputModelValues();
+
+            var claimsData = _claimsService.ReadClaimsExcel(excelFilePath);
+            string batchId = _claimsService.SaveClaimsToDatabase(claimsData, inputModel, userEmail);
+
+            // just before loading the view, delete the file from the uploads folder
+            _excelFileService.DeleteFileByPath(excelFilePath);
+
+            // Redirect page
+            return RedirectToAction("IndexCalculationsPlusClaims2", "Calculations", new
+            {
+                batchId,
+                selectedNumOfMonths = "12",
+                projYears = "3",
+                chargeCOIFee = "Yes",
+                pricingMetric = "CCPVY",
+                priceBy = "Experience",
+            });
         }
 
 
@@ -394,7 +424,7 @@ namespace CSV_reader.Controllers
 
 
 
-        
+
 
 
 

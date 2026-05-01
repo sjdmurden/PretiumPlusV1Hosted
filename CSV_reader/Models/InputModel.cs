@@ -7,9 +7,9 @@ namespace CSV_reader.Models
     {
         //public string QuoteNumber { get; set; }
         [Required(ErrorMessage = "Client Name is required.")]
-        public string SelectedCoverType { get; set; } = string.Empty;
+        public string SelectedCoverType { get; set; } = "Self Drive Hire";
         public List<SelectListItem> CoverTypes { get; set; } = new List<SelectListItem>();
-        public double Excess { get; set; }
+        public double Excess { get; set; } = 1000.0;
 
         [Display(Name = "Start Date")]
         [DataType(DataType.Date)]
@@ -20,10 +20,10 @@ namespace CSV_reader.Models
         public DateTime? EndDate { get; set; }
 
         // large loss loading
-        public double CarLLL { get; set; }
-        public double VanLLL { get; set; }
-        public double MinibusLLL { get; set; }
-        public double HGVLLL { get; set; }
+        public double CarLLL { get; set; } = 40.0;
+        public double VanLLL { get; set; } = 50.0;
+        public double MinibusLLL { get; set; } = 120.0;
+        public double HGVLLL { get; set; } = 120.0;
         /*
         // exposure ratings
         public double CarExp { get; set; }

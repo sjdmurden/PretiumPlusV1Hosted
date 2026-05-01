@@ -459,7 +459,25 @@
                         </button>
                     </div>
                 </div>
+
+
+               
+
             </div>
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
 
             <script>
                 function toggleMobileFilter() {
@@ -483,10 +501,248 @@
 
         </div>
 
+
+
+
+        <!-------------------- BRUN RATE GRAPH POPUP HERE ------------------->
+
+        @* <div class="flex flex-col items-center w-full">
+
+            <button id="toggleBurnRateChart"
+                    class="font-semibold mb-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                Hide Burn Rate Chart
+            </button>
+
+
+            <div id="burnRateChartWrapper"
+                 class="overflow-hidden transition-[height] duration-500 ease-in-out w-full flex justify-center">
+
+                <div id="burnRateChartContent"
+                     class="bg-white rounded-lg shadow-md p-4 mt-6 w-2/5">
+                    <h2 class="text-lg font-semibold mb-4">Burn Rate by Year</h2>
+                    <canvas id="burnRateChart"></canvas>
+
+                    <table class="table-auto text-sm w-full mb-4">
+                        <thead>
+                            <tr>
+                                <th class="font-semibold">Year</th>
+                                <th class="font-semibold">Insurable Days</th>
+                                <th class="font-semibold">Total Claims Costs</th>
+                                <th class="font-semibold">Burn Rate</th>
+                                <th class="font-semibold">Factored BR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Model.ClaimsCalculationsModel.Year1Name</td>
+                                <td>@Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI</td>
+                                <td>@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1Total)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y1BurnRate)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY1BurnRate)</td>
+                            </tr>
+                            <tr>
+                                <td>@Model.ClaimsCalculationsModel.Year2Name</td>
+                                <td>@Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI</td>
+                                <td>@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2Total)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y2BurnRate)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY2BurnRate)</td>
+                            </tr>
+                            <tr>
+                                <td>@Model.ClaimsCalculationsModel.Year3Name</td>
+                                <td>@Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI</td>
+                                <td>@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3Total)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y3BurnRate)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY3BurnRate)</td>
+                            </tr>
+                            <tr>
+                                <td>@Model.ClaimsCalculationsModel.Year4Name</td>
+                                <td>@Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI</td>
+                                <td>@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4Total)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y4BurnRate)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY4BurnRate)</td>
+                            </tr>
+                            <tr class="border-b border-gray-300">
+                                <td>@Model.ClaimsCalculationsModel.Year5Name</td>
+                                <td>@Model.ClaimsCalculationsModel.Y5RentalDaysNonCOI</td>
+                                <td>@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5Total)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y5BurnRate)</td>
+                                <td>@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY5BurnRate)</td>
+                            </tr>
+                            <tr>
+                                <td>Past 2 Years</td>
+                                <td>
+                                    @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N2}", 
+                                    (Model.ClaimsCalculationsModel.Y1Total +
+                                     Model.ClaimsCalculationsModel.Y2Total))
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.TwoYAvBurnRate)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredTwoYAvBurnRate)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Past 3 Years</td>
+                                <td>
+                                    @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N2}", 
+                                    (Model.ClaimsCalculationsModel.Y1Total +
+                                      Model.ClaimsCalculationsModel.Y2Total + 
+                                      Model.ClaimsCalculationsModel.Y3Total))
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.ThreeYAvBurnRate)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredThreeYAvBurnRate)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Past 4 Years</td>
+                                <td>
+                                    @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI +
+                                      Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N2}",
+                                    (Model.ClaimsCalculationsModel.Y1Total +
+                                    Model.ClaimsCalculationsModel.Y2Total +
+                                    Model.ClaimsCalculationsModel.Y3Total +
+                                    Model.ClaimsCalculationsModel.Y4Total))
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FourYAvBurnRate)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredFourYAvBurnRate)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Past 5 Years</td>
+                                <td>                           
+                                    @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI +
+                                      Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI + 
+                                      Model.ClaimsCalculationsModel.Y5RentalDaysNonCOI)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N2}", 
+                                    (Model.ClaimsCalculationsModel.Y1Total +
+                                      Model.ClaimsCalculationsModel.Y2Total +
+                                      Model.ClaimsCalculationsModel.Y3Total +
+                                      Model.ClaimsCalculationsModel.Y4Total +
+                                      Model.ClaimsCalculationsModel.Y5Total)) 
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FiveYAvBurnRate)
+                                </td>
+                                <td>
+                                    @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredFiveYAvBurnRate)
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const burnRateLabels = [
+                '@Model.ClaimsCalculationsModel.Year5Name',
+                '@Model.ClaimsCalculationsModel.Year4Name',
+                '@Model.ClaimsCalculationsModel.Year3Name',
+                '@Model.ClaimsCalculationsModel.Year2Name',
+                '@Model.ClaimsCalculationsModel.Year1Name'
+            ];
+
+            const burnRateData = [
+                @Model.ClaimsCalculationsModel.Y5BurnRate,
+                @Model.ClaimsCalculationsModel.Y4BurnRate,
+                @Model.ClaimsCalculationsModel.Y3BurnRate,
+                @Model.ClaimsCalculationsModel.Y2BurnRate,
+                @Model.ClaimsCalculationsModel.Y1BurnRate
+            ];
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                // this finds the <canvas> element
+                const burnRateContext = document.getElementById('burnRateChart').getContext('2d');
+
+                new Chart(burnRateContext, {
+                    type: 'line',      // this defines the chart type: line chart
+                    data: {
+                        labels: burnRateLabels,    // x-axis labels
+                        datasets: [{
+                            label: 'Burn Rate',
+                            data: burnRateData,   // y-axis values
+                            borderColor: 'rgb(37, 99, 235)', // blue-600
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            tension: 0.3,    // smoothness of line: 0 = sharp angled, 1 = very smooth
+                            fill: true,
+                            pointRadius: 5,    // size of dots
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {   // currency formatting for hover tooltip
+                                        
+                                        return 'Burn Rate: £' + context.parsed.y.toLocaleString();
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Year'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Cost'
+                                },
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {   // currency formatting
+                                        return '£' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        </script> *@
+
+        
+
+
+
         <!--------------- SHOW CLAIMS TABLE BUTTON -------------------->
-        <button id="toggleTableBtn" class="mt-4 mx-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
-            Show Claims
-        </button>
+        <div class="flex justify-center">
+            <button id="toggleTableBtn"
+                    class="mt-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+                Show Claims
+            </button>
+        </div>
 
 
         <!----------- CLAIMS LIST PLUS FILTER BOX --------------->
@@ -697,6 +953,7 @@
 
 
 
+    
 
     <script src="~/js/quoteSearch.js"></script>
     <script src="~/js/pdfDownload.js"></script>
@@ -706,6 +963,50 @@
 
     <script src="~/js/generatePDFButton.js"></script>
     <script src="~/js/adjustUltimateCosts.js"></script>
+
+
+    <!-- burn rate js button -->
+@*     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggleBurnRateChart");
+            const wrapper = document.getElementById("burnRateChartWrapper");
+            const content = document.getElementById("burnRateChartContent");
+
+            let isOpen = true;
+
+            // Initial state
+            wrapper.style.height = content.scrollHeight + "px";
+
+            toggleBtn.addEventListener("click", function () {
+                if (isOpen) {
+                    // COLLAPSE
+                    wrapper.style.height = content.scrollHeight + "px";
+
+                    requestAnimationFrame(() => {
+                        wrapper.style.height = "0px";
+                    });
+
+                    toggleBtn.textContent = "Show Burn Rate Chart";
+                } else {
+                    // EXPAND
+                    wrapper.style.height = "auto";
+                    const fullHeight = content.scrollHeight;
+
+                    wrapper.style.height = "0px";
+
+                    requestAnimationFrame(() => {
+                        wrapper.style.height = fullHeight + "px";
+                    });
+
+                    toggleBtn.textContent = "Hide Burn Rate Chart";
+                }
+
+                isOpen = !isOpen;
+            });
+        });
+    </script> *@
+
+
 </body>
 </html>
 

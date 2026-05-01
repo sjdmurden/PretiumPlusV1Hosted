@@ -280,6 +280,8 @@
             </div>
         </div>
 
+       
+
 
         <!------------ BUSINESS FORECAST -------------->
 
@@ -505,9 +507,45 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-blue-50 p-4 text-sm">
-                            <th scope="row" class="px-6 py-4 bg-blue-200">Exposure</th>
-                            <td class="px-6 py-4 text-right text-gray-900">
+                            <th scope="row" class="px-6 py-4 border-b border-gray-400 bg-blue-200">Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
                                 @string.Format("{0:N2}", Model.ClaimsCalculationsModel.ProjectedExposureTech)
+                            </td>
+                        </tr>                        
+                        <tr class="hover:bg-blue-50 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 border-b border-gray-400 bg-blue-200">Total Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.TotalExposure)
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 p-4 text-sm">
+                            <th scope="row" class=" px-6 py-4 border-b border-gray-400 bg-blue-200">Total Non COI Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.TotalNonCOIExposure)
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 border-b border-gray-400 bg-blue-200">CC 1000 Days (Book)</th>
+                            <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CC1000DaysBook)
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 border-b border-gray-400 bg-blue-200">CC 1000 Days (Client)</th>
+                            <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.CC1000DaysClient)
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 border-b border-gray-400 bg-blue-200">Variance (+/-)</th>
+                            <td class="px-6 py-4 text-right text-gray-900 border-b border-gray-300">
+                                @string.Format("{0:N2}", Model.ClaimsCalculationsModel.Variance)%
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-blue-50 p-4 text-sm">
+                            <th scope="row" class="px-6 py-4 bg-blue-200">New Exposure</th>
+                            <td class="px-6 py-4 text-right text-gray-900">
+                                @string.Format("£{0:N2}", Model.ClaimsCalculationsModel.NewExposure)
                             </td>
                         </tr>
                     </tbody>
@@ -756,6 +794,263 @@
 
                 </div>                
             </div>
+
+            <!-------------- BURN RATE GRAPH ------------------->
+
+            <div class="w-full">
+
+                
+
+
+                <div id="burnRateChartWrapper" class=" w-full">
+
+                    <div id="burnRateChartContent"
+                         class="bg-white rounded-lg shadow-md p-4 mt-6 w-3/5">
+
+                        <h2 class="text-lg font-semibold mb-4">Burn Rate by Year</h2>
+
+                        <div class="h-[300px] w-full">
+                            <canvas id="burnRateChart"></canvas>
+                        </div>
+
+                        <table class="min-w-full text-sm text-gray-700 border border-gray-200 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-100 text-gray-800 uppercase text-xs tracking-wider">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">Year</th>
+                                    <th class="px-4 py-3 text-right">Insurable Days</th>
+                                    <th class="px-4 py-3 text-right">Total Claims Costs</th>
+                                    <th class="px-4 py-3 text-right">Burn Rate</th>
+                                    <th class="px-4 py-3 text-right">Factored BR</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-4 py-2 font-medium">@Model.ClaimsCalculationsModel.Year1Name</td>
+                                    <td class="px-4 py-2 text-right">@Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI</td>
+                                    <td class="px-4 py-2 text-right">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y1Total)</td>
+                                    <td class="px-4 py-2 text-right text-blue-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y1BurnRate)</td>
+                                    <td class="px-4 py-2 text-right text-green-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY1BurnRate)</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-4 py-2 font-medium">@Model.ClaimsCalculationsModel.Year2Name</td>
+                                    <td class="px-4 py-2 text-right">@Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI</td>
+                                    <td class="px-4 py-2 text-right">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y2Total)</td>
+                                    <td class="px-4 py-2 text-right text-blue-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y2BurnRate)</td>
+                                    <td class="px-4 py-2 text-right text-green-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY2BurnRate)</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-4 py-2 font-medium">@Model.ClaimsCalculationsModel.Year3Name</td>
+                                    <td class="px-4 py-2 text-right">@Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI</td>
+                                    <td class="px-4 py-2 text-right">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y3Total)</td>
+                                    <td class="px-4 py-2 text-right text-blue-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y3BurnRate)</td>
+                                    <td class="px-4 py-2 text-right text-green-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY3BurnRate)</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-4 py-2 font-medium">@Model.ClaimsCalculationsModel.Year4Name</td>
+                                    <td class="px-4 py-2 text-right">@Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI</td>
+                                    <td class="px-4 py-2 text-right">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y4Total)</td>
+                                    <td class="px-4 py-2 text-right text-blue-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y4BurnRate)</td>
+                                    <td class="px-4 py-2 text-right text-green-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY4BurnRate)</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-4 py-2 font-medium">@Model.ClaimsCalculationsModel.Year5Name</td>
+                                    <td class="px-4 py-2 text-right">@Model.ClaimsCalculationsModel.Y5RentalDaysNonCOI</td>
+                                    <td class="px-4 py-2 text-right">@string.Format("£{0:N2}", Model.ClaimsCalculationsModel.Y5Total)</td>
+                                    <td class="px-4 py-2 text-right text-blue-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.Y5BurnRate)</td>
+                                    <td class="px-4 py-2 text-right text-green-600 font-semibold">@string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredY5BurnRate)</td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-3 py-2 font-medium">Past 2 Years</td>
+                                    <td class="px-4 py-2 text-right">
+                                        @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI)
+                                    </td>
+                                    <td class="px-4 py-2 text-right">
+                                        @string.Format("£{0:N2}",
+                                                                                (Model.ClaimsCalculationsModel.Y1Total +
+                                                                                Model.ClaimsCalculationsModel.Y2Total))
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.TwoYAvBurnRate)
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredTwoYAvBurnRate)
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-3 py-2 font-medium">Past 3 Years</td>
+                                    <td class="px-4 py-2 text-right">
+                                        @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI)
+                                    </td>
+                                    <td class="px-4 py-2 text-right">
+                                        @string.Format(
+                                            "£{0:N2}",
+                                            (
+                                                Model.ClaimsCalculationsModel.Y1Total +
+                                                Model.ClaimsCalculationsModel.Y2Total +
+                                                Model.ClaimsCalculationsModel.Y3Total
+                                            )
+                                        )
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.ThreeYAvBurnRate)
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredThreeYAvBurnRate)
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-3 py-2 font-medium">Past 4 Years</td>
+                                    <td class="px-4 py-2 text-right">
+                                        @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI +
+                                                                                Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI)
+                                    </td>
+                                    <td class="px-4 py-2 text-right">
+                                        @string.Format("£{0:N2}",
+                                                                                (Model.ClaimsCalculationsModel.Y1Total +
+                                                                                Model.ClaimsCalculationsModel.Y2Total +
+                                                                                Model.ClaimsCalculationsModel.Y3Total +
+                                                                                Model.ClaimsCalculationsModel.Y4Total))
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FourYAvBurnRate)
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredFourYAvBurnRate)
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition duration-150">
+                                    <td class="px-3 py-2 font-medium">Past 5 Years</td>
+                                    <td class="px-4 py-2 text-right">
+                                        @(Model.ClaimsCalculationsModel.Y1RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y2RentalDaysNonCOI + Model.ClaimsCalculationsModel.Y3RentalDaysNonCOI +
+                                                                                Model.ClaimsCalculationsModel.Y4RentalDaysNonCOI +
+                                                                                Model.ClaimsCalculationsModel.Y5RentalDaysNonCOI)
+                                    </td>
+                                    <td class="px-4 py-2 text-right">
+                                        @string.Format("£{0:N2}",
+                                                                                (Model.ClaimsCalculationsModel.Y1Total +
+                                                                                Model.ClaimsCalculationsModel.Y2Total +
+                                                                                Model.ClaimsCalculationsModel.Y3Total +
+                                                                                Model.ClaimsCalculationsModel.Y4Total +
+                                                                                Model.ClaimsCalculationsModel.Y5Total))
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FiveYAvBurnRate)
+                                    </td>
+                                    <td class="px-4 py-2 text-right font-semibold">
+                                        @string.Format("£{0:N3}", Model.ClaimsCalculationsModel.FactoredFiveYAvBurnRate)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const burnRateLabels = [
+                    '@Model.ClaimsCalculationsModel.Year5Name',
+                    '@Model.ClaimsCalculationsModel.Year4Name',
+                    '@Model.ClaimsCalculationsModel.Year3Name',
+                    '@Model.ClaimsCalculationsModel.Year2Name',
+                    '@Model.ClaimsCalculationsModel.Year1Name'
+                ];
+
+                const burnRateData = [
+                    @Model.ClaimsCalculationsModel.Y5BurnRate,
+                    @Model.ClaimsCalculationsModel.Y4BurnRate,
+                    @Model.ClaimsCalculationsModel.Y3BurnRate,
+                    @Model.ClaimsCalculationsModel.Y2BurnRate,
+                    @Model.ClaimsCalculationsModel.Y1BurnRate
+                ];
+
+                const factoredBurnRateData = [
+                    @Model.ClaimsCalculationsModel.FactoredY5BurnRate,
+                    @Model.ClaimsCalculationsModel.FactoredY4BurnRate,
+                    @Model.ClaimsCalculationsModel.FactoredY3BurnRate,
+                    @Model.ClaimsCalculationsModel.FactoredY2BurnRate,
+                    @Model.ClaimsCalculationsModel.FactoredY1BurnRate,
+                ];
+            </script>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+
+                    // this finds the <canvas> element
+                    const burnRateContext = document.getElementById('burnRateChart').getContext('2d');
+
+                    new Chart(burnRateContext, {
+                        type: 'line',      // this defines the chart type: line chart
+                        data: {
+                            labels: burnRateLabels,    // x-axis labels
+                            datasets: [
+                                {
+                                    label: 'Burn Rate',
+                                    data: burnRateData,   // y-axis values
+                                    borderColor: 'rgb(37, 99, 235)', // blue-600
+                                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                    tension: 0.3,    // smoothness of line: 0 = sharp angled, 1 = very smooth
+                                    fill: false,
+                                    pointRadius: 5,    // size of dots
+                                    pointHoverRadius: 7
+                                },
+                                {
+                                    label: 'Factored Burn Rate',
+                                    data: factoredBurnRateData,
+                                    borderColor: 'rgb(22, 163, 74)',
+                                    backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                                    tension: 0.3,
+                                    fill: false,
+                                    pointRadius: 5,
+                                    pointHoverRadius: 7
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {   // currency formatting for hover tooltip
+
+                                            return 'Burn Rate: £' + context.parsed.y.toLocaleString();
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Year'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Cost'
+                                    },
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {   // currency formatting
+                                            return '£' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+
+
+
+
         </div>
 
 

@@ -23,7 +23,6 @@ namespace CSV_reader.Services
                 throw new InvalidOperationException("Account with this email already exists.");
             }
 
-            // string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
             // create a new user without the hashed password at first
             var user = new User

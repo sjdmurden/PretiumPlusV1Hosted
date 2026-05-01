@@ -6,6 +6,8 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Security.Claims;
+using QuestPDF.Companion;
+using QuestPDF.Drawing.Exceptions;
 
 
 namespace CSV_reader.Services
@@ -588,72 +590,122 @@ namespace CSV_reader.Services
                     page.DefaultTextStyle(x => x.FontSize(9));
 
                     page.Header()
+                        .AlignCenter()
                         .Text("Certificate of Motor Insurance")
+                        .FontFamily("Times New Roman")
                         .FontSize(30).Bold();
+
+                    page.Header().Padding(5).Column(headerCol =>
+                    {
+                        headerCol.Item().Row(row =>
+                        {
+                            var pretiumLogo = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "pretium_nobackground.png");
+                            var logoBytes = File.ReadAllBytes(pretiumLogo);
+
+                            row.RelativeItem().AlignLeft().Column(column =>
+                            {
+                                column.Item().PaddingBottom(10).Text("Certificate of Motor Insurance")
+                                    .FontFamily("Times New Roman")
+                                    .FontSize(30).Bold();
+
+                            });
+
+                            row.RelativeItem().AlignRight().Column(column =>
+                            {
+                                column.Item().PaddingBottom(10).Text("Pretium Agency")
+                                    .FontSize(12)
+                                    .Bold()
+                                    .FontColor(QuestPDF.Helpers.Colors.Blue.Medium);
+
+                                column.Item()
+                                    .Height(40)
+                                    .AlignRight()
+                                    .Image(Image.FromBinaryData(logoBytes))
+                                    .FitArea();
+                            });
+                        });
+
+
+                        headerCol.Item().PaddingTop(10).LineHorizontal(1).LineColor(QuestPDF.Helpers.Colors.Grey.Lighten2);
+                    });
 
                     // put horizontal line here -------------------------
 
                     // ------------------- PAGE 1 --------------------------------
                     page.Content().Column(column =>
                     {
-                        const float nestingSize = 25;
+                        const int nestingSize = 25;
                         column.Spacing(10);
 
                         column.Item()
+                            .AlignCenter()
                             .Text($"POLICY NUMBER: {policyNumber}")
                             .FontSize(11)
                             .FontColor(Colors.Blue.Darken2);
 
                         column.Item()
+                            .AlignCenter()
                             .Text($"QUOTE NUMBER: {quoteId}")
                             .FontSize(11)
                             .FontColor(Colors.Blue.Darken2);
 
-                        // 1
-                        AddListItem(column, 0, "1.", "Description of vehicle(s)");
-                        AddListItem(column, 1, "-", "Any motor vehicle the property of, or on hire or loan or lease to the policyholder");
+                        // Bordered section
+                        column.Item()
+                            .Border(2)
+                            .BorderColor(Colors.Red.Medium)
+                            .Padding(10)
+                            .Column(innerColumn =>
+                            {
+                                AddListItem(innerColumn, 0, "1.", "Description of vehicle(s)", isBold: true);
+                                AddListItem(innerColumn, 1, "-", "Any motor vehicle...");
 
-                        // 2
-                        AddListItem(column, 0, "2.", "Name of policyholder");
-                        AddListItem(column, 1, "-", $"{clientName}");
+                                AddListItem(innerColumn, 0, "2.", "Name of policyholder", isBold: true);
+                                AddListItem(innerColumn, 1, "-", $"{clientName}");
 
-                        // 3
-                        AddListItem(column, 0, "3.", "Effective date and time of the commencement of insurance for the purpose of the relevant law");
-                        AddListItem(column, 1, "-", $"{clientStartDate}");
+                                // 3
+                                AddListItem(innerColumn, 0, "3.", "Effective date and time of the commencement of insurance for the purpose of the relevant law", isBold: true);
+                                AddListItem(innerColumn, 1, "-", $"{clientStartDate}");
 
-                        // 4
-                        AddListItem(column, 0, "4.", "Date of expiry of insurance");
-                        AddListItem(column, 1, "-", $"{clientEndDate}");
+                                // 4
+                                AddListItem(innerColumn, 0, "4.", "Date of expiry of insurance", isBold: true);
+                                AddListItem(innerColumn, 1, "-", $"{clientEndDate}");
 
-                        // 5
-                        AddListItem(column, 0, "5.", "Persons or classes of persons entitled to drive");
-                        AddListItem(column, 1, "-", "Any person who is driving on the order or with the permission of the policyholder.");
-                        AddListItem(column, 1, "-", "Providing that the person driving has a licence to drive the vehicle or has held and is not disqualified from or prohibited by law from holding or obtaining such a licence");
+                                // 5
+                                AddListItem(innerColumn, 0, "5.", "Persons or classes of persons entitled to drive", isBold: true);
+                                AddListItem(innerColumn, 1, "-", "Any person who is driving on the order or with the permission of the policyholder.");
+                                AddListItem(innerColumn, 1, "-", "Providing that the person driving has a licence to drive the vehicle or has held and is not disqualified from or prohibited by law from holding or obtaining such a licence");
 
-                        // 6
-                        AddListItem(column, 0, "6.", "Limitations as to use");
-                        AddListItem(column, 1, "-", "Use for social, domestic and pleasure purposes");
-                        AddListItem(column, 1, "-", "Use in connection with the policyholder's business.");
-                        AddListItem(column, 1, "-", "Use in connection with the business of any hirer including the carriage of goods for hire and reward.");
+                                // 6
+                                AddListItem(innerColumn, 0, "6.", "Limitations as to use", isBold: true);
+                                AddListItem(innerColumn, 1, "-", "Use for social, domestic and pleasure purposes");
+                                AddListItem(innerColumn, 1, "-", "Use in connection with the policyholder's business.");
+                                AddListItem(innerColumn, 1, "-", "Use in connection with the business of any hirer including the carriage of goods for hire and reward.");
 
-                        AddListItem(column, 0, "", "Unless specified under section 6 of this certificate of insurance, this policy does not cover:");
-                        AddListItem(column, 0, "", "Use for hiring, the letting on hire, the carriage of passengers and goods for hire or reward, racing, pacemaking, use in any contest, reliability or speed trial or the use for any purpose in connection with the motor trade.");
-                        AddListItem(column, 0, "", "I hereby certify that the policy to which this certificate of insurance relates satisfies the requirements of the relevant law applicable in Great Britain, Northern Ireland, Isle of Man and the Islands of Guernsey, Jersey and Alderney.");
-                        AddListItem(column, 0, "", "For and on behalf of the Underwriter subscribing ERS, 30 Fenchurch Street, London EC3M 3BD");
-                        AddListItem(column, 0, "", "Authorised Insurer");
-                        AddListItem(column, 0, "", "--- signature here ---");
-                        AddListItem(column, 0, "", "Active Underwriter");
+                                AddListItem(innerColumn, 0, "", "Unless specified under section 6 of this certificate of insurance, this policy does not cover:");
+                                AddListItem(innerColumn, 0, "", "Use for hiring, the letting on hire, the carriage of passengers and goods for hire or reward, racing, pacemaking, use in any contest, reliability or speed trial or the use for any purpose in connection with the motor trade.");
+                                AddListItem(innerColumn, 0, "", "I hereby certify that the policy to which this certificate of insurance relates satisfies the requirements of the relevant law applicable in Great Britain, Northern Ireland, Isle of Man and the Islands of Guernsey, Jersey and Alderney.");
+                                AddListItem(innerColumn, 0, "", "For and on behalf of the Underwriter subscribing ERS, 30 Fenchurch Street, London EC3M 3BD");
+                                AddListItem(innerColumn, 0, "", "Authorised Insurer");
+                                AddListItem(innerColumn, 0, "", "--- signature here ---");
+                                AddListItem(innerColumn, 0, "", "Active Underwriter");
                        
+                            });
 
 
                         // Helper function
-                        void AddListItem(ColumnDescriptor col, int nestingLevel, string bulletText, string text)
+                        void AddListItem(ColumnDescriptor col, int nestingLevel, string bulletText, string text, bool isBold=false)
                         {
                             col.Item().Row(row =>
                             {
-                                row.ConstantItem(nestingSize * nestingLevel); // indentation
-                                row.ConstantItem(nestingSize).Text(bulletText).FontSize(11); // bullet
-                                row.RelativeItem().Text(text).FontSize(11); // main text
+                                row.ConstantItem(nestingSize * nestingLevel);
+
+                                // Bullet styling
+                                var bullet = row.ConstantItem(nestingSize).Text(bulletText).FontSize(11);
+                                if (isBold) bullet.Bold();
+
+                                // Main text styling
+                                var textItem = row.RelativeItem().Text(text).FontSize(11);
+                                if (isBold) textItem.Bold();
                             });
                         }
                     });
@@ -869,8 +921,12 @@ namespace CSV_reader.Services
 
             // ------------------ DOCUMENT END --------------------------------
 
+            policyDocument.ShowInCompanion(12500);
+
             return policyDocument.GeneratePdf();
         }
+
+       
     };
 
 
